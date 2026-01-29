@@ -5,7 +5,7 @@ add_executable (${PROJECT_NAME}
     "src/Graphics/VAO.cpp" "src/Graphics/VAO.h"
     "src/Graphics/VBO.cpp" "src/Graphics/VBO.h"
     "src/Graphics/ShaderClass.cpp" "src/Graphics/ShaderClass.h"
-    #"src/Graphics/Texture.cpp" "src/Graphics/Texture.h"
+    "src/Graphics/Texture.cpp" "src/Graphics/Texture.h"
     "src/Graphics/Window.cpp" "src/Graphics/Window.h"
 )
 
@@ -14,8 +14,8 @@ message(STATUS "Shader source dir: ${CMAKE_CURRENT_SOURCE_DIR}/src/Assets/Shader
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/Assets/Shaders"
-            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/shaders"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/Assets"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Assets"
 )
 
 

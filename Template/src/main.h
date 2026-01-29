@@ -18,5 +18,6 @@
 #include"Graphics/VAO.h"
 #include"Graphics/VBO.h"
 #include"Graphics/EBO.h"
+#include"Graphics/Texture.h"
 
 // TODO: Reference additional headers your program requires here.
