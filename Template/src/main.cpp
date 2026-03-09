@@ -19,6 +19,9 @@ int main()
 	Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
 	defShader.Activate();
 
+	Imgui imgui(VIEWPORT.getWindow());
+	imgui.CreateContext();
+
 	VAO triangleVAO;
 	triangleVAO.Bind();
 	VBO triangleVBO(triangle, sizeof(triangle));
@@ -39,12 +42,22 @@ int main()
 
 	while (!glfwWindowShouldClose(VIEWPORT.getWindow())) {
 		VIEWPORT.glClearCurrentColor();
+		imgui.ShowDockSpace();
+
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		
+		ImGui::Begin("Template");
+			ImGui::ShowDemoWindow();
+		ImGui::End();
+		imgui.RenderDockSpace();
 		glfwSwapBuffers(VIEWPORT.getWindow());
 		glfwPollEvents();
 	}
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	defShader.Delete();
 	triangleTexture.Delete();
 	triangleVBO.Delete();

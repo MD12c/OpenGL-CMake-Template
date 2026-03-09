@@ -15,6 +15,9 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
+#include<thread>
+#include<chrono>
+#include<stdexcept>
 #include<vector>
 #include"Benchmarks/Instrumentatior.h"
 
@@ -25,5 +28,6 @@
 #include"Graphics/EBO.h"
 #include"Graphics/Texture.h"
 #include"Graphics/Camera.h"
+#include"Graphics/ImguiSetup.h"
 
 // TODO: Reference additional headers your program requires here.
