@@ -1,4 +1,4 @@
-﻿#include "main.h"
+﻿#include "App.h"
 int width = 900;
 int height = 900;
 

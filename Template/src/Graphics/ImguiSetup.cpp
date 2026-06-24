@@ -63,7 +63,7 @@ void Imgui::ShowDockSpace() {
         dock_bottom = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down,   0.25f, nullptr, &dock_main);
 
         // Assign windows to docks
-        ImGui::DockBuilderDockWindow("Function input", dock_right);
+        ImGui::DockBuilderDockWindow("", dock_right);
         ImGui::DockBuilderFinish(dockspace_id);
     }
     ImGui::End();
