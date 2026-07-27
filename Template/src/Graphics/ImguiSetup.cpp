@@ -2,8 +2,8 @@
 
 namespace My_ImGui
 {
-GLFWwindow* m_VIEWPORT = nullptr;
-bool m_dockBuild = false;
+GLFWwindow* m_VIEWPORT  = nullptr;
+bool        m_dockBuild = false;
 
 int My_ImGui::Init(GLFWwindow* VIEWPORT)
 {
@@ -104,7 +104,7 @@ void My_ImGui::Shutdown()
 void My_ImGui::RenderInterfaceInput()
 {
     ImGui::Begin("Input", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::ShowDemoWindow();
     ImGui::End();
+    //ImGui::ShowDemoWindow();
 }
 }  // namespace My_ImGui
