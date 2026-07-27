@@ -1,19 +1,25 @@
 #pragma once
-#include"imgui.h"
-#include"imgui_internal.h"
-#include"imgui_impl_glfw.h"
-#include"imgui_impl_opengl3.h"
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <optional>
 
-class Imgui {
-public:
-    GLFWwindow* m_VIEWPORT;
-    ImGuiIO* m_io;
+namespace My_ImGui
+{
+    extern GLFWwindow *m_VIEWPORT;
+    extern bool m_dockBuilt;
 
-    Imgui(GLFWwindow* VIEWPORT);
+    int Init(GLFWwindow *VIEWPORT);
     void CreateContext();
     void ShowDockSpace();
     void RenderDockSpace();
-    ImGuiIO* getGuiContext() const;
+    void Shutdown();
+    
+    void RenderInterfaceInput();
 };

@@ -1,32 +1,43 @@
-#include"ImguiSetup.h"
+#include "ImguiSetup.h"
 
-Imgui::Imgui(GLFWwindow* VIEWPORT) : m_VIEWPORT(VIEWPORT) {}
+namespace My_ImGui
+{
+GLFWwindow* m_VIEWPORT = nullptr;
+bool m_dockBuild = false;
 
-void Imgui::CreateContext() {
-    // Created ImGUI context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-    m_io = &ImGui::GetIO(); (void)m_io;
-	m_io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	m_io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	m_io->Fonts->AddFontFromFileTTF("Assets/Fonts/DejaVuSans.ttf", 16.0f);
-	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(m_VIEWPORT, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
-	ImGui::GetIO().FontGlobalScale = 1.0f;
+int My_ImGui::Init(GLFWwindow* VIEWPORT)
+{
+    if (VIEWPORT == nullptr)
+        return 1;
+
+    m_VIEWPORT = VIEWPORT;
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGui::GetIO().ConfigFlags |=
+        ImGuiConfigFlags_ViewportsEnable |
+        ImGuiConfigFlags_DockingEnable;
+
+    ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF("Assets/Fonts/DejaVuSans.ttf", 26.0f);
+    if (!font)
+        std::cerr << "Failed to load font\n";
+
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(m_VIEWPORT, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+    ImGui::GetIO().FontGlobalScale = 1.0f;
+
+    return 0;
 }
 
-void Imgui::ShowDockSpace() {
-    // ImGui initializeation
+void My_ImGui::ShowDockSpace()
+{
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     ImGuiWindowFlags dockspace_flags =
-        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoNavFocus |
-        ImGuiWindowFlags_NoBackground;
+        ImGuiWindowFlags_NoBackground |
+        ImGuiWindowFlags_NoDecoration;
 
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
@@ -42,37 +53,39 @@ void Imgui::ShowDockSpace() {
 
     // Dockspace node
     ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-    ImGui::DockSpace(dockspace_id, ImVec2(0.0f,0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
-    static bool dock_built = false;
-    if (!dock_built)
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+    if (!m_dockBuild)
     {
-        dock_built = true;
+        m_dockBuild = true;
 
-        ImGui::DockBuilderRemoveNode(dockspace_id); // clear
+        ImGui::DockBuilderRemoveNode(dockspace_id);
         ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
         ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
         ImGuiID dock_main = dockspace_id;
+        ImGuiID dock_top;
         ImGuiID dock_left;
         ImGuiID dock_right;
         ImGuiID dock_bottom;
 
         // Split layout
-        dock_left   = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left,   0.25f, nullptr, &dock_main);
-        dock_right  = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Right,  0.25f, nullptr, &dock_main);
-        dock_bottom = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down,   0.25f, nullptr, &dock_main);
+        dock_top    = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Up, 0.22f, nullptr, &dock_main);
+        dock_left   = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.25f, nullptr, &dock_main);
+        dock_right  = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Right, 0.25f, nullptr, &dock_main);
+        dock_bottom = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down, 0.25f, nullptr, &dock_main);
 
         // Assign windows to docks
-        ImGui::DockBuilderDockWindow("Function input", dock_right);
+        ImGui::DockBuilderDockWindow("Input", dock_top);
         ImGui::DockBuilderFinish(dockspace_id);
     }
     ImGui::End();
 }
 
-void Imgui::RenderDockSpace() {
+void My_ImGui::RenderDockSpace()
+{
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if (m_io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
         GLFWwindow* backup = glfwGetCurrentContext();
         ImGui::UpdatePlatformWindows();
@@ -81,6 +94,17 @@ void Imgui::RenderDockSpace() {
     }
 }
 
-ImGuiIO* Imgui::getGuiContext() const {
-    return m_io;
+void My_ImGui::Shutdown()
+{
+    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui::DestroyContext();
 }
+
+void My_ImGui::RenderInterfaceInput()
+{
+    ImGui::Begin("Input", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::ShowDemoWindow();
+    ImGui::End();
+}
+}  // namespace My_ImGui

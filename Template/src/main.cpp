@@ -25,8 +25,7 @@ int main()
 	VIEWPORT.glfwSetup();
 	Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
 	defShader.Activate();
-	Imgui imgui(VIEWPORT.getWindow());
-	imgui.CreateContext();
+	My_ImGui::Init(VIEWPORT.getWindow());
 #pragma endregion
 
 // Uniform pointers and initial matrix values
@@ -102,7 +101,7 @@ int main()
 	{
 		VIEWPORT.glClearCurrentColor();
 		glClear(GL_COLOR_BUFFER_BIT);
-		imgui.ShowDockSpace();
+		My_ImGui::ShowDockSpace();
 
 		Bind(squareVAO, squareVBO, squareTexture);
 		glUniform1i(useTextureLoc, 1);
@@ -110,19 +109,15 @@ int main()
 		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, indices);
 		Unbind(squareVAO, squareVBO, squareTexture);
 
-		ImGui::Begin("Template");
-			ImGui::ShowDemoWindow();
-		ImGui::End();
-		imgui.RenderDockSpace();
+		My_ImGui::RenderInterfaceInput();
+		My_ImGui::RenderDockSpace();
 		glfwSwapBuffers(VIEWPORT.getWindow());
 		glfwPollEvents();
 	}
 
 // Cleanup
 #pragma region
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+	My_ImGui::Shutdown();
 	defShader.Delete();
 	squareTexture.Delete();
 	squareVBO.Delete();
