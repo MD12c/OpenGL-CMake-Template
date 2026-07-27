@@ -25,16 +25,7 @@ int main()
 	VIEWPORT.glfwSetup();
 	Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
 	defShader.Activate();
-
-	VAO triangleVAO;
-	triangleVAO.Bind();
-	VBO triangleVBO(triangle, sizeof(triangle));
-	triangleVBO.Bind();
-	triangleVAO.LinkAttrib(triangleVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-
-	Texture triangleTexture("Assets/Textures/canion1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-	triangleTexture.Bind();
-	triangleTexture.texUnit(defShader, "tex0", 0);
+	My_ImGui::Init(VIEWPORT.getWindow());
 
 	GLint modelLoc = glGetUniformLocation(defShader.ID, "translated");
 	GLint projLoc = glGetUniformLocation(defShader.ID, "projection");
@@ -107,8 +98,16 @@ int main()
 	{
 		VIEWPORT.glClearCurrentColor();
 		glClear(GL_COLOR_BUFFER_BIT);
+		My_ImGui::ShowDockSpace();
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		Bind(squareVAO, squareVBO, squareTexture);
+		glUniform1i(useTextureLoc, 1);
+		// glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, indices);
+		Unbind(squareVAO, squareVBO, squareTexture);
+
+		My_ImGui::RenderInterfaceInput();
+		My_ImGui::RenderDockSpace();
 		glfwSwapBuffers(VIEWPORT.getWindow());
 		glfwPollEvents();
 	}
