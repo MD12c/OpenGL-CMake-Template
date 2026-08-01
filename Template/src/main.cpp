@@ -6,19 +6,17 @@ int main()
 #pragma region
     Window VIEWPORT;
     Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
-    defShader.Activate();
     My_ImGui::Init(VIEWPORT.getWindow());
+    Camera2D camera(VIEWPORT.getWindow());
+    glfwPtr.window = &VIEWPORT;
+    glfwPtr.camera = &camera;
+    
+    defShader.Activate();
+    GLint cameraMatrixLoc = glGetUniformLocation(defShader.ID, "cameraMatrix");
+    GLint colorLoc        = glGetUniformLocation(defShader.ID, "Color");
+    GLint useTextureLoc   = glGetUniformLocation(defShader.ID, "useTexture");
 
-    GLint modelLoc      = glGetUniformLocation(defShader.ID, "translated");
-    GLint projLoc       = glGetUniformLocation(defShader.ID, "projection");
-    GLint colorLoc      = glGetUniformLocation(defShader.ID, "Color");
-    GLint useTextureLoc = glGetUniformLocation(defShader.ID, "useTexture");
-
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 proj  = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f);
-    model           = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(proj));
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(cameraMatrixLoc, 1, GL_FALSE, glm::value_ptr(camera.cameraMatrix));
     glUniform3fv(colorLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
 #pragma endregion
 
@@ -56,11 +54,13 @@ int main()
         VIEWPORT.glClearCurrentColor();
         glClear(GL_COLOR_BUFFER_BIT);
         My_ImGui::ShowDockSpace();
+        camera.Inputs(VIEWPORT.getWindow());
 
+        camera.Activate(VIEWPORT.getWindow(), cameraMatrixLoc);
         Bind(squareVAO, squareVBO, squareTexture);
         glUniform1i(useTextureLoc, 1);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        //glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, indices);
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);
         Unbind(squareVAO, squareVBO, squareTexture);
 
         My_ImGui::RenderInterfaceInput();

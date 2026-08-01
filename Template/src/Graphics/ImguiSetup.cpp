@@ -39,8 +39,14 @@ void My_ImGui::ShowDockSpace()
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
     ImGuiWindowFlags dockspace_flags =
-        ImGuiWindowFlags_NoBackground |
-        ImGuiWindowFlags_NoDecoration;
+        ImGuiWindowFlags_NoDocking |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_NoBackground;
 
     ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->Pos);
@@ -66,19 +72,15 @@ void My_ImGui::ShowDockSpace()
         ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
         ImGuiID dock_main = dockspace_id;
-        ImGuiID dock_top;
-        ImGuiID dock_left;
-        ImGuiID dock_right;
-        ImGuiID dock_bottom;
 
         // Split layout
-        dock_top    = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Up, 0.22f, nullptr, &dock_main);
-        dock_left   = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.25f, nullptr, &dock_main);
-        dock_right  = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Right, 0.25f, nullptr, &dock_main);
-        dock_bottom = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down, 0.25f, nullptr, &dock_main);
+        ImGuiID dock_top    = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Up, 0.22f, nullptr, &dock_main);
+        ImGuiID dock_left   = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Left, 0.25f, nullptr, &dock_main);
+        ImGuiID dock_right  = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Right, 0.25f, nullptr, &dock_main);
+        ImGuiID dock_bottom = ImGui::DockBuilderSplitNode(dock_main, ImGuiDir_Down, 0.25f, nullptr, &dock_main);
 
         // Assign windows to docks
-        ImGui::DockBuilderDockWindow("Input", dock_top);
+        ImGui::DockBuilderDockWindow("Input", dock_right);
         ImGui::DockBuilderFinish(dockspace_id);
     }
     ImGui::End();
@@ -107,6 +109,7 @@ void My_ImGui::Shutdown()
 void My_ImGui::RenderInterfaceInput()
 {
     ImGui::Begin("Input", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Text("Template");
     ImGui::End();
     // ImGui::ShowDemoWindow();
 }

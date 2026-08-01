@@ -16,15 +16,16 @@ Window::Window()
         throw std::runtime_error("Failed to create GLFW window");
     }
     glfwMakeContextCurrent(m_window);
+	glfwSetWindowUserPointer(m_window, &glfwPtr);
 
     auto resizeCallback = [](GLFWwindow* win, int w, int h)
     {
         auto* ptr = static_cast<glfwPointers*>(glfwGetWindowUserPointer(win));
+		glViewport(0, 0, w, h);
+		width  = w;
+		height = h;
         if (auto* cam = dynamic_cast<Camera2D*>(ptr->camera))
         {
-            glViewport(0, 0, w, h);
-            width  = w;
-            height = h;
             cam->updateOrtho();
         }
     };

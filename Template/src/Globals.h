@@ -12,22 +12,23 @@ inline GLfloat     windowRGB[3] = {
     0.8f, 0.8f, 0.8f
 };
 
-struct glfwPointers
+inline struct glfwPointers
 {
     Window* window;
     Camera* camera;
+} glfwPtr;
+
+constexpr GLfloat square[] = {
+    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+    -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+    1.0f, -1.0f, 0.0f, 1.0f, 0.0f
 };
 
-constexpr GLfloat square[8] = {
-    -1.0f,
-    -1.0f,  // bottom-left
-    -1.0f,
-    1.0f,  // top-left
-    1.0f,
-    1.0f,  // top-right
-    1.0f,
-    -1.0f,  // bottom-right
+constexpr GLuint squareIndices[6] = {
+    0, 1, 3,
+    1, 2, 3
 };
 
 constexpr glm::vec2 BOT_LEFT_BOUNDERY  = glm::vec2(square[0], square[1]);
-constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[4], square[5]);
+constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[6], square[7]);
