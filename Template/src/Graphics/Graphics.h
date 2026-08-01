@@ -11,3 +11,5 @@
 #include "Cameras/2Dcam.h"
 #include "Cameras/Orbit.h"
 #include "ImguiSetup.h"
+#include "Models/Mesh.h"
+#include "Models/Model.h"

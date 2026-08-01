@@ -25,7 +25,11 @@
   src/Graphics/ImguiSetup.h
   src/Graphics/SSBO.h
   src/Graphics/SSBO.cpp
-  )
+  src/Graphics/Models/Mesh.h
+  src/Graphics/Models/Mesh.cpp
+  src/Graphics/Models/Model.h
+  src/Graphics/Models/Model.cpp
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)
 
@@ -38,6 +42,14 @@ add_custom_command(
   COMMAND
     ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/src/Assets"
     "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Assets")
+
+add_custom_command(
+  TARGET ${PROJECT_NAME}
+  POST_BUILD
+  COMMAND
+    ${CMAKE_COMMAND} -E copy
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/binaries/assimp-vc143-mt.dll"
+    "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
 
 add_library(glfw STATIC IMPORTED)
 set_target_properties(
@@ -56,17 +68,23 @@ target_include_directories(glm INTERFACE include/libraries)
 
 add_library(
   imgui STATIC
-  include/imgui/imgui.cpp
-  include/imgui/imgui_draw.cpp
-  include/imgui/imgui_demo.cpp
-  include/imgui/imgui_tables.cpp
-  include/imgui/imgui_widgets.cpp
-  include/imgui/imgui_impl_glfw.cpp
-  include/imgui/imgui_impl_opengl3.cpp)
-target_include_directories(imgui PUBLIC include/imgui)
+  include/libraries/imgui/imgui.cpp
+  include/libraries/imgui/imgui_draw.cpp
+  include/libraries/imgui/imgui_demo.cpp
+  include/libraries/imgui/imgui_tables.cpp
+  include/libraries/imgui/imgui_widgets.cpp
+  include/libraries/imgui/imgui_impl_glfw.cpp
+  include/libraries/imgui/imgui_impl_opengl3.cpp)
+target_include_directories(imgui PUBLIC include/libraries/imgui)
+target_link_libraries(imgui PUBLIC glfw glad)
+
+target_link_libraries(
+  ${PROJECT_NAME}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/lib/assimp-vc143-mt.lib)
+target_include_directories(${PROJECT_NAME}
+                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glad glfw stb glm imgui)
-target_link_libraries(imgui PUBLIC glfw glad)
 
 if(CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)

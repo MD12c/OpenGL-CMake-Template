@@ -3,35 +3,40 @@
 
 Orbit::Orbit(glm::vec3 Position)
 {
-    translate   = Position;
+    translate  = Position;
     view       = glm::lookAt(translate, translate + Orientation, Up);
     projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
     updateMatrix();
 }
 
-void Orbit::setProjection(float FOVdeg, float nearPlane, float farPlane, float speed)
+void Orbit::setProjection(float FOVdeg, float nearPlane, float farPlane)
 {
     this->FOVdeg    = FOVdeg;
     this->nearPlane = nearPlane;
     this->farPlane  = farPlane;
-    this->speed     = speed;
 }
-void Orbit::setParameters(float orbitRadius, float yaw, float pitch)
+void Orbit::setPosition(float orbitRadius, float yaw, float pitch)
 {
     this->radius = orbitRadius;
     this->yaw    = yaw;
     this->pitch  = pitch;
 }
+void Orbit::setSpeeds(float speedYaw, float speedPitch, float speedZoom)
+{
+    this->speedYaw   = speedYaw;
+    this->speedPitch = speedPitch;
+    this->speedZoom  = speedZoom;
+}
 
 void Orbit::Inputs(GLFWwindow* window)
 {
     // Orbit keys
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) pitch += speed;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) pitch -= speed;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) yaw -= speed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) yaw += speed;
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) radius -= 0.4f;
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) radius += 0.4f;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) pitch += speedPitch;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) pitch -= speedPitch;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) yaw -= speedYaw;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) yaw += speedYaw;
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) radius -= speedZoom;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) radius += speedZoom;
 
     // Clamp pitch to avoid flipping
     if (pitch > 89.0f) pitch = 89.0f;

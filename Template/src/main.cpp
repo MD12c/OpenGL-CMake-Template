@@ -7,11 +7,11 @@ int main()
     Window VIEWPORT;
     Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
     My_ImGui::Init(VIEWPORT.getWindow());
-    //Camera2D camera(VIEWPORT.getWindow());
-    Orbit camera(glm::vec3(1.0f, 0.0f, 0.0f));
+    Camera2D camera(VIEWPORT.getWindow());
+    //Orbit camera(glm::vec3(1.0f, 0.0f, 0.0f));
     glfwPtr.window = &VIEWPORT;
     glfwPtr.camera = &camera;
-    
+
     defShader.Activate();
     GLint cameraMatrixLoc = glGetUniformLocation(defShader.ID, "cameraMatrix");
     GLint colorLoc        = glGetUniformLocation(defShader.ID, "Color");
@@ -30,7 +30,7 @@ int main()
     squareVAO.LinkAttrib(squareVBO, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
     squareVAO.LinkAttrib(squareVBO, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(sizeof(GLfloat) * 3));
 
-    Texture squareTexture("Assets/Textures/canion1.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    Texture squareTexture("Assets/Textures/canion1.png", "GL_TEXTURE_2D", GL_TEXTURE0);
     squareTexture.Bind();
     squareTexture.texUnit(defShader, "tex0", 0);
 
@@ -50,15 +50,26 @@ int main()
     Unbind();
 #pragma endregion
 
+// Models
+#pragma region
+    Model model("Assets/Models/AC.obj");
+#pragma endregion
+
     double timePrev = 0;
     double timeCrnt = 0;
+    double timeDiff;
+
     while (!glfwWindowShouldClose(VIEWPORT.getWindow()))
     {
         timeCrnt = glfwGetTime();
+        timeDiff = timeCrnt - timePrev;
+        if (timeDiff >= 1.0 / 60.0)
+        {
+            timePrev = timeCrnt;
+            if (!ImGui::GetIO().WantCaptureMouse)
+                camera.Inputs(VIEWPORT.getWindow());
+        }
         VIEWPORT.updateFPS();
-
-        if (!ImGui::GetIO().WantCaptureMouse)
-            camera.Inputs(VIEWPORT.getWindow());
 
         VIEWPORT.glClearCurrentColor();
         glClear(GL_COLOR_BUFFER_BIT);
@@ -66,10 +77,12 @@ int main()
 
         camera.Activate(VIEWPORT.getWindow(), cameraMatrixLoc);
         Bind();
-        glUniform1i(useTextureLoc, 1);
+        glUniform1i(useTextureLoc, 0);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);
+        // glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);
         Unbind();
+
+        model.Draw(defShader);
 
         My_ImGui::RenderInterfaceInput();
         My_ImGui::RenderDockSpace();
