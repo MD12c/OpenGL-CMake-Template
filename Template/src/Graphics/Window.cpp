@@ -1,46 +1,83 @@
 #include "Window.h"
+#include "../Globals.h"
+#include "Cameras/2Dcam.h"
 
-Window::Window(const char* WINDOW_NAME, unsigned int width, unsigned int height, GLfloat RED, GLfloat GREEN, GLfloat BLUE)
-	: m_WINDOW_NAME(WINDOW_NAME),
-	m_width(width),
-	m_height(height),
-	m_RED(RED),
-	m_GREEN(GREEN),
-	m_BLUE(BLUE)
-{}
+Window::Window()
+{
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+    m_window = glfwCreateWindow(width, height, windowName.c_str(), NULL, NULL);
+    if (m_window == NULL)
+    {
+        glfwTerminate();
+        throw std::runtime_error("Failed to create GLFW window");
+    }
+    glfwMakeContextCurrent(m_window);
 
+    auto resizeCallback = [](GLFWwindow* win, int w, int h)
+    {
+        auto* ptr = static_cast<glfwPointers*>(glfwGetWindowUserPointer(win));
+        if (auto* cam = dynamic_cast<Camera2D*>(ptr->camera))
+        {
+            glViewport(0, 0, w, h);
+            width  = w;
+            height = h;
+            cam->updateOrtho();
+        }
+    };
 
-void Window::glfwSetup() {
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	m_window = glfwCreateWindow(m_width, m_height, m_WINDOW_NAME, NULL, NULL);
-	if (m_window == NULL)
-	{
-		glfwTerminate();
-		throw std::runtime_error("Failed to create GLFW window");
-	}
-	glfwMakeContextCurrent(m_window);
-	gladLoadGL();
-	glViewport(0, 0, m_width, m_height);
-	glClearColor(m_RED, m_GREEN, m_BLUE, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glfwSwapBuffers(m_window);
-};
+    glfwSetFramebufferSizeCallback(m_window, resizeCallback);
 
-GLFWwindow* Window::getWindow() {
-	return m_window;
+    gladLoadGL();
+    glViewport(0, 0, width, height);
+    glClearColor(windowRGB[0], windowRGB[1], windowRGB[2], 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glfwSwapBuffers(m_window);
+
+    glfwSwapInterval(0);
 }
 
-Window::~Window() {
-	if (m_window) {
-		glfwDestroyWindow(m_window);
-	}
-	glfwTerminate();
+void Window::updateFPS()
+{
+    // FPS
+    static double       prevTime = 0.0;
+    static double       crntTime = 0.0;
+    static double       timeDiff;
+    static unsigned int counter = 0;
+
+    crntTime = glfwGetTime();
+    timeDiff = crntTime - prevTime;
+    counter++;
+
+    if (timeDiff >= 1.0 / 30.0)
+    {
+        std::string FPS      = std::to_string((1.0 / timeDiff) * counter);
+        std::string ms       = std::to_string((timeDiff / counter) * 1000.0);
+        std::string newTitle = windowName + "   " + FPS + " FPS / " + ms + " ms";
+        glfwSetWindowTitle(m_window, newTitle.c_str());
+        prevTime = crntTime;
+        counter  = 0;
+    }
 }
 
-void Window::glClearCurrentColor() {
-	glClearColor(m_RED, m_GREEN, m_BLUE, 1.0f);
+GLFWwindow* Window::getWindow()
+{
+    return m_window;
+}
+
+Window::~Window()
+{
+    if (m_window)
+    {
+        glfwDestroyWindow(m_window);
+    }
+    glfwTerminate();
+}
+
+void Window::glClearCurrentColor()
+{
+    glClearColor(windowRGB[0], windowRGB[1], windowRGB[2], 1.0f);
 }

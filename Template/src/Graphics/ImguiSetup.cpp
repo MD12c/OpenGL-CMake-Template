@@ -1,5 +1,8 @@
 #include "ImguiSetup.h"
 
+#include <iostream>
+#include <string>
+
 namespace My_ImGui
 {
 GLFWwindow* m_VIEWPORT  = nullptr;
@@ -105,6 +108,6 @@ void My_ImGui::RenderInterfaceInput()
 {
     ImGui::Begin("Input", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::End();
-    //ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
 }
 }  // namespace My_ImGui

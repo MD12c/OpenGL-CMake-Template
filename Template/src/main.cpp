@@ -1,28 +1,10 @@
 ﻿#include "main.h"
-int width  = 900;
-int height = 900;
-
-GLfloat square[20] = {
-    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,  // bottom-left
-    -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,   // top-left
-    1.0f, -1.0f, 0.0f, 1.0f, 0.0f,   // bottom-right
-    1.0f, 1.0f, 0.0f, 1.0f, 1.0f     // top-right
-};
-
-GLuint indices[6] = {
-    0, 1, 2,
-    1, 2, 3
-};
 
 int main()
 {
-    std::cout << "Hello CMake." << std::endl;
-
 // Window creation
 #pragma region
-    // Name of the window, width & height of the window, background color RGB
-    Window VIEWPORT("Template", width, height, 0.7f, 0.7f, 0.7f);
-    VIEWPORT.glfwSetup();
+    Window VIEWPORT;
     Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
     defShader.Activate();
     My_ImGui::Init(VIEWPORT.getWindow());
@@ -40,36 +22,11 @@ int main()
     glUniform3fv(colorLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
 #pragma endregion
 
-// Window aspect correction
-#pragma region
-    struct ResizeData
-    {
-        GLint     projLoc;
-        glm::mat4 proj;
-        GLuint    shaderID;
-        int&      width;
-        int&      height;
-    };
-    ResizeData resizeData{ projLoc, proj, defShader.ID, width, height };
-    glfwSetWindowUserPointer(VIEWPORT.getWindow(), &resizeData);
-
-    glfwSetFramebufferSizeCallback(VIEWPORT.getWindow(), [](GLFWwindow* win, int w, int h)
-                                   {
-		glViewport(0, 0, w, h);
-		auto* data = (ResizeData*)glfwGetWindowUserPointer(win);
-		float aspect = (float)w / (float)h;
-		data->width = w;
-    	data->height = h;
-		data->proj = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
-		glUseProgram(data->shaderID);
-		glUniformMatrix4fv(data->projLoc, 1, GL_FALSE, glm::value_ptr(data->proj)); });
-#pragma endregion
-
 // Square
 #pragma region
     VAO squareVAO;
     squareVAO.Bind();
-    VBO squareVBO(square, sizeof(square));
+    VBO squareVBO(square, sizeof(square), GL_STATIC_DRAW);
     squareVBO.Bind();
     squareVAO.LinkAttrib(squareVBO, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
     squareVAO.LinkAttrib(squareVBO, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(sizeof(GLfloat) * 3));
@@ -102,8 +59,8 @@ int main()
 
         Bind(squareVAO, squareVBO, squareTexture);
         glUniform1i(useTextureLoc, 1);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, indices);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, indices);
         Unbind(squareVAO, squareVBO, squareTexture);
 
         My_ImGui::RenderInterfaceInput();
