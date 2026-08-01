@@ -4,7 +4,8 @@
 Camera2D::Camera2D(GLFWwindow* window)
 {
     translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    updateOrtho();
+    glfwSetScrollCallback(window, ScrollCallback);
+    updateScreenSize();
 }
 
 void Camera2D::onScroll(GLFWwindow* win, double xoffset, double yoffset)
@@ -31,7 +32,7 @@ void Camera2D::onScroll(GLFWwindow* win, double xoffset, double yoffset)
     }
 };
 
-void Camera2D::updateOrtho()
+void Camera2D::updateScreenSize()
 {
     float aspect = (float)width / (float)height;
     proj         = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);

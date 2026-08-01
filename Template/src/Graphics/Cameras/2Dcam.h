@@ -15,7 +15,7 @@ private:
 public:
     Camera2D(GLFWwindow* window);
     
-    void updateOrtho();
+    void updateScreenSize() override;
     void updateMatrix() override;
     void Inputs(GLFWwindow* window) override;
     void onScroll(GLFWwindow* win, double xoffset, double yoffset) override;

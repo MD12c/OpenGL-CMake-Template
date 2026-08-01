@@ -24,10 +24,7 @@ Window::Window()
 		glViewport(0, 0, w, h);
 		width  = w;
 		height = h;
-        if (auto* cam = dynamic_cast<Camera2D*>(ptr->camera))
-        {
-            cam->updateOrtho();
-        }
+        ptr->camera->updateScreenSize();
     };
 
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);

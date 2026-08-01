@@ -7,7 +7,8 @@ int main()
     Window VIEWPORT;
     Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
     My_ImGui::Init(VIEWPORT.getWindow());
-    Camera2D camera(VIEWPORT.getWindow());
+    //Camera2D camera(VIEWPORT.getWindow());
+    Orbit camera(glm::vec3(1.0f, 0.0f, 0.0f));
     glfwPtr.window = &VIEWPORT;
     glfwPtr.camera = &camera;
     
@@ -33,35 +34,42 @@ int main()
     squareTexture.Bind();
     squareTexture.texUnit(defShader, "tex0", 0);
 
-    auto Bind = [](VAO squareVAO, VBO squareVBO, Texture squareTexture)
+    auto Bind = [&]()
     {
         squareVAO.Bind();
         squareVBO.Bind();
         squareTexture.Bind();
     };
-    auto Unbind = [](VAO squareVAO, VBO squareVBO, Texture squareTexture)
+    auto Unbind = [&]()
     {
         squareTexture.Unbind();
         squareVBO.Unbind();
         squareVAO.Unbind();
     };
 
-    Unbind(squareVAO, squareVBO, squareTexture);
+    Unbind();
 #pragma endregion
 
+    double timePrev = 0;
+    double timeCrnt = 0;
     while (!glfwWindowShouldClose(VIEWPORT.getWindow()))
     {
+        timeCrnt = glfwGetTime();
+        VIEWPORT.updateFPS();
+
+        if (!ImGui::GetIO().WantCaptureMouse)
+            camera.Inputs(VIEWPORT.getWindow());
+
         VIEWPORT.glClearCurrentColor();
         glClear(GL_COLOR_BUFFER_BIT);
         My_ImGui::ShowDockSpace();
-        camera.Inputs(VIEWPORT.getWindow());
 
         camera.Activate(VIEWPORT.getWindow(), cameraMatrixLoc);
-        Bind(squareVAO, squareVBO, squareTexture);
+        Bind();
         glUniform1i(useTextureLoc, 1);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
         glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);
-        Unbind(squareVAO, squareVBO, squareTexture);
+        Unbind();
 
         My_ImGui::RenderInterfaceInput();
         My_ImGui::RenderDockSpace();

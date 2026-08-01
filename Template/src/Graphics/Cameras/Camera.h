@@ -25,6 +25,7 @@ public:
     void        Activate(GLFWwindow* window, GLuint uniformLoc);
     glm::vec2   screenToWorld(const glm::vec2& pos);
 
+    virtual void updateScreenSize()                                        = 0;
     virtual void updateMatrix()                                            = 0;
     virtual void Inputs(GLFWwindow* window)                                = 0;
     virtual void onScroll(GLFWwindow* win, double xoffset, double yoffset) = 0;

@@ -11,7 +11,6 @@ Camera::Camera()
 void Camera::Activate(GLFWwindow* window, GLuint uniformLoc)
 {
     glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(cameraMatrix));
-    glfwSetScrollCallback(window, ScrollCallback);
 }
 
 glm::vec2 Camera::screenToWorld(const glm::vec2& pos)
