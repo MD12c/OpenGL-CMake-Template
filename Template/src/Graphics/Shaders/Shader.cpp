@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-std::string get_file_contents(const char* filename)
+std::string get_file_contents(const std::string& filename)
 {
     std::ifstream in(filename, std::ios::binary);
     if (in)
@@ -49,13 +49,13 @@ void Shader::PrintError(GLuint shader)
               << infoLog << "\n";
 }
 
-Shader::Shader(const char* vertexFile, const char* fragmentFile)
+Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile)
 {
     std::string vertexCode   = get_file_contents(vertexFile);
     std::string fragmentCode = get_file_contents(fragmentFile);
 
-    const char* vertexSource   = vertexCode.c_str();
-    const char* fragmentSource = fragmentCode.c_str();
+    const GLchar* vertexSource   = vertexCode.c_str();
+    const GLchar* fragmentSource = fragmentCode.c_str();
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -83,15 +83,15 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
     glDeleteShader(fragmentShader);
 }
 
-Shader::Shader(const char* vertexFile, const char* fragmentFile, const char* geometryFile)
+Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile)
 {
     std::string vertexCode   = get_file_contents(vertexFile);
     std::string fragmentCode = get_file_contents(fragmentFile);
     std::string geometryCode = get_file_contents(geometryFile);
 
-    const char* vertexSource   = vertexCode.c_str();
-    const char* fragmentSource = fragmentCode.c_str();
-    const char* geometrySource = geometryCode.c_str();
+    const GLchar* vertexSource   = vertexCode.c_str();
+    const GLchar* fragmentSource = fragmentCode.c_str();
+    const GLchar* geometrySource = geometryCode.c_str();
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -110,13 +110,12 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile, const char* geo
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &successVert);
     glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &successGeom);
 
-	if (!successVert)
+    if (!successVert)
         PrintError(vertexShader);
     if (!successFrag)
         PrintError(fragmentShader);
-	if (!successGeom)
+    if (!successGeom)
         PrintError(geometryShader);
-
 
     ID = glCreateProgram();
     glAttachShader(ID, vertexShader);
@@ -130,18 +129,18 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile, const char* geo
     glDeleteShader(geometryShader);
 }
 
-Shader::Shader(const char* computeFile)
+Shader::Shader(const std::string& computeFile)
 {
-    std::string computeCode   = get_file_contents(computeFile);
-    const char* computeSource = computeCode.c_str();
-    GLuint      computeShader = glCreateShader(GL_COMPUTE_SHADER);
+    std::string   computeCode   = get_file_contents(computeFile);
+    const GLchar* computeSource = computeCode.c_str();
+    GLuint        computeShader = glCreateShader(GL_COMPUTE_SHADER);
     glShaderSource(computeShader, 1, &computeSource, NULL);
     glCompileShader(computeShader);
 
     GLint successCompute;
     glGetShaderiv(computeShader, GL_COMPILE_STATUS, &successCompute);
-	
-	if (!successCompute)
+
+    if (!successCompute)
         PrintError(computeShader);
 
     ID = glCreateProgram();
@@ -150,11 +149,18 @@ Shader::Shader(const char* computeFile)
     glDeleteShader(computeShader);
 }
 
+Shader::~Shader()
+{
+    Delete();
+}
+
 void Shader::Activate()
 {
     glUseProgram(ID);
 }
+
 void Shader::Delete()
 {
     glDeleteProgram(ID);
+    ID = -1;
 }

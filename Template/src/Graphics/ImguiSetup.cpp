@@ -19,7 +19,8 @@ int My_ImGui::Init(GLFWwindow* VIEWPORT)
     ImGui::CreateContext();
     ImGui::GetIO().ConfigFlags |=
         ImGuiConfigFlags_ViewportsEnable |
-        ImGuiConfigFlags_DockingEnable;
+        ImGuiConfigFlags_DockingEnable |
+        ImGuiConfigFlags_NoMouseCursorChange;
 
     ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF("Assets/Fonts/DejaVuSans.ttf", 26.0f);
     if (!font)

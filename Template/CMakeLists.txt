@@ -11,8 +11,10 @@
   src/Graphics/VertexBuffers/VBO.h
   src/Graphics/VertexBuffers/SSBO.h
   src/Graphics/VertexBuffers/SSBO.cpp
-  src/Graphics/Shader.cpp
-  src/Graphics/Shader.h
+  src/Graphics//Shaders/Shader.cpp
+  src/Graphics/Shaders/Shader.h
+  src/Graphics/Shaders/ShaderManager.h
+  src/Graphics/Shaders/ShaderManager.cpp
   src/Graphics/FrameBuffers/Texture.cpp
   src/Graphics/FrameBuffers/Texture.h
   src/Graphics/Window.cpp

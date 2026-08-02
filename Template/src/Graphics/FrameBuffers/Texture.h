@@ -6,7 +6,7 @@
 
 #include<glad/glad.h>
 
-#include"../Shader.h"
+#include"../Shaders/ShaderManager.h"
 
 class Texture
 {
@@ -16,9 +16,10 @@ public:
 	std::string path;
 	GLuint unit;
 
-	Texture(std::string image, std::string texType, GLuint slot);
+	Texture(const std::string& image, const std::string& texType, GLuint slot);
 
-	void texUnit(Shader& shader, std::string uniform, GLuint unit);
+	void texUnit(const std::string& shaderName, const std::string& uniform);
+	void texUnit(Shader& shader, const std::string&, GLuint unit); // Old
 	void Bind();
 	void Unbind();
 	void Delete();

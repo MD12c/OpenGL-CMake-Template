@@ -3,7 +3,8 @@
 #include "Window.h"
 #include "ImguiSetup.h"
 
-#include "Shader.h"
+#include "Shaders/Shader.h"
+#include "Shaders/ShaderManager.h"
 
 #include "VertexBuffers/VAO.h"
 #include "VertexBuffers/VBO.h"

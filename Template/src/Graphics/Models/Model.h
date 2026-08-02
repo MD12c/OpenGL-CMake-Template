@@ -6,6 +6,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "../Shaders/ShaderManager.h"
+
 class Model
 {
 private:
@@ -22,5 +24,5 @@ public:
 
     Model(const std::string& path);
 
-    void Draw(Shader&);
+    void Draw(const std::string& shaderName);
 };

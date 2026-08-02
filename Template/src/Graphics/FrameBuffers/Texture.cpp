@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include <stb/stb_image.h>
 
-Texture::Texture(std::string image, std::string texType, GLuint slot)
+Texture::Texture(const std::string& image, const std::string& texType, GLuint slot)
 {
     type = texType;
     path = image;
@@ -47,11 +47,18 @@ Texture::Texture(std::string image, std::string texType, GLuint slot)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::texUnit(Shader& shader, std::string uniform, GLuint unit)
+void Texture::texUnit(const std::string& shaderName, const std::string& uniform)
 {
-    GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
-    shader.Activate();
-    glUniform1i(texUni, unit);
+    ShaderManager::shaderResources.at(shaderName).shader.Activate();
+    glUniform1i(ShaderManager::GetUniformLoc(shaderName, uniform), unit);
+}
+
+// Old! Dont use if using shader manager
+void Texture::texUnit(Shader& shader, const std::string& uniform, GLuint unit)
+{
+	GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
+	shader.Activate();
+	glUniform1i(texUni, unit);
 }
 
 void Texture::Bind()
