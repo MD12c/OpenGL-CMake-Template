@@ -2,9 +2,9 @@
 #include "Globals.h"
 
 Camera2D::Camera2D(GLFWwindow* window)
+    : Camera(window)
 {
     translation = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-    glfwSetScrollCallback(window, ScrollCallback);
     updateScreenSize();
 }
 
@@ -41,7 +41,7 @@ void Camera2D::updateScreenSize()
 
 void Camera2D::updateMatrix()
 {
-    position = glm::vec3(translation[3].x, translation[3].y, 0);
+    position     = glm::vec3(translation[3].x, translation[3].y, 0);
     cameraMatrix = proj * glm::inverse(translation * scale);
 }
 

@@ -3,15 +3,17 @@
 
 std::vector<Camera*> Camera::cameras = {};
 
-Camera::Camera()
+Camera::Camera(GLFWwindow* window)
 {
     cameras.push_back(this);
+    glfwSetScrollCallback(window, ScrollCallback);
 }
 
-void Camera::updateUniforms(GLFWwindow* window, GLuint cameraMatrixLoc, GLuint positionLoc)
+void Camera::updateUniforms(GLuint cameraMatrixLoc, GLuint positionLoc)
 {
     glUniformMatrix4fv(cameraMatrixLoc, 1, GL_FALSE, glm::value_ptr(cameraMatrix));
     glUniform3f(positionLoc, position.x, position.y, position.z);
+    glfwPtr.camera = this;
 }
 
 glm::vec2 Camera::screenToWorld(const glm::vec2& pos)

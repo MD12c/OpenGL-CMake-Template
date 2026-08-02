@@ -17,6 +17,7 @@ Window::Window()
     }
     glfwMakeContextCurrent(m_window);
 	glfwSetWindowUserPointer(m_window, &glfwPtr);
+    glfwPtr.window = this;
 
     auto resizeCallback = [](GLFWwindow* win, int w, int h)
     {

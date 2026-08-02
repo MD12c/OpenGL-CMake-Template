@@ -21,9 +21,9 @@ public:
 
     static std::vector<Camera*> cameras;
 
-    Camera();
+    Camera(GLFWwindow* window);
     static void ScrollCallback(GLFWwindow* win, double xoffset, double yoffset);
-    void        updateUniforms(GLFWwindow* window, GLuint cameraMatrixLoc, GLuint positionLoc);
+    void        updateUniforms(GLuint cameraMatrixLoc, GLuint positionLoc);
     glm::vec2   screenToWorld(const glm::vec2& pos);
 
     virtual void updateScreenSize()                                        = 0;

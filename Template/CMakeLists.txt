@@ -9,6 +9,8 @@
   src/Graphics/VertexBuffers/VAO.h
   src/Graphics/VertexBuffers/VBO.cpp
   src/Graphics/VertexBuffers/VBO.h
+  src/Graphics/VertexBuffers/SSBO.h
+  src/Graphics/VertexBuffers/SSBO.cpp
   src/Graphics/Shader.cpp
   src/Graphics/Shader.h
   src/Graphics/FrameBuffers/Texture.cpp
@@ -23,12 +25,12 @@
   src/Graphics/Cameras/Orbit.cpp
   src/Graphics/ImguiSetup.cpp
   src/Graphics/ImguiSetup.h
-  src/Graphics/SSBO.h
-  src/Graphics/SSBO.cpp
   src/Graphics/Models/Mesh.h
   src/Graphics/Models/Mesh.cpp
   src/Graphics/Models/Model.h
   src/Graphics/Models/Model.cpp
+  src/Graphics/Cameras/Fly.h
+  src/Graphics/Cameras/Fly.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

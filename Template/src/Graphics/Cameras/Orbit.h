@@ -26,7 +26,7 @@ private:
     float speedZoom  = 0.1f;
 
 public:
-    Orbit(glm::vec3 position);
+    Orbit(GLFWwindow* window, glm::vec3 position);
     void Inputs(GLFWwindow* window) override;
     void updateScreenSize() override;
     void updateMatrix() override;

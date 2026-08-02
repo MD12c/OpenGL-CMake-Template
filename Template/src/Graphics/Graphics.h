@@ -1,15 +1,21 @@
 #pragma once
 
 #include "Window.h"
+#include "ImguiSetup.h"
+
 #include "Shader.h"
+
 #include "VertexBuffers/VAO.h"
 #include "VertexBuffers/VBO.h"
 #include "VertexBuffers/EBO.h"
-#include "SSBO.h"
+#include "VertexBuffers/SSBO.h"
+
 #include "FrameBuffers/Texture.h"
+
 #include "Cameras/Camera.h"
 #include "Cameras/2Dcam.h"
 #include "Cameras/Orbit.h"
-#include "ImguiSetup.h"
+#include "Cameras/Fly.h"
+
 #include "Models/Mesh.h"
 #include "Models/Model.h"

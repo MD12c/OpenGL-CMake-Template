@@ -7,9 +7,8 @@ int main()
     Window VIEWPORT;
     My_ImGui::Init(VIEWPORT.getWindow());
     //Camera2D camera(VIEWPORT.getWindow());
-    Orbit camera(glm::vec3(1.0f, 0.0f, 0.0f));
-    glfwPtr.window = &VIEWPORT;
-    glfwPtr.camera = &camera;
+    //Orbit camera(VIEWPORT.getWindow(), glm::vec3(1.0f, 0.0f, 0.0f));
+    CameraFly camera(VIEWPORT.getWindow(), glm::vec3(0.0f), 45, 0.1f, 10000.0f);
 #pragma endregion
 
 // Shaders
@@ -23,12 +22,12 @@ int main()
 
     Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
     defShader.Activate();
-    GLint  cameraMatrixdefLoc   = glGetUniformLocation(defShader.ID, "cameraMatrix");
+    GLint  cameraMatrixDefLoc   = glGetUniformLocation(defShader.ID, "cameraMatrix");
     GLuint cameraPositionDefLoc = glGetUniformLocation(defShader.ID, "camPos");
     GLint  colorLoc             = glGetUniformLocation(defShader.ID, "Color");
     GLint  useTextureLoc        = glGetUniformLocation(defShader.ID, "useTexture");
 
-    glUniformMatrix4fv(cameraMatrixdefLoc, 1, GL_FALSE, glm::value_ptr(camera.cameraMatrix));
+    glUniformMatrix4fv(cameraMatrixDefLoc, 1, GL_FALSE, glm::value_ptr(camera.cameraMatrix));
     glUniform3fv(colorLoc, 1, glm::value_ptr(glm::vec3(0.5f, 0.5f, 0.5f)));
 #pragma endregion
 
@@ -41,7 +40,7 @@ int main()
     squareVAO.LinkAttrib(squareVBO, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
     squareVAO.LinkAttrib(squareVBO, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(sizeof(GLfloat) * 3));
 
-    Texture squareTexture("Assets/Textures/canion1.png", "GL_TEXTURE_2D", GL_TEXTURE0);
+    Texture squareTexture("Assets/Textures/canion1.png", "diffuse", GL_TEXTURE0);
     squareTexture.Bind();
     squareTexture.texUnit(defShader, "tex0", 0);
 
@@ -97,7 +96,7 @@ int main()
         My_ImGui::ShowDockSpace();
 
         defShader.Activate();
-        camera.updateUniforms(VIEWPORT.getWindow(), cameraMatrixdefLoc, cameraPositionDefLoc);
+        camera.updateUniforms(cameraMatrixDefLoc, cameraPositionDefLoc);
         Bind();
         glUniform1i(useTextureLoc, 1);
         // glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -105,7 +104,7 @@ int main()
         Unbind();
 
         modelShader.Activate();
-        camera.updateUniforms(VIEWPORT.getWindow(), cameraMatrixModLoc, cameraPositionModLoc);
+        camera.updateUniforms(cameraMatrixModLoc, cameraPositionModLoc);
         model.Draw(modelShader);
 
         My_ImGui::RenderInterfaceInput();
