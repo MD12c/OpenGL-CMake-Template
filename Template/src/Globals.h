@@ -26,8 +26,8 @@ constexpr GLfloat square[] = {
 };
 
 constexpr GLuint squareIndices[6] = {
-    0, 1, 3,
-    1, 2, 3
+    3, 1, 0,
+    3, 2, 1
 };
 
 constexpr glm::vec2 BOT_LEFT_BOUNDERY  = glm::vec2(square[0], square[1]);

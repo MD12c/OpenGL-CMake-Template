@@ -6,7 +6,7 @@ int main()
 #pragma region
     Window VIEWPORT;
     My_ImGui::Init(VIEWPORT.getWindow());
-    // Camera2D camera(VIEWPORT.getWindow());
+    //Camera2D camera(VIEWPORT.getWindow());
     Orbit camera(glm::vec3(1.0f, 0.0f, 0.0f));
     glfwPtr.window = &VIEWPORT;
     glfwPtr.camera = &camera;
@@ -24,7 +24,7 @@ int main()
     Shader defShader("Assets/shaders/default.vert", "Assets/shaders/default.frag");
     defShader.Activate();
     GLint  cameraMatrixdefLoc   = glGetUniformLocation(defShader.ID, "cameraMatrix");
-    GLuint cameraPositionDefLoc = glGetUniformLocation(modelShader.ID, "camPos");
+    GLuint cameraPositionDefLoc = glGetUniformLocation(defShader.ID, "camPos");
     GLint  colorLoc             = glGetUniformLocation(defShader.ID, "Color");
     GLint  useTextureLoc        = glGetUniformLocation(defShader.ID, "useTexture");
 
@@ -72,8 +72,8 @@ int main()
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-    glFrontFace(GL_CW);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 #pragma endregion
 
     double timePrev = 0;
@@ -96,6 +96,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         My_ImGui::ShowDockSpace();
 
+        defShader.Activate();
         camera.updateUniforms(VIEWPORT.getWindow(), cameraMatrixdefLoc, cameraPositionDefLoc);
         Bind();
         glUniform1i(useTextureLoc, 1);
@@ -112,11 +113,11 @@ int main()
         glfwSwapBuffers(VIEWPORT.getWindow());
         glfwPollEvents();
     }
-    // defShader.Delete();
+    defShader.Delete();
     modelShader.Delete();
-    // squareTexture.Delete();
-    // squareVBO.Delete();
-    // squareVAO.Delete();
+    squareTexture.Delete();
+    squareVBO.Delete();
+    squareVAO.Delete();
 #pragma endregion
 
     return 0;
