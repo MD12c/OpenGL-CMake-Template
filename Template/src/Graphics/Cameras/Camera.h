@@ -17,12 +17,13 @@ class Camera
 {
 public:
     glm::mat4 cameraMatrix = glm::mat4(1.0f);
+    glm::vec3 position     = glm::vec3(0.0f, 0.0f, 0.0f);
 
     static std::vector<Camera*> cameras;
 
     Camera();
     static void ScrollCallback(GLFWwindow* win, double xoffset, double yoffset);
-    void        Activate(GLFWwindow* window, GLuint uniformLoc);
+    void        updateUniforms(GLFWwindow* window, GLuint cameraMatrixLoc, GLuint positionLoc);
     glm::vec2   screenToWorld(const glm::vec2& pos);
 
     virtual void updateScreenSize()                                        = 0;

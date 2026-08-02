@@ -1,9 +1,9 @@
 #include "Orbit.h"
 #include "Globals.h"
 
-Orbit::Orbit(glm::vec3 Position)
+Orbit::Orbit(glm::vec3 position)
 {
-    translate  = Position;
+    translate  = position;
     view       = glm::lookAt(translate, translate + Orientation, Up);
     projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
     updateMatrix();
@@ -48,6 +48,7 @@ void Orbit::Inputs(GLFWwindow* window)
     camZ = radius * cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 
     translate = glm::vec3(camX, camY, camZ);
+    position = translate;
 
     // Look at origin
     Orientation = glm::normalize(-translate);

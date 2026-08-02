@@ -41,6 +41,7 @@ void Camera2D::updateScreenSize()
 
 void Camera2D::updateMatrix()
 {
+    position = glm::vec3(translation[3].x, translation[3].y, 0);
     cameraMatrix = proj * glm::inverse(translation * scale);
 }
 

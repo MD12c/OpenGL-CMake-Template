@@ -8,9 +8,10 @@ Camera::Camera()
     cameras.push_back(this);
 }
 
-void Camera::Activate(GLFWwindow* window, GLuint uniformLoc)
+void Camera::updateUniforms(GLFWwindow* window, GLuint cameraMatrixLoc, GLuint positionLoc)
 {
-    glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+    glUniformMatrix4fv(cameraMatrixLoc, 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+    glUniform3f(positionLoc, position.x, position.y, position.z);
 }
 
 glm::vec2 Camera::screenToWorld(const glm::vec2& pos)

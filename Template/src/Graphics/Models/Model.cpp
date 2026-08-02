@@ -40,14 +40,12 @@ void Model::loadModel(const std::string& path)
 
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
-	// process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		meshes.push_back(processMesh(mesh, scene));
 	}
 
-	// then do the same for each of its children
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
 		processNode(node->mChildren[i], scene);
@@ -98,7 +96,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.texUV = glm::vec2(0.0f, 0.0f);
 		}
 
-		// vertex color (fallback to white, since Assimp color data is optional per-format)
+		// N/A texture color
 		vertex.color = glm::vec3(1.0f, 1.0f, 1.0f);
 
 		vertices.push_back(vertex);
@@ -142,7 +140,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType 
 		aiString str;
 		mat->GetTexture(type, i, &str);
 
-		// check if texture was already loaded to avoid duplicate GPU uploads
+		// check if texture was already loaded
 		bool skip = false;
 		for (unsigned int j = 0; j < loadedTextures.size(); j++)
 		{

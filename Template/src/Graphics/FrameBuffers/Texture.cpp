@@ -4,11 +4,14 @@
 Texture::Texture(std::string image, std::string texType, GLuint slot)
 {
     type = texType;
-	path = image;
+    path = image;
 
     int widthImg, heightImg, numColCh;
     stbi_set_flip_vertically_on_load(false);
     unsigned char* bytes = stbi_load(image.c_str(), &widthImg, &heightImg, &numColCh, 0);
+
+    if (bytes == nullptr)
+        throw std::runtime_error("Couldn't Load Texture");
 
     glGenTextures(1, &ID);
     glActiveTexture(GL_TEXTURE0 + slot);
@@ -24,39 +27,16 @@ Texture::Texture(std::string image, std::string texType, GLuint slot)
     // float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
     // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
 
+    // if (type == "normal")
+    //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+    // else if (type == "displacement")
+    //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
     if (numColCh == 4)
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            widthImg,
-            heightImg,
-            0,
-            GL_RGBA,
-            GL_UNSIGNED_BYTE,
-            bytes);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
     else if (numColCh == 3)
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            widthImg,
-            heightImg,
-            0,
-            GL_RGB,
-            GL_UNSIGNED_BYTE,
-            bytes);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
     else if (numColCh == 1)
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RGBA,
-            widthImg,
-            heightImg,
-            0,
-            GL_RED,
-            GL_UNSIGNED_BYTE,
-            bytes);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RED, GL_UNSIGNED_BYTE, bytes);
     else
         throw std::invalid_argument("Automatic Texture type recognition failed");
 
@@ -69,23 +49,23 @@ Texture::Texture(std::string image, std::string texType, GLuint slot)
 
 void Texture::texUnit(Shader& shader, std::string uniform, GLuint unit)
 {
-	GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
-	shader.Activate();
-	glUniform1i(texUni, unit);
+    GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
+    shader.Activate();
+    glUniform1i(texUni, unit);
 }
 
 void Texture::Bind()
 {
-	glActiveTexture(GL_TEXTURE0 + unit);
-	glBindTexture(GL_TEXTURE_2D, ID);
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_2D, ID);
 }
 
 void Texture::Unbind()
 {
-	glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture::Delete()
 {
-	glDeleteTextures(1, &ID);
+    glDeleteTextures(1, &ID);
 }
