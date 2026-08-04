@@ -6,28 +6,26 @@
 class Orbit : public Camera
 {
 private:
-    glm::vec3 translate  = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::mat4 view       = glm::mat4(1.0f);
-    glm::mat4 projection = glm::mat4(1.0f);
-
-    glm::vec3 planeCenter = glm::vec3(2.0f, 0.0f, 2.0f);
+    glm::vec3 focusPoint = glm::vec3(0.0f, 0.0f, 0.0f);
 
     float radius = 5.0f;
-    float camX = 0, camY = 0, camZ = 0.0f;
     float yaw = 0, pitch = 0;
 
     float FOVdeg    = 45.0f;
     float nearPlane = 0.1f, farPlane = 10000.0f;
 
-    float speedYaw   = 1.0f;
-    float speedPitch = 1.0f;
-    float speedZoom  = 0.1f;
+    float speedYaw   = 100.0f;
+    float speedPitch = 100.0f;
+    float speedZoom  = 1.0f;
+    float speedMove = 10.0f;
+
+    glm::vec3 calculatePos();
 
 public:
-    Orbit(GLFWwindow* window, glm::vec3 position);
+    Orbit(GLFWwindow* window);
     void Inputs(GLFWwindow* window) override;
     void updateScreenSize() override;
-    void onScroll(GLFWwindow* win, double xoffset, double yoffset) override {}
+    void onScroll(GLFWwindow* win, double xoffset, double yoffset) override;
 
     void setSpeeds(float speedYaw, float speedPitch, float speedZoom);
     void setProjection(float FOVdeg, float nearPlane, float farPlane);

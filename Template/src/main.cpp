@@ -7,9 +7,9 @@ int main()
     Window VIEWPORT;
     My_ImGui::Init(VIEWPORT.getWindow());
 
-    Camera2D camera(VIEWPORT.getWindow());
-    //Orbit camera(VIEWPORT.getWindow(), glm::vec3(1.0f, 0.0f, 0.0f));
-    //CameraFly camera(VIEWPORT.getWindow(), glm::vec3(0.0f), 45, 0.1f, 10000.0f);
+    //Camera2D camera(VIEWPORT.getWindow());
+    Orbit camera(VIEWPORT.getWindow());
+    //CameraFly camera(VIEWPORT.getWindow(), 45, 0.1f, 10000.0f);
 
     Framebuffer framebuffer;
 #pragma endregion

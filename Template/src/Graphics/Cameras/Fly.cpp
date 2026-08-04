@@ -1,13 +1,12 @@
 #include "Fly.h"
 #include "Globals.h"
 
-CameraFly::CameraFly(GLFWwindow* window, glm::vec3 position, float FOVdeg, float nearPlane, float farPlane)
+CameraFly::CameraFly(GLFWwindow* window, float FOVdeg, float nearPlane, float farPlane)
     : Camera(window),
       FOVdeg(FOVdeg),
       nearPlane(nearPlane),
       farPlane(farPlane)
 {
-    this->position = position;
     view = glm::lookAt(position, position + Orientation, Up);
     updateScreenSize();
 }
@@ -38,6 +37,7 @@ void CameraFly::Inputs(GLFWwindow* window)
         speed = 0.1f;
 
     // Mouse
+    static bool firstClick = true;
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
@@ -70,11 +70,9 @@ void CameraFly::Inputs(GLFWwindow* window)
         // Locks the cursor to the middle of the screen
         glfwSetCursorPos(window, (width / 2), (height / 2));
     }
-    else
+    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         firstClick = true;
     }
     view = glm::lookAt(position, position + Orientation, Up);
