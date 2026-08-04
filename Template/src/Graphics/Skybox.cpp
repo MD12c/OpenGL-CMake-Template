@@ -2,22 +2,17 @@
 #include "Globals.h"
 
 Skybox::Skybox()
-    // : skyboxVAO(),
-    //   skyboxVBO(square, sizeof(square), GL_STATIC_DRAW)
-      //skyboxEBO(squareIndices, sizeof(squareIndices))
-{   
-    
-	glGenVertexArrays(1, &skyboxVAO);
-	glGenBuffers(1, &skyboxVBO);
-	glGenBuffers(1, &skyboxEBO);
-	glBindVertexArray(skyboxVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skyboxEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(skyboxIndices), &skyboxIndices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+    : skyboxVAO(),
+      skyboxVBO(skyboxVertices, sizeof(skyboxVertices), GL_STATIC_DRAW),
+      skyboxEBO(skyboxIndices, sizeof(skyboxIndices))
+{
+    skyboxVAO.Bind();
+	skyboxVBO.Bind();
+    skyboxEBO.Bind();
+    skyboxVAO.LinkAttrib(skyboxVBO, 0, 3, GL_FLOAT, 3 * sizeof(GLfloat), (void*)0);
+    skyboxVAO.Unbind();
+    skyboxEBO.Unbind();
+	skyboxVBO.Unbind();
 
 	glGenTextures(1, &cubemapTexture);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
@@ -52,19 +47,24 @@ void Skybox::Draw(const std::string& shaderName, glm::mat4 cameraMatrix)
     glUniform1i(ShaderManager::GetUniformLoc(shaderName, "skybox"), 0);
 
     glDisable(GL_CULL_FACE);
-    glBindVertexArray(skyboxVAO);
+	glDepthFunc(GL_LEQUAL);
+    skyboxVAO.Bind();
+	skyboxVBO.Bind();
+    skyboxEBO.Bind();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    skyboxVAO.Unbind();
+    skyboxEBO.Unbind();
+	skyboxVBO.Unbind();
     glDepthFunc(GL_LESS);
     glEnable(GL_CULL_FACE);
 }
 
 Skybox::~Skybox()
 {
-    // skyboxVAO.Delete();
-    // skyboxEBO.Delete();
-    // skyboxVBO.Delete();
-    //glDeleteTextures(1, &cubemapTexture);
+    skyboxVAO.Delete();
+    skyboxEBO.Delete();
+    skyboxVBO.Delete();
+    glDeleteTextures(1, &cubemapTexture);
 }

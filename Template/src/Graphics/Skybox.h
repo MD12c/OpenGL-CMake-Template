@@ -20,13 +20,6 @@
 class Skybox
 {
 public:
-    // VAO    skyboxVAO;
-    // VBO    skyboxVBO;
-    // EBO    skyboxEBO;
-    // GLuint cubemapTexture;
-	unsigned int skyboxVAO, skyboxVBO, skyboxEBO;
-	unsigned int cubemapTexture;
-
     const std::string facesCubemap[6] = {
         "Assets/Textures/Skybox/right.jpg",
         "Assets/Textures/Skybox/left.jpg",
@@ -67,6 +60,11 @@ public:
         6, 7, 3,
         3, 2, 6
     };
+
+    VAO    skyboxVAO;
+    VBO    skyboxVBO;
+    EBO    skyboxEBO;
+    GLuint cubemapTexture;
 
 public:
     Skybox();
