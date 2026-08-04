@@ -8,7 +8,7 @@ Orbit::Orbit(GLFWwindow* window, glm::vec3 position)
     view       = glm::lookAt(translate, translate + Orientation, Up);
     projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
     updateScreenSize();
-    updateMatrix();
+    //updateMatrix();
 }
 
 void Orbit::setProjection(float FOVdeg, float nearPlane, float farPlane)
@@ -55,18 +55,18 @@ void Orbit::Inputs(GLFWwindow* window)
     // Look at origin
     Orientation = glm::normalize(-translate);
 
-    updateMatrix();
+    //updateMatrix();
 }
 
-void Orbit::updateMatrix()
-{
-    view         = glm::lookAt(translate, translate + Orientation, Up);
-    cameraMatrix = projection * view;
-}
+// void Orbit::updateMatrix()
+// {
+//     view         = glm::lookAt(translate, translate + Orientation, Up);
+//     cameraMatrix = projection * view;
+// }
 
 void Orbit::updateScreenSize()
 {
     float aspect = (float)width / (float)height;
     projection   = glm::perspective(glm::radians(FOVdeg), aspect, nearPlane, farPlane);
-    updateMatrix();
+    //updateMatrix();
 }

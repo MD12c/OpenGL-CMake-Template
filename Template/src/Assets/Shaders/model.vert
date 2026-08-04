@@ -15,7 +15,8 @@ out DATA
 }
 data_out;
 
-uniform mat4 cameraMatrix;
+uniform mat4 proj;
+uniform mat4 view;
 uniform mat4 model;
 uniform mat4 translation;
 uniform mat4 rotation;
@@ -27,5 +28,5 @@ void main()
     data_out.Normal = aNormal;
     data_out.color = aColor;
     data_out.texCoord = aTex;
-    data_out.camMatrix = cameraMatrix;
+    data_out.camMatrix = proj * view;
 }

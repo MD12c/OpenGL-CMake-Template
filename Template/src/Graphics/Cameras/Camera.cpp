@@ -5,15 +5,18 @@ std::vector<Camera*> Camera::cameras = {};
 
 Camera::Camera(GLFWwindow* window)
 {
+    glfwPtr.camera = this;
     cameras.push_back(this);
     glfwSetScrollCallback(window, ScrollCallback);
 }
 
-void Camera::updateUniforms(GLuint cameraMatrixLoc, GLuint positionLoc)
+void Camera::updateUniforms(const std::string& shaderName)
 {
-    glUniformMatrix4fv(cameraMatrixLoc, 1, GL_FALSE, glm::value_ptr(cameraMatrix));
-    glUniform3f(positionLoc, position.x, position.y, position.z);
     glfwPtr.camera = this;
+    ShaderManager::Activate(shaderName);
+    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(ShaderManager::GetUniformLoc(shaderName, "camPos"), position.x, position.y, position.z);
 }
 
 glm::vec2 Camera::screenToWorld(const glm::vec2& pos)
@@ -21,8 +24,11 @@ glm::vec2 Camera::screenToWorld(const glm::vec2& pos)
     float ndcX = (2.0f * (float)pos.x) / width - 1.0f;
     float ndcY = 1.0f - (2.0f * (float)pos.y) / height;
 
-    glm::mat4 invCamera = glm::inverse(cameraMatrix);
+    glm::mat4 invCamera = glm::inverse(proj * view);
     glm::vec4 world     = invCamera * glm::vec4(ndcX, ndcY, 0.0f, 1.0f);
+
+    if (world.w != 0.0f)
+        world /= world.w;
 
     return glm::vec2(world.x, world.y);
 }
@@ -33,4 +39,10 @@ void Camera::ScrollCallback(GLFWwindow* win, double xoffset, double yoffset)
 
     if (ptr && ptr->camera)
         ptr->camera->onScroll(win, xoffset, yoffset);
+}
+
+glm::mat4 Camera::getRotationMat()
+{
+    glm::mat4 noTransView = glm::mat4(glm::mat3(view));
+    return proj * noTransView;
 }

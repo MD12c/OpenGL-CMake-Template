@@ -33,6 +33,8 @@
   src/Graphics/Models/Model.cpp
   src/Graphics/Cameras/Fly.h
   src/Graphics/Cameras/Fly.cpp
+  src/Graphics/Skybox.h
+  src/Graphics/Skybox.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

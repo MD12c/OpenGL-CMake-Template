@@ -10,7 +10,6 @@ void VAO::LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type,
     VBO.Bind();
     glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
     glEnableVertexAttribArray(layout);
-    VBO.Unbind();
 }
 
 void VAO::Bind()

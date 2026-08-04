@@ -1,7 +1,13 @@
 #include "ImguiSetup.h"
 
+#include <filesystem>
 #include <iostream>
 #include <string>
+
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 namespace My_ImGui
 {
@@ -24,7 +30,10 @@ int My_ImGui::Init(GLFWwindow* VIEWPORT)
 
     ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF("Assets/Fonts/DejaVuSans.ttf", 26.0f);
     if (!font)
-        std::cerr << "Failed to load font\n";
+    {
+        std::cerr << "Failed to load font, falling back to default font\n";
+        ImGui::GetIO().Fonts->AddFontDefault();
+    }
 
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(m_VIEWPORT, true);
@@ -114,4 +123,18 @@ void My_ImGui::RenderInterfaceInput()
     ImGui::End();
     // ImGui::ShowDemoWindow();
 }
+
+void My_ImGui::RenderOverlay(float x, float y, float z)
+{
+    ImGui::SetNextWindowBgAlpha(0.35f);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+                             ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing |
+                             ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+
+    ImGui::Begin("Debug Overlay", nullptr, flags);
+    ImGui::Text("FPS: %1.0f", ImGui::GetIO().Framerate);
+    ImGui::Text("Camera Pos: (%.2f, %.2f, %.2f)", x, y, z);
+    ImGui::End();
+}
+
 }  // namespace My_ImGui

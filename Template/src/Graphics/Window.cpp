@@ -16,21 +16,29 @@ Window::Window()
         throw std::runtime_error("Failed to create GLFW window");
     }
     glfwMakeContextCurrent(m_window);
-	glfwSetWindowUserPointer(m_window, &glfwPtr);
+    glfwSetWindowUserPointer(m_window, &glfwPtr);
     glfwPtr.window = this;
 
     auto resizeCallback = [](GLFWwindow* win, int w, int h)
     {
         auto* ptr = static_cast<glfwPointers*>(glfwGetWindowUserPointer(win));
-		glViewport(0, 0, w, h);
-		width  = w;
-		height = h;
+        glViewport(0, 0, w, h);
+        width  = w;
+        height = h;
         ptr->camera->updateScreenSize();
     };
 
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);
 
-    gladLoadGL();
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        glfwDestroyWindow(m_window);
+        glfwTerminate();
+        throw std::runtime_error("Failed to initialize GLAD");
+    }
+
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glViewport(0, 0, width, height);
     glClearColor(windowRGB[0], windowRGB[1], windowRGB[2], 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);

@@ -1,8 +1,4 @@
 #pragma once
-#include "imgui.h"
-#include "imgui_internal.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -18,4 +14,5 @@ void RenderDockSpace();
 void Shutdown();
 
 void RenderInterfaceInput();
+void RenderOverlay(float x, float y, float z);
 };  // namespace My_ImGui

@@ -8,20 +8,13 @@ CameraFly::CameraFly(GLFWwindow* window, glm::vec3 position, float FOVdeg, float
       farPlane(farPlane)
 {
     this->position = position;
+    view = glm::lookAt(position, position + Orientation, Up);
     updateScreenSize();
-}
-
-void CameraFly::updateMatrix()
-{
-    view         = glm::lookAt(position, position + Orientation, Up);
-    projection   = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
-    cameraMatrix = projection * view;
 }
 
 void CameraFly::updateScreenSize()
 {
-    projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
-    updateMatrix();
+    proj = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 }
 
 void CameraFly::Inputs(GLFWwindow* window)
@@ -42,10 +35,7 @@ void CameraFly::Inputs(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 0.4f;
     else
-    {
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-            speed = 0.1f;
-    }
+        speed = 0.1f;
 
     // Mouse
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
@@ -87,12 +77,12 @@ void CameraFly::Inputs(GLFWwindow* window)
 
         firstClick = true;
     }
-    updateMatrix();
+    view = glm::lookAt(position, position + Orientation, Up);
 }
 
 void CameraFly::onScroll(GLFWwindow* win, double xoffset, double yoffset)
 {
     FOVdeg += (float)yoffset * 5;
     FOVdeg = glm::clamp(FOVdeg, 0.0f, 179.0f);
-    updateMatrix();
+    proj   = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 }

@@ -49,6 +49,14 @@ void Shader::PrintError(GLuint shader)
               << infoLog << "\n";
 }
 
+void PrintProgramError(GLuint program)
+{
+    char infoLog[1024];
+    glGetProgramInfoLog(program, 1024, NULL, infoLog);
+    std::cerr << "Shader program link failed:\n"
+              << infoLog << "\n";
+}
+
 Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile)
 {
     std::string vertexCode   = get_file_contents(vertexFile);
@@ -78,6 +86,11 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile)
     glAttachShader(ID, vertexShader);
     glAttachShader(ID, fragmentShader);
     glLinkProgram(ID);
+
+    GLint successProgram;
+    glGetProgramiv(ID, GL_LINK_STATUS, &successProgram);
+    if (!successProgram)
+        PrintProgramError(ID);
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -124,6 +137,11 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
 
     glLinkProgram(ID);
 
+    GLint successProgram;
+    glGetProgramiv(ID, GL_LINK_STATUS, &successProgram);
+    if (!successProgram)
+        PrintProgramError(ID);
+
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     glDeleteShader(geometryShader);
@@ -146,6 +164,12 @@ Shader::Shader(const std::string& computeFile)
     ID = glCreateProgram();
     glAttachShader(ID, computeShader);
     glLinkProgram(ID);
+
+    GLint successProgram;
+    glGetProgramiv(ID, GL_LINK_STATUS, &successProgram);
+    if (!successProgram)
+        PrintProgramError(ID);
+
     glDeleteShader(computeShader);
 }
 
