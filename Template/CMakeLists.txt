@@ -35,6 +35,10 @@
   src/Graphics/Cameras/Fly.cpp
   src/Graphics/Skybox.h
   src/Graphics/Skybox.cpp
+  src/Graphics/FrameBuffers/FrameBuffer.h
+  src/Graphics/FrameBuffers/FrameBuffer.cpp
+  src/Graphics/FrameBuffers/RBO.h
+  src/Graphics/FrameBuffers/RBO.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

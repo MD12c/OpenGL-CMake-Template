@@ -6,9 +6,12 @@ int main()
 #pragma region
     Window VIEWPORT;
     My_ImGui::Init(VIEWPORT.getWindow());
-    //Camera2D camera(VIEWPORT.getWindow());
+
+    Camera2D camera(VIEWPORT.getWindow());
     //Orbit camera(VIEWPORT.getWindow(), glm::vec3(1.0f, 0.0f, 0.0f));
-    CameraFly camera(VIEWPORT.getWindow(), glm::vec3(0.0f), 45, 0.1f, 10000.0f);
+    //CameraFly camera(VIEWPORT.getWindow(), glm::vec3(0.0f), 45, 0.1f, 10000.0f);
+
+    Framebuffer framebuffer;
 #pragma endregion
 
 // Shaders
@@ -41,6 +44,17 @@ int main()
     }
     ShaderManager::Activate(skyboxShaderName);
     glUniform1i(ShaderManager::GetUniformLoc(skyboxShaderName, "skybox"), 0);
+
+    // Framebuffer
+        std::string framebufferShaderName = ShaderManager::Load("framebufferShader", "Assets/shaders/framebuffer.vert", "Assets/shaders/framebuffer.frag");
+    {
+        std::unordered_map<std::string, GLint> framebufferShaderUniforms = {
+            { "screenTexture", ShaderManager::GetUniformLoc(framebufferShaderName, "screenTexture") }
+        };
+        ShaderManager::AddUniforms(framebufferShaderName, framebufferShaderUniforms);
+    }
+    ShaderManager::Activate(framebufferShaderName);
+    glUniform1i(ShaderManager::GetUniformLoc(framebufferShaderName, "screenTexture"), 0);
 
     // Default
     std::string defShaderName = ShaderManager::Load("defShader", "Assets/shaders/default.vert", "Assets/shaders/default.frag");
@@ -94,16 +108,6 @@ int main()
     Model model("Assets/Models/crow.obj");
     glfwPtr.camera = &camera;
     Skybox skybox;
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    glEnable(GL_STENCIL_TEST);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
 #pragma endregion
 
     double timePrev = 0;
@@ -124,8 +128,9 @@ int main()
         // VIEWPORT.updateFPS(); // Can be overlayed
 
         VIEWPORT.glClearCurrentColor();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         My_ImGui::ShowDockSpace();
+
+        framebuffer.Activate();
 
         ShaderManager::Activate(defShaderName);
         camera.updateUniforms(defShaderName);
@@ -140,15 +145,17 @@ int main()
 
         skybox.Draw(skyboxShaderName, camera.getRotationMat());
 
+        framebuffer.Draw(framebufferShaderName);
+
         My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z);
         My_ImGui::RenderInterfaceInput();
         My_ImGui::RenderDockSpace();
         glfwSwapBuffers(VIEWPORT.getWindow());
         glfwPollEvents();
     }
-    // squareTexture.Delete();
-    // squareVBO.Delete();
-    // squareVAO.Delete();
+    squareTexture.Delete();
+    squareVBO.Delete();
+    squareVAO.Delete();
 #pragma endregion
 
     return 0;

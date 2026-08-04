@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include "Graphics/Window.h"
 #include "Graphics/Cameras/Camera.h"
+#include "Graphics/FrameBuffers/FrameBuffer.h"
 
 inline int         width        = 2560;
 inline int         height       = 1440;
@@ -14,11 +15,12 @@ inline GLfloat     windowRGB[3] = {
 
 inline struct glfwPointers
 {
-    Window* window;
-    Camera* camera;
+    Window*      window;
+    Camera*      camera;
+    Framebuffer* framebuffer;
 } glfwPtr;
 
-constexpr GLfloat square[] = {
+constexpr GLfloat square[20] = {
     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
     -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
     1.0f, 1.0f, 0.0f, 1.0f, 1.0f,

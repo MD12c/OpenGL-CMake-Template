@@ -12,6 +12,8 @@
 #include "VertexBuffers/SSBO.h"
 
 #include "FrameBuffers/Texture.h"
+#include "FrameBuffers/RBO.h"
+#include "FrameBuffers/FrameBuffer.h"
 
 #include "Cameras/Camera.h"
 #include "Cameras/2Dcam.h"

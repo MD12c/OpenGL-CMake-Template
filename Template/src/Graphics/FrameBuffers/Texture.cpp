@@ -1,5 +1,6 @@
 #include "Texture.h"
 #include <stb/stb_image.h>
+#include "Globals.h"
 
 Texture::Texture(const std::string& image, const std::string& texType, GLuint slot)
 {
@@ -47,18 +48,29 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Texture::Texture(GLuint unit) : unit(unit)
+{
+    glGenTextures(1, &ID);
+    glBindTexture(GL_TEXTURE_2D, ID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
 void Texture::texUnit(const std::string& shaderName, const std::string& uniform)
 {
-    ShaderManager::shaderResources.at(shaderName).shader.Activate();
+    ShaderManager::Activate(shaderName);
     glUniform1i(ShaderManager::GetUniformLoc(shaderName, uniform), unit);
 }
 
 // Old! Dont use if using shader manager
 void Texture::texUnit(Shader& shader, const std::string& uniform, GLuint unit)
 {
-	GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
-	shader.Activate();
-	glUniform1i(texUni, unit);
+    GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
+    shader.Activate();
+    glUniform1i(texUni, unit);
 }
 
 void Texture::Bind()

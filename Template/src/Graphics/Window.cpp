@@ -1,6 +1,5 @@
 #include "Window.h"
 #include "../Globals.h"
-#include "Cameras/2Dcam.h"
 
 Window::Window()
 {
@@ -26,6 +25,7 @@ Window::Window()
         width  = w;
         height = h;
         ptr->camera->updateScreenSize();
+        ptr->framebuffer->Resize(w, h);
     };
 
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);
