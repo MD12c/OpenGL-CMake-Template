@@ -142,6 +142,7 @@ int main()
         UnbindSquare();
 
         camera.updateUniforms(modelShaderName);
+        glUniform3fv(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), 1, glm::value_ptr(camera.position));
         model.Draw(modelShaderName);
 
         skybox.Draw(skyboxShaderName, camera.getRotationMat());
