@@ -7,11 +7,12 @@ int main()
     Window VIEWPORT;
     My_ImGui::Init(VIEWPORT.getWindow());
 
-    //Camera2D camera(VIEWPORT.getWindow());
-    Orbit camera(VIEWPORT.getWindow());
-    //CameraFly camera(VIEWPORT.getWindow(), 45, 0.1f, 10000.0f);
+    // Camera2D camera(VIEWPORT.getWindow());
+    // Orbit camera(VIEWPORT.getWindow());
+    CameraFly camera(VIEWPORT.getWindow(), 45, 0.1f, 10000.0f);
 
-    Framebuffer framebuffer;
+    MSAAbuffer  antiAlias;
+    Framebuffer postProcess;
 #pragma endregion
 
 // Shaders
@@ -45,16 +46,16 @@ int main()
     ShaderManager::Activate(skyboxShaderName);
     glUniform1i(ShaderManager::GetUniformLoc(skyboxShaderName, "skybox"), 0);
 
-    // Framebuffer
-        std::string framebufferShaderName = ShaderManager::Load("framebufferShader", "Assets/shaders/framebuffer.vert", "Assets/shaders/framebuffer.frag");
+    // postProcess
+    std::string postProcessShaderName = ShaderManager::Load("postProcessShader", "Assets/shaders/postProcess.vert", "Assets/shaders/postProcess.frag");
     {
-        std::unordered_map<std::string, GLint> framebufferShaderUniforms = {
-            { "screenTexture", ShaderManager::GetUniformLoc(framebufferShaderName, "screenTexture") }
+        std::unordered_map<std::string, GLint> postProcessShaderUniforms = {
+            { "screenTexture", ShaderManager::GetUniformLoc(postProcessShaderName, "screenTexture") }
         };
-        ShaderManager::AddUniforms(framebufferShaderName, framebufferShaderUniforms);
+        ShaderManager::AddUniforms(postProcessShaderName, postProcessShaderUniforms);
     }
-    ShaderManager::Activate(framebufferShaderName);
-    glUniform1i(ShaderManager::GetUniformLoc(framebufferShaderName, "screenTexture"), 0);
+    ShaderManager::Activate(postProcessShaderName);
+    glUniform1i(ShaderManager::GetUniformLoc(postProcessShaderName, "screenTexture"), 0);
 
     // Default
     std::string defShaderName = ShaderManager::Load("defShader", "Assets/shaders/default.vert", "Assets/shaders/default.frag");
@@ -130,7 +131,7 @@ int main()
         VIEWPORT.glClearCurrentColor();
         My_ImGui::ShowDockSpace();
 
-        framebuffer.Activate();
+        antiAlias.Activate();
 
         ShaderManager::Activate(defShaderName);
         camera.updateUniforms(defShaderName);
@@ -145,7 +146,8 @@ int main()
 
         skybox.Draw(skyboxShaderName, camera.getRotationMat());
 
-        framebuffer.Draw(framebufferShaderName);
+        antiAlias.CopyResultsTo(postProcess.ID);
+        postProcess.Draw(postProcessShaderName);
 
         My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z);
         My_ImGui::RenderInterfaceInput();

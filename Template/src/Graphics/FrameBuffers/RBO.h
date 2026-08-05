@@ -9,7 +9,7 @@ class RBO
 {
 public:
     GLuint ID;
-    RBO();
+    RBO(bool useMultisample);
 
     void Bind();
     void Unbind();

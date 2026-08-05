@@ -5,6 +5,7 @@
 #include "Graphics/Window.h"
 #include "Graphics/Cameras/Camera.h"
 #include "Graphics/FrameBuffers/FrameBuffer.h"
+#include "Graphics/FrameBuffers/MSAABuffer.h"
 
 inline int         width        = 2560;
 inline int         height       = 1440;
@@ -18,6 +19,7 @@ inline struct glfwPointers
     Window*      window;
     Camera*      camera;
     Framebuffer* framebuffer;
+    MSAAbuffer*  msaabuffer;
 } glfwPtr;
 
 constexpr GLfloat square[20] = {
@@ -34,3 +36,5 @@ constexpr GLuint squareIndices[6] = {
 
 constexpr glm::vec2 BOT_LEFT_BOUNDERY  = glm::vec2(square[0], square[1]);
 constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[6], square[7]);
+
+constexpr GLuint numSamples = 8;

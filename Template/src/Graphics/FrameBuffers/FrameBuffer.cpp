@@ -6,8 +6,7 @@ Framebuffer::Framebuffer()
     : framebufferVAO(),
       framebufferVBO(square, sizeof(square), GL_STATIC_DRAW),
       framebufferEBO(squareIndices, sizeof(squareIndices)),
-      framebufferRBO(),
-      texture(0)
+      framebufferRBO(false)
 {
     glfwPtr.framebuffer = this;
     glGenFramebuffers(1, &ID);
@@ -18,11 +17,17 @@ Framebuffer::Framebuffer()
     framebufferVAO.LinkAttrib(framebufferVBO, 0, 3, GL_FLOAT, 5 * sizeof(GLfloat), (void*)0);
     framebufferVAO.LinkAttrib(framebufferVBO, 1, 2, GL_FLOAT, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 
-    texture.Bind();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.ID, 0);
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
     framebufferRBO.Bind();
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, framebufferRBO.ID);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, framebufferRBO.ID);
 
     auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
@@ -33,10 +38,9 @@ void Framebuffer::Activate()
 {
     glfwPtr.framebuffer = this;
     glViewport(0, 0, width, height);
-    glBindFramebuffer(GL_FRAMEBUFFER, ID);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    ClearBuffer();
     framebufferRBO.Bind();
-    
+
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -56,19 +60,26 @@ void Framebuffer::Draw(const std::string& shaderName)
     framebufferVAO.Bind();
     framebufferVBO.Bind();
     framebufferEBO.Bind();
-    texture.Bind();
+    glBindTexture(GL_TEXTURE_2D, textureID);
     glDisable(GL_DEPTH_TEST);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    texture.Unbind();
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glBindTexture(GL_TEXTURE_2D, 0);
     framebufferVAO.Unbind();
     framebufferVBO.Unbind();
     framebufferEBO.Unbind();
 }
 
+void Framebuffer::ClearBuffer()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, ID);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
 void Framebuffer::Resize(int w, int h)
 {
-    glfwPtr.framebuffer = this;
-    glBindTexture(GL_TEXTURE_2D, texture.ID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
     glBindRenderbuffer(GL_RENDERBUFFER, framebufferRBO.ID);

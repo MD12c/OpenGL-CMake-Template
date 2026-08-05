@@ -14,6 +14,7 @@
 #include "FrameBuffers/Texture.h"
 #include "FrameBuffers/RBO.h"
 #include "FrameBuffers/FrameBuffer.h"
+#include "FrameBuffers/MSAABuffer.h"
 
 #include "Cameras/Camera.h"
 #include "Cameras/2Dcam.h"

@@ -39,6 +39,8 @@
   src/Graphics/FrameBuffers/FrameBuffer.cpp
   src/Graphics/FrameBuffers/RBO.h
   src/Graphics/FrameBuffers/RBO.cpp
+  src/Graphics/FrameBuffers/MSAABuffer.h
+  src/Graphics/FrameBuffers/MSAABuffer.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

@@ -1,5 +1,5 @@
-#ifndef FRAMEBUFFER_CLASS_H
-#define FRAMEBUFFER_CLASS_H
+#ifndef MSAA_BUFFER_CLASS_H
+#define MSAA_BUFFER_CLASS_H
 
 #include <glad/glad.h>
 
@@ -9,21 +9,17 @@
 #include "Texture.h"
 #include "RBO.h"
 
-class Framebuffer
+class MSAAbuffer
 {
 public:
     GLuint ID;
-    VAO    framebufferVAO;
-    VBO    framebufferVBO;
-    EBO    framebufferEBO;
-    RBO    framebufferRBO;
+    RBO    MSAAbufferRBO;
     GLuint textureID;
 
-    Framebuffer();
-    void ClearBuffer();
+    MSAAbuffer();
     void Resize(int w, int h);
     void Activate();
-    void Draw(const std::string& shaderName);
+    void CopyResultsTo(GLuint postProcessing);
 };
 
 #endif
