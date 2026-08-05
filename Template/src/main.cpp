@@ -153,7 +153,7 @@ int main()
         postProcess.Draw(postProcessShaderName);
 
         My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z);
-        My_ImGui::RenderInterfaceInput();
+        //My_ImGui::RenderInterfaceInput();
         My_ImGui::RenderDockSpace();
         glfwSwapBuffers(VIEWPORT.getWindow());
         glfwPollEvents();
