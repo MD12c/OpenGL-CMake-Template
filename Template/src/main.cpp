@@ -50,12 +50,14 @@ int main()
     std::string postProcessShaderName = ShaderManager::Load("postProcessShader", "Assets/shaders/postProcess.vert", "Assets/shaders/postProcess.frag");
     {
         std::unordered_map<std::string, GLint> postProcessShaderUniforms = {
-            { "screenTexture", ShaderManager::GetUniformLoc(postProcessShaderName, "screenTexture") }
+            { "screenTexture", ShaderManager::GetUniformLoc(postProcessShaderName, "screenTexture") },
+            { "gamma", ShaderManager::GetUniformLoc(postProcessShaderName, "gamma") }
         };
         ShaderManager::AddUniforms(postProcessShaderName, postProcessShaderUniforms);
     }
     ShaderManager::Activate(postProcessShaderName);
     glUniform1i(ShaderManager::GetUniformLoc(postProcessShaderName, "screenTexture"), 0);
+    glUniform1f(ShaderManager::GetUniformLoc(postProcessShaderName, "gamma"), gamma);
 
     // Default
     std::string defShaderName = ShaderManager::Load("defShader", "Assets/shaders/default.vert", "Assets/shaders/default.frag");

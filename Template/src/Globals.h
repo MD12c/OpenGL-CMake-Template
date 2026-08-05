@@ -10,8 +10,9 @@
 inline int         width        = 2560;
 inline int         height       = 1440;
 inline std::string windowName   = "Template";
+inline GLfloat     gamma        = 2;
 inline GLfloat     windowRGB[3] = {
-    0.8f, 0.8f, 0.8f
+    pow(0.8f, gamma), pow(0.8f, gamma), pow(0.8f, gamma)
 };
 
 inline struct glfwPointers

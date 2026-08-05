@@ -11,7 +11,7 @@ MSAAbuffer::MSAAbuffer()
 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureID);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGBA8, width, height, GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB16F, width, height, GL_TRUE);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -41,7 +41,7 @@ void MSAAbuffer::Activate()
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-    glEnable(GL_CULL_FACE);
+    glDisable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 }
@@ -57,8 +57,8 @@ void MSAAbuffer::CopyResultsTo(GLuint postProcessing)
 void MSAAbuffer::Resize(int w, int h)
 {
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureID);
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGBA8, w, h, GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB16F, w, h, GL_TRUE);
 
-    glBindRenderbuffer(GL_RENDERBUFFER, MSAAbufferRBO.ID);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+    MSAAbufferRBO.Bind();
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, numSamples, GL_DEPTH24_STENCIL8, w, h);
 }

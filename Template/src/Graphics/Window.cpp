@@ -26,6 +26,7 @@ Window::Window()
         height = h;
         ptr->camera->updateScreenSize();
         ptr->framebuffer->Resize(w, h);
+        ptr->msaabuffer->Resize(w, h);
     };
 
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);
