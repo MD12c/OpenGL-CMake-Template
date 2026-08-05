@@ -3,7 +3,7 @@
 
 #include "Camera.h"
 
-class Orbit : public Camera
+class CameraOrbit : public Camera
 {
 private:
     glm::vec3 focusPoint = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -22,7 +22,7 @@ private:
     glm::vec3 calculatePos();
 
 public:
-    Orbit(GLFWwindow* window);
+    CameraOrbit(GLFWwindow* window);
     void Inputs(GLFWwindow* window) override;
     void updateScreenSize() override;
     void onScroll(GLFWwindow* win, double xoffset, double yoffset) override;

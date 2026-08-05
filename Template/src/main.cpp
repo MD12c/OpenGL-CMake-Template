@@ -8,7 +8,7 @@ int main()
     My_ImGui::Init(VIEWPORT.getWindow());
 
     // Camera2D camera(VIEWPORT.getWindow());
-    // Orbit camera(VIEWPORT.getWindow());
+    // CameraOrbit camera(VIEWPORT.getWindow());
     CameraFly camera(VIEWPORT.getWindow(), 45, 0.1f, 10000.0f);
 
     MSAAbuffer  antiAlias;
@@ -32,7 +32,7 @@ int main()
     }
     ShaderManager::Activate(modelShaderName);
     glUniform4f(ShaderManager::GetUniformLoc(modelShaderName, "lightColor"), 1.0f, 1.0f, 1.0f, 1.0f);
-    glUniform3f(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), -4.0f, 17.0f, 13.0f);
+    glUniform3f(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), -9.5f, 21.0f, 5.0f);
 
     // SkyBox
     std::string skyboxShaderName = ShaderManager::Load("skyboxShader", "Assets/shaders/skybox.vert", "Assets/shaders/skybox.frag");
@@ -144,7 +144,7 @@ int main()
         UnbindSquare();
 
         camera.updateUniforms(modelShaderName);
-        glUniform3fv(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), 1, glm::value_ptr(camera.position));
+        //glUniform3fv(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), 1, glm::value_ptr(camera.position));
         model.Draw(modelShaderName);
 
         skybox.Draw(skyboxShaderName, camera.getRotationMat());

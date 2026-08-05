@@ -1,7 +1,7 @@
 #include "Orbit.h"
 #include "Globals.h"
 
-Orbit::Orbit(GLFWwindow* window)
+CameraOrbit::CameraOrbit(GLFWwindow* window)
     : Camera(window)
 {
     position    = calculatePos() + focusPoint;
@@ -11,26 +11,26 @@ Orbit::Orbit(GLFWwindow* window)
     updateScreenSize();
 }
 
-void Orbit::setProjection(float FOVdeg, float nearPlane, float farPlane)
+void CameraOrbit::setProjection(float FOVdeg, float nearPlane, float farPlane)
 {
     this->FOVdeg    = FOVdeg;
     this->nearPlane = nearPlane;
     this->farPlane  = farPlane;
 }
-void Orbit::setPosition(float orbitRadius, float yaw, float pitch)
+void CameraOrbit::setPosition(float orbitRadius, float yaw, float pitch)
 {
     this->radius = orbitRadius;
     this->yaw    = yaw;
     this->pitch  = pitch;
 }
-void Orbit::setSpeeds(float speedYaw, float speedPitch, float speedZoom)
+void CameraOrbit::setSpeeds(float speedYaw, float speedPitch, float speedZoom)
 {
     this->speedYaw   = speedYaw;
     this->speedPitch = speedPitch;
     this->speedZoom  = speedZoom;
 }
 
-glm::vec3 Orbit::calculatePos()
+glm::vec3 CameraOrbit::calculatePos()
 {
     float camX = radius * cos(glm::radians(pitch)) * sin(glm::radians(yaw));
     float camY = radius * sin(glm::radians(pitch));
@@ -38,7 +38,7 @@ glm::vec3 Orbit::calculatePos()
     return glm::vec3(camX, camY, camZ);
 }
 
-void Orbit::Inputs(GLFWwindow* window)
+void CameraOrbit::Inputs(GLFWwindow* window)
 {
     static bool firstClick = true;
 
@@ -111,7 +111,7 @@ void Orbit::Inputs(GLFWwindow* window)
     view = glm::lookAt(position, position + Orientation, Up);
 }
 
-void Orbit::onScroll(GLFWwindow* win, double xoffset, double yoffset)
+void CameraOrbit::onScroll(GLFWwindow* win, double xoffset, double yoffset)
 {
     radius      = glm::clamp(expf(logf(radius) + -(float)yoffset * speedZoom), 0.1f, 1000.0f);
     position    = calculatePos() + focusPoint;
@@ -119,7 +119,7 @@ void Orbit::onScroll(GLFWwindow* win, double xoffset, double yoffset)
     view        = glm::lookAt(position, position + Orientation, Up);
 }
 
-void Orbit::updateScreenSize()
+void CameraOrbit::updateScreenSize()
 {
     float aspect = (float)width / (float)height;
     proj         = glm::perspective(glm::radians(FOVdeg), aspect, nearPlane, farPlane);

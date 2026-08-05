@@ -18,8 +18,8 @@ vec4 pointLight()
 
     // intensity of light with respect to distance
     float dist      = length(crntPosToLightPos);
-    float quadratic = 0.032f;
-    float linear    = 0.09f;
+    float quadratic = 0.0075f;
+    float linear    = 0.045f;
     float constant  = 1.0f;
     float inten     = 1.0f / (quadratic * dist * dist + linear * dist + constant);
 

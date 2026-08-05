@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include "Graphics/Window.h"
 #include "Graphics/Cameras/Camera.h"
-#include "Graphics/FrameBuffers/FrameBuffer.h"
+#include "Graphics/FrameBuffers/PostProcess.h"
 #include "Graphics/FrameBuffers/MSAABuffer.h"
 
 inline int         width        = 2560;
