@@ -15,6 +15,9 @@
 #include "FrameBuffers/RBO.h"
 #include "FrameBuffers/PostProcess.h"
 #include "FrameBuffers/MSAABuffer.h"
+#include "FrameBuffers/ShadowMaps/ShadowCaster.h"
+#include "FrameBuffers/ShadowMaps/ShadowMap2D.h"
+#include "FrameBuffers/ShadowMaps/ShadowMapCube.h"
 
 #include "Cameras/Camera.h"
 #include "Cameras/2Dcam.h"

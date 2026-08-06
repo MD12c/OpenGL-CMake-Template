@@ -26,13 +26,19 @@ int main()
             { "model", ShaderManager::GetUniformLoc(modelShaderName, "model") },
             { "camPos", ShaderManager::GetUniformLoc(modelShaderName, "camPos") },
             { "lightColor", ShaderManager::GetUniformLoc(modelShaderName, "lightColor") },
-            { "lightPos", ShaderManager::GetUniformLoc(modelShaderName, "lightPos") }
+            { "lightPos", ShaderManager::GetUniformLoc(modelShaderName, "lightPos") },
+            { "lightDirection", ShaderManager::GetUniformLoc(modelShaderName, "lightDirection") },
+            { "shadowMap", ShaderManager::GetUniformLoc(modelShaderName, "shadowMap") },
+            { "shadowMapMatrix", ShaderManager::GetUniformLoc(modelShaderName, "shadowMapMatrix") },
         };
         ShaderManager::AddUniforms(modelShaderName, modelShaderUniforms);
     }
     ShaderManager::Activate(modelShaderName);
+    // glm::vec3 lightPos = glm::vec3(0.0f, 30.0f, 0.0f);
+    glm::vec3 lightPos = glm::vec3(-4.5f, 17.0f, 3.0f);
     glUniform4f(ShaderManager::GetUniformLoc(modelShaderName, "lightColor"), 1.0f, 1.0f, 1.0f, 1.0f);
-    glUniform3f(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), -9.5f, 21.0f, 5.0f);
+    glUniform3fv(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), 1, glm::value_ptr(lightPos));
+    glUniform3f(ShaderManager::GetUniformLoc(modelShaderName, "lightDirection"), 0.0f, -1.0f, 0.0f);
 
     // SkyBox
     std::string skyboxShaderName = ShaderManager::Load("skyboxShader", "Assets/shaders/skybox.vert", "Assets/shaders/skybox.frag");
@@ -58,6 +64,28 @@ int main()
     ShaderManager::Activate(postProcessShaderName);
     glUniform1i(ShaderManager::GetUniformLoc(postProcessShaderName, "screenTexture"), 0);
     glUniform1f(ShaderManager::GetUniformLoc(postProcessShaderName, "gamma"), gamma);
+
+    // shadowMap2D
+    std::string shadowMap2DShaderName = ShaderManager::Load("shadowMap2DShader", "Assets/shaders/shadowMap2D.vert", "Assets/shaders/shadowMap2D.frag");
+    {
+        std::unordered_map<std::string, GLint> shadowMap2DShaderUniforms = {
+            { "proj", ShaderManager::GetUniformLoc(shadowMap2DShaderName, "proj") },
+            { "model", ShaderManager::GetUniformLoc(shadowMap2DShaderName, "model") },
+            { "view", ShaderManager::GetUniformLoc(shadowMap2DShaderName, "view") }
+        };
+        ShaderManager::AddUniforms(shadowMap2DShaderName, shadowMap2DShaderUniforms);
+    }
+
+    // Debug
+    std::string depthDebugShaderName = ShaderManager::Load("depthDebugShader", "Assets/shaders/debug.vert", "Assets/shaders/debug.frag");
+    {
+        std::unordered_map<std::string, GLint> depthDebugUniforms = {
+            { "depthMap", ShaderManager::GetUniformLoc(depthDebugShaderName, "depthMap") }
+        };
+        ShaderManager::AddUniforms(depthDebugShaderName, depthDebugUniforms);
+    }
+    ShaderManager::Activate(depthDebugShaderName);
+    glUniform1i(ShaderManager::GetUniformLoc(depthDebugShaderName, "depthMap"), 0);
 
     // Default
     std::string defShaderName = ShaderManager::Load("defShader", "Assets/shaders/default.vert", "Assets/shaders/default.frag");
@@ -111,6 +139,8 @@ int main()
     Model model("Assets/Models/crow.obj");
     glfwPtr.camera = &camera;
     Skybox skybox;
+    //ShadowMap2D shadowMap(lightPos, glm::vec3(0.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 400.0f);// -100.0f, 100.0f, -100.0f, 100.0f
+    ShadowMap2D shadowMap(lightPos, glm::vec3(1.0f, 0.0f, 0.0f), 90.0f, 0.1f, 400.0f);
 #pragma endregion
 
     double timePrev = 0;
@@ -133,18 +163,28 @@ int main()
         VIEWPORT.glClearCurrentColor();
         My_ImGui::ShowDockSpace();
 
+        shadowMap.BeginDepthPass(shadowMap2DShaderName);
+        if (glfwGetKey(VIEWPORT.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
+            shadowMap.setView(camera.position, camera.Orientation);
+        model.Draw(shadowMap2DShaderName);
+
         antiAlias.Activate();
 
-        ShaderManager::Activate(defShaderName);
-        camera.updateUniforms(defShaderName);
-        BindSquare();
-        glUniform1i(ShaderManager::GetUniformLoc(defShaderName, "useTexture"), true);
-        // glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);
-        UnbindSquare();
+        // ShaderManager::Activate(defShaderName);
+        // camera.updateUniforms(defShaderName);
+        // BindSquare();
+        // glUniform1i(ShaderManager::GetUniformLoc(defShaderName, "useTexture"), true);
+        // // glDrawArrays(GL_TRIANGLES, 0, 3);
+        // glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);
+        // UnbindSquare();
 
+        shadowMap.ExportUniformsTo(modelShaderName, 2);
         camera.updateUniforms(modelShaderName);
-        //glUniform3fv(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), 1, glm::value_ptr(camera.position));
+        if (glfwGetKey(VIEWPORT.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
+        {
+            glUniform3fv(ShaderManager::GetUniformLoc(modelShaderName, "lightPos"), 1, glm::value_ptr(camera.position));
+            glUniform3fv(ShaderManager::GetUniformLoc(modelShaderName, "lightDirection"), 1, glm::value_ptr(camera.Orientation));
+        }
         model.Draw(modelShaderName);
 
         skybox.Draw(skyboxShaderName, camera.getRotationMat());
@@ -152,8 +192,12 @@ int main()
         antiAlias.CopyResultsTo(postProcess.ID);
         postProcess.Draw(postProcessShaderName);
 
+        // BindSquare();
+        // shadowMap.DrawDepthDebug(depthDebugShaderName);
+        // UnbindSquare();
+
         My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z);
-        //My_ImGui::RenderInterfaceInput();
+        // My_ImGui::RenderInterfaceInput();
         My_ImGui::RenderDockSpace();
         glfwSwapBuffers(VIEWPORT.getWindow());
         glfwPollEvents();

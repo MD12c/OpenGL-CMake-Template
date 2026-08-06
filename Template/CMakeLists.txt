@@ -41,6 +41,12 @@
   src/Graphics/FrameBuffers/RBO.cpp
   src/Graphics/FrameBuffers/MSAABuffer.h
   src/Graphics/FrameBuffers/MSAABuffer.cpp
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowMap2D.h
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowMap2D.cpp
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowCaster.h
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowCaster.cpp
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.h
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

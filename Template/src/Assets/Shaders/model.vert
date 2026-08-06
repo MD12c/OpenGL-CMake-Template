@@ -12,6 +12,7 @@ out DATA
     vec3 color;
     vec2 texCoord;
     mat4 camMatrix;
+    vec4 fragPosLight;
 }
 data_out;
 
@@ -21,12 +22,14 @@ uniform mat4 model;
 uniform mat4 translation;
 uniform mat4 rotation;
 uniform mat4 scale;
+uniform mat4 shadowMapMatrix;
 
 void main()
 {
-    data_out.Position = vec3(model * translation * rotation * scale * vec4(aPos, 1.0f));
-    data_out.Normal = aNormal;
-    data_out.color = aColor;
-    data_out.texCoord = aTex;
-    data_out.camMatrix = proj * view;
+    data_out.Position     = vec3(model * translation * rotation * scale * vec4(aPos, 1.0f));
+    data_out.Normal       = aNormal;
+    data_out.color        = aColor;
+    data_out.texCoord     = aTex;
+    data_out.camMatrix    = proj * view;
+    data_out.fragPosLight = shadowMapMatrix * vec4(data_out.Position, 1.0f);
 }

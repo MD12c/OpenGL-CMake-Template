@@ -68,6 +68,6 @@ void Mesh::Draw(
     glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "rotation"), 1, GL_FALSE, glm::value_ptr(rot));
     glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
     glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "model"), 1, GL_FALSE, glm::value_ptr(matrix));
-
+    
     glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
 }
