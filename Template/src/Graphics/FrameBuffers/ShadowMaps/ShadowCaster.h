@@ -20,7 +20,6 @@ public:
     virtual void BeginDepthPass(const std::string& shaderName)                       = 0;
     virtual void EndDepthPass()                                                      = 0;
     virtual void ExportUniformsTo(const std::string& shaderName, GLuint textureSlot) = 0;
-    virtual void DrawDepthDebug(const std::string& shaderName)                       = 0;
 };
 
 #endif

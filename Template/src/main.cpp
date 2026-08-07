@@ -30,6 +30,8 @@ int main()
             { "lightDirection", ShaderManager::GetUniformLoc(modelShaderName, "lightDirection") },
             { "shadowMap", ShaderManager::GetUniformLoc(modelShaderName, "shadowMap") },
             { "shadowMapMatrix", ShaderManager::GetUniformLoc(modelShaderName, "shadowMapMatrix") },
+            { "shadowCubeMap", ShaderManager::GetUniformLoc(modelShaderName, "shadowCubeMap") },
+            { "farPlane", ShaderManager::GetUniformLoc(modelShaderName, "farPlane") },
         };
         ShaderManager::AddUniforms(modelShaderName, modelShaderUniforms);
     }
@@ -76,6 +78,21 @@ int main()
         ShaderManager::AddUniforms(shadowMap2DShaderName, shadowMap2DShaderUniforms);
     }
 
+    // shadowMapCube
+    std::string shadowMapCubeShaderName = ShaderManager::Load("shadowMapCubeShader", "Assets/shaders/shadowMapCube.vert", "Assets/shaders/shadowMapCube.frag", "Assets/shaders/shadowMapCube.geom");
+    {
+        std::unordered_map<std::string, GLint> shadowMapCubeShaderUniforms = {
+            { "model", ShaderManager::GetUniformLoc(shadowMapCubeShaderName, "model") },
+            { "lightPos", ShaderManager::GetUniformLoc(shadowMapCubeShaderName, "lightPos") },
+            { "farPlane", ShaderManager::GetUniformLoc(shadowMapCubeShaderName, "farPlane") }
+        };
+        ShaderManager::AddUniforms(shadowMapCubeShaderName, shadowMapCubeShaderUniforms);
+        for (int i = 0; i < 6; i++)
+            ShaderManager::AddUniform(shadowMapCubeShaderName,
+                                      "shadowMatrices[" + std::to_string(i) + "]",
+                                      ShaderManager::GetUniformLoc(shadowMapCubeShaderName, "shadowMatrices[" + std::to_string(i) + "]"));
+    }
+
     // Debug
     std::string depthDebugShaderName = ShaderManager::Load("depthDebugShader", "Assets/shaders/debug.vert", "Assets/shaders/debug.frag");
     {
@@ -86,6 +103,19 @@ int main()
     }
     ShaderManager::Activate(depthDebugShaderName);
     glUniform1i(ShaderManager::GetUniformLoc(depthDebugShaderName, "depthMap"), 0);
+
+    // DebugCube
+    std::string depthDebugCubeShaderName = ShaderManager::Load("depthDebugCubeShader", "Assets/shaders/debug.vert", "Assets/shaders/debugCube.frag");
+    {
+        std::unordered_map<std::string, GLint> depthDebugCubeUniforms = {
+            { "depthCubeMap", ShaderManager::GetUniformLoc(depthDebugCubeShaderName, "depthCubeMap") },
+            { "faceForward", ShaderManager::GetUniformLoc(depthDebugCubeShaderName, "faceForward") },
+            { "faceRight", ShaderManager::GetUniformLoc(depthDebugCubeShaderName, "faceRight") },
+            { "faceUp", ShaderManager::GetUniformLoc(depthDebugCubeShaderName, "faceUp") },
+        };
+        ShaderManager::AddUniforms(depthDebugCubeShaderName, depthDebugCubeUniforms);
+    }
+    ShaderManager::Activate(depthDebugCubeShaderName);
 
     // Default
     std::string defShaderName = ShaderManager::Load("defShader", "Assets/shaders/default.vert", "Assets/shaders/default.frag");
@@ -139,8 +169,9 @@ int main()
     Model model("Assets/Models/crow.obj");
     glfwPtr.camera = &camera;
     Skybox skybox;
-    //ShadowMap2D shadowMap(lightPos, glm::vec3(0.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 400.0f);// -100.0f, 100.0f, -100.0f, 100.0f
-    ShadowMap2D shadowMap(lightPos, glm::vec3(1.0f, 0.0f, 0.0f), 90.0f, 0.1f, 400.0f);
+    // ShadowMap2D shadowMap(lightPos, glm::vec3(0.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f, 0.1f, 400.0f);// -100.0f, 100.0f, -100.0f, 100.0f
+    // ShadowMap2D shadowMap(lightPos, glm::vec3(1.0f, 0.0f, 0.0f), 90.0f, 0.1f, 400.0f);
+    ShadowMapCube shadowMap(lightPos, 0.1f, 400.0f);
 #pragma endregion
 
     double timePrev = 0;
@@ -163,10 +194,10 @@ int main()
         VIEWPORT.glClearCurrentColor();
         My_ImGui::ShowDockSpace();
 
-        shadowMap.BeginDepthPass(shadowMap2DShaderName);
+        shadowMap.BeginDepthPass(shadowMapCubeShaderName);
         if (glfwGetKey(VIEWPORT.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
-            shadowMap.setView(camera.position, camera.Orientation);
-        model.Draw(shadowMap2DShaderName);
+            shadowMap.setView(camera.position);  //, camera.Orientation);
+        model.Draw(shadowMapCubeShaderName);
 
         antiAlias.Activate();
 
@@ -193,7 +224,7 @@ int main()
         postProcess.Draw(postProcessShaderName);
 
         // BindSquare();
-        // shadowMap.DrawDepthDebug(depthDebugShaderName);
+        // shadowMap.DrawDepthDebug(depthDebugCubeShaderName, 0);
         // UnbindSquare();
 
         My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z);

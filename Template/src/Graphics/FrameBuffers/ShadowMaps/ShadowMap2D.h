@@ -29,7 +29,7 @@ public:
     void BeginDepthPass(const std::string& shaderName) override;
     void EndDepthPass() override;
     void ExportUniformsTo(const std::string& shaderName, GLuint textureSlot) override;
-    void DrawDepthDebug(const std::string& shaderName) override;
+    void DrawDepthDebug(const std::string& shaderName);
 };
 
 #endif
