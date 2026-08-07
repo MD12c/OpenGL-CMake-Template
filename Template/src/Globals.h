@@ -39,3 +39,10 @@ constexpr glm::vec2 BOT_LEFT_BOUNDERY  = glm::vec2(square[0], square[1]);
 constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[6], square[7]);
 
 constexpr GLuint numSamples = 8;
+
+//-----------------------------------------------------------------------
+// Temporary Globals Below
+//-----------------------------------------------------------------------
+
+// glm::vec3 lightPos = glm::vec3(0.0f, 30.0f, 0.0f);
+inline glm::vec3 lightPos = glm::vec3(-4.5f, 17.0f, 3.0f);

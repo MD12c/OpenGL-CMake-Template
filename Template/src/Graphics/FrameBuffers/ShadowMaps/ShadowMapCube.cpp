@@ -41,14 +41,14 @@ void ShadowMapCube::setView(glm::vec3 newPosition)
         shadowMatrices[i] = proj * glm::lookAt(lightPos, lightPos + cubeFaces[i].dir, cubeFaces[i].up);
 }
 
-void ShadowMapCube::BeginDepthPass(const std::string& shaderName)
+void ShadowMapCube::BeginDepthPass(unsigned int shaderID)
 {
-    ShaderManager::Activate(shaderName);
+    ShaderManager::Activate(shaderID);
     for (int i = 0; i < 6; i++)
-        glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "shadowMatrices[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(shadowMatrices[i]));
+        glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "shadowMatrices[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(shadowMatrices[i]));
 
-    glUniform3f(ShaderManager::GetUniformLoc(shaderName, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-    glUniform1f(ShaderManager::GetUniformLoc(shaderName, "farPlane"), farPlane);
+    glUniform3f(ShaderManager::getLoc(shaderID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    glUniform1f(ShaderManager::getLoc(shaderID, "farPlane"), farPlane);
 
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
@@ -61,31 +61,31 @@ void ShadowMapCube::EndDepthPass()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMapCube::ExportUniformsTo(const std::string& shaderName, GLuint textureSlot)
+void ShadowMapCube::ExportUniformsTo(unsigned int shaderID, GLuint textureSlot)
 {
-    ShaderManager::Activate(shaderName);
+    ShaderManager::Activate(shaderID);
     glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeTexture);
-    glUniform1i(ShaderManager::GetUniformLoc(shaderName, "shadowCubeMap"), textureSlot);
-    glUniform1f(ShaderManager::GetUniformLoc(shaderName, "farPlane"), farPlane);
-    glUniform3fv(ShaderManager::GetUniformLoc(shaderName, "lightPos"), 1, glm::value_ptr(lightPos));
+    glUniform1i(ShaderManager::getLoc(shaderID, "shadowCubeMap"), textureSlot);
+    glUniform1f(ShaderManager::getLoc(shaderID, "farPlane"), farPlane);
+    glUniform3fv(ShaderManager::getLoc(shaderID, "lightPos"), 1, glm::value_ptr(lightPos));
 }
 
-void ShadowMapCube::DrawDepthDebug(const std::string& shaderName, int faceIndex)
+void ShadowMapCube::DrawDepthDebug(unsigned int shaderID, int faceIndex)
 {
-    ShaderManager::Activate(shaderName);
+    ShaderManager::Activate(shaderID);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeTexture);
-    glUniform1i(ShaderManager::GetUniformLoc(shaderName, "depthCubeMap"), 0);
+    glUniform1i(ShaderManager::getLoc(shaderID, "depthCubeMap"), 0);
 
     glm::vec3 forward = cubeFaces[faceIndex].dir;
     glm::vec3 up      = cubeFaces[faceIndex].up;
     glm::vec3 right   = glm::normalize(glm::cross(forward, up));
 
-    glUniform3fv(ShaderManager::GetUniformLoc(shaderName, "faceForward"), 1, glm::value_ptr(forward));
-    glUniform3fv(ShaderManager::GetUniformLoc(shaderName, "faceRight"), 1, glm::value_ptr(right));
-    glUniform3fv(ShaderManager::GetUniformLoc(shaderName, "faceUp"), 1, glm::value_ptr(up));
+    glUniform3fv(ShaderManager::getLoc(shaderID, "faceForward"), 1, glm::value_ptr(forward));
+    glUniform3fv(ShaderManager::getLoc(shaderID, "faceRight"), 1, glm::value_ptr(right));
+    glUniform3fv(ShaderManager::getLoc(shaderID, "faceUp"), 1, glm::value_ptr(up));
 
     glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);
 }

@@ -17,9 +17,9 @@ public:
 
     virtual ~ShadowCaster() = default;
 
-    virtual void BeginDepthPass(const std::string& shaderName)                       = 0;
-    virtual void EndDepthPass()                                                      = 0;
-    virtual void ExportUniformsTo(const std::string& shaderName, GLuint textureSlot) = 0;
+    virtual void BeginDepthPass(unsigned int shaderID)                       = 0;
+    virtual void EndDepthPass()                                              = 0;
+    virtual void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot) = 0;
 };
 
 #endif

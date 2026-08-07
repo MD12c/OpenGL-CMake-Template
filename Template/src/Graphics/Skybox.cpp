@@ -40,11 +40,11 @@ Skybox::Skybox()
 	}
 }
 
-void Skybox::Draw(const std::string& shaderName, glm::mat4 cameraMatrix)
+void Skybox::Draw(unsigned int shaderID, glm::mat4 cameraMatrix)
 {
-    ShaderManager::Activate(shaderName);
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
-    glUniform1i(ShaderManager::GetUniformLoc(shaderName, "skybox"), 0);
+    ShaderManager::Activate(shaderID);
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+    glUniform1i(ShaderManager::getLoc(shaderID, "skybox"), 0);
 
     glDisable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);

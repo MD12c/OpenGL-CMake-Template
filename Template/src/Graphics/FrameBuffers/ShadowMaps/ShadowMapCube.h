@@ -39,10 +39,10 @@ public:
     ShadowMapCube(glm::vec3 lightPos, float near, float far);
     void setView(glm::vec3 newPosition);
 
-    void BeginDepthPass(const std::string& shaderName) override;
+    void BeginDepthPass(unsigned int shaderID) override;
     void EndDepthPass() override;
-    void ExportUniformsTo(const std::string& shaderName, GLuint textureSlot) override;
-    void DrawDepthDebug(const std::string& shaderName, int faceIndex);
+    void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot) override;
+    void DrawDepthDebug(unsigned int shaderID, int faceIndex);
 };
 
 #endif

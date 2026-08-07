@@ -1,71 +1,50 @@
 #include "ShaderManager.h"
+#include <iostream>
 
 namespace ShaderManager
 {
-std::unordered_map<std::string, ShaderResources> shaderResources;
+std::vector<ShaderResources> shaderResources;
 
-ShaderResources* checkIfExists(const std::string& name)
+Shader& Get(unsigned int ID)
 {
-    auto it = shaderResources.find(name);
-    return it != shaderResources.end() ? &it->second : nullptr;
+    return shaderResources.at(ID).shader;
 }
 
-std::string Load(const std::string& name, const std::string& vertPath, const std::string& fragPath, const std::string& geomPath)
+void addUniforms(unsigned int ID, const std::unordered_map<std::string, GLint>& uniforms)
 {
-    if (checkIfExists(name))
-        return name;
-
-    shaderResources.emplace(name, ShaderResources(Shader(vertPath, fragPath, geomPath), {}));
-    return name;
-}
-
-std::string Load(const std::string& name, const std::string& vertPath, const std::string& fragPath)
-{
-    if (checkIfExists(name))
-        return name;
-
-    shaderResources.emplace(name, ShaderResources(Shader(vertPath, fragPath), {}));
-    return name;
-}
-
-Shader& Get(const std::string& name)
-{
-    return shaderResources.at(name).shader;
-}
-
-void AddUniforms(const std::string& name, const std::unordered_map<std::string, GLint>& uniforms)
-{
-    auto& resource    = shaderResources.at(name);
+    auto& resource    = shaderResources.at(ID);
     resource.uniforms = uniforms;
 }
 
-void AddUniform(const std::string& name, const std::string& uniformName, GLint uniformLoc)
+void addUniform(unsigned int ID, const std::string& uniformName, GLint uniformLoc)
 {
-    auto& resource = shaderResources.at(name);
+    auto& resource = shaderResources.at(ID);
     resource.uniforms.emplace(uniformName, uniformLoc);
 }
 
-GLint GetUniformLoc(const std::string& name, const std::string& uniformName)
+GLint getLoc(unsigned int ID, const std::string& uniformName)
 {
-    auto& resource = shaderResources.at(name);
+    auto& resource = shaderResources.at(ID);
 
     auto it = resource.uniforms.find(uniformName);
     if (it != resource.uniforms.end())
         return it->second;
 
-    GLint loc                      = glGetUniformLocation(resource.shader.ID, uniformName.c_str());
+    GLint loc = glGetUniformLocation(resource.shader.ID, uniformName.c_str());
+    if (loc == -1)
+        std::cerr << "[ERROR] uniform location not found, Shader ID: " + std::to_string(ID) << std::endl;
     resource.uniforms[uniformName] = loc;
     return loc;
 }
 
-std::unordered_map<std::string, GLint>& GetUniforms(const std::string& name)
+std::unordered_map<std::string, GLint>& getUniforms(unsigned int ID)
 {
-    return shaderResources.at(name).uniforms;
+    return shaderResources.at(ID).uniforms;
 }
 
-void Activate(const std::string& name)
+void Activate(unsigned int ID)
 {
-    shaderResources.at(name).shader.Activate();
+    shaderResources.at(ID).shader.Activate();
 }
 
 void Cleanup()

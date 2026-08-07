@@ -5,12 +5,12 @@ Model::Model(const std::string& path)
     loadModel(path);
 }
 
-void Model::Draw(const std::string& shaderName)
+void Model::Draw(unsigned int shaderID)
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
         meshes[i].Draw(
-            shaderName,
+            shaderID,
             glm::mat4(1.0f),
             glm::vec3(0.0f, 0.0f, 0.0f),
             glm::quat(1.0f, 0.0f, 0.0f, 0.0f),

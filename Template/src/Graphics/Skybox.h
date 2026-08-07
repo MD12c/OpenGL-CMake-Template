@@ -69,7 +69,7 @@ public:
 public:
     Skybox();
     ~Skybox();
-    void Draw(const std::string& shaderName, glm::mat4 cameraMatrix);
+    void Draw(unsigned int shaderID, glm::mat4 cameraMatrix);
 };
 
 #endif

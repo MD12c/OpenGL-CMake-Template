@@ -18,7 +18,7 @@ public:
 
 	Texture(const std::string& image, const std::string& texType, GLuint slot);
 
-	void texUnit(const std::string& shaderName, const std::string& uniform);
+	void texUnit(unsigned int shaderID, const std::string& uniform);
 	void texUnit(Shader& shader, const std::string&, GLuint unit); // Old
 	void Bind();
 	void Unbind();

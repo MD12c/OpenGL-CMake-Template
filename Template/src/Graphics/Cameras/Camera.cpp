@@ -10,13 +10,13 @@ Camera::Camera(GLFWwindow* window)
     glfwSetScrollCallback(window, ScrollCallback);
 }
 
-void Camera::updateUniforms(const std::string& shaderName)
+void Camera::updateUniforms(unsigned int shaderID)
 {
     glfwPtr.camera = this;
-    ShaderManager::Activate(shaderName);
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(ShaderManager::GetUniformLoc(shaderName, "camPos"), position.x, position.y, position.z);
+    ShaderManager::Activate(shaderID);
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    glUniform3f(ShaderManager::getLoc(shaderID, "camPos"), position.x, position.y, position.z);
 }
 
 glm::vec2 Camera::screenToWorld(const glm::vec2& pos)

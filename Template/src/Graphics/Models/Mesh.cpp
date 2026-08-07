@@ -20,9 +20,9 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vec
     EBO.Unbind();
 }
 
-void Mesh::addTextureUnits(const std::string& shaderName)
+void Mesh::addTextureUnits(unsigned int shaderID)
 {
-    if (configuredShaders.count(shaderName))
+    if (configuredShaders.count(shaderID))
         return;
 
     unsigned int numDiffuse  = 0;
@@ -36,25 +36,25 @@ void Mesh::addTextureUnits(const std::string& shaderName)
         else if (type == "specular")
             num = std::to_string(numSpecular++);
 
-        textures[i].texUnit(shaderName, (type + num).c_str());
+        textures[i].texUnit(shaderID, (type + num).c_str());
     }
-	configuredShaders.insert(shaderName);
+    configuredShaders.insert(shaderID);
 }
 
 void Mesh::Draw(
-    const std::string& shaderName,
-    glm::mat4          matrix,
-    glm::vec3          translation,
-    glm::quat          rotation,
-    glm::vec3          scale)
+    unsigned int shaderID,
+    glm::mat4    matrix,
+    glm::vec3    translation,
+    glm::quat    rotation,
+    glm::vec3    scale)
 {
-    ShaderManager::Get(shaderName).Activate();
-	addTextureUnits(shaderName);
+    ShaderManager::Get(shaderID).Activate();
+    addTextureUnits(shaderID);
 
     VAO.Bind();
 
-	for (auto& tex : textures)
-		tex.Bind();
+    for (auto& tex : textures)
+        tex.Bind();
 
     glm::mat4 trans = glm::mat4(1.0f);
     glm::mat4 rot   = glm::mat4(1.0f);
@@ -64,10 +64,10 @@ void Mesh::Draw(
     rot   = glm::mat4_cast(rotation);
     sca   = glm::scale(sca, scale);
 
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "translation"), 1, GL_FALSE, glm::value_ptr(trans));
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "rotation"), 1, GL_FALSE, glm::value_ptr(rot));
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "model"), 1, GL_FALSE, glm::value_ptr(matrix));
-    
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "translation"), 1, GL_FALSE, glm::value_ptr(trans));
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "rotation"), 1, GL_FALSE, glm::value_ptr(rot));
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "model"), 1, GL_FALSE, glm::value_ptr(matrix));
+
     glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
 }

@@ -47,6 +47,7 @@
   src/Graphics/FrameBuffers/ShadowMaps/ShadowCaster.cpp
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.h
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.cpp
+  src/Graphics/Shaders/ShaderLoader.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

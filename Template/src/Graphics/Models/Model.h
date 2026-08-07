@@ -24,5 +24,5 @@ public:
 
     Model(const std::string& path);
 
-    void Draw(const std::string& shaderName);
+    void Draw(unsigned int shaderID);
 };

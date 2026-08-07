@@ -52,11 +52,11 @@ void Framebuffer::Activate()
     glFrontFace(GL_CCW);
 }
 
-void Framebuffer::Draw(const std::string& shaderName)
+void Framebuffer::Draw(unsigned int shaderID)
 {
     glfwPtr.framebuffer = this;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    ShaderManager::Activate(shaderName);
+    ShaderManager::Activate(shaderID);
     framebufferVAO.Bind();
     framebufferVBO.Bind();
     framebufferEBO.Bind();

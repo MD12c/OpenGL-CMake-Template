@@ -44,11 +44,11 @@ void ShadowMap2D::genTexture()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMap2D::BeginDepthPass(const std::string& shaderName)
+void ShadowMap2D::BeginDepthPass(unsigned int shaderID)
 {
-    ShaderManager::Activate(shaderName);
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "view"), 1, GL_FALSE, glm::value_ptr(view));
+    ShaderManager::Activate(shaderID);
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "view"), 1, GL_FALSE, glm::value_ptr(view));
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
@@ -60,18 +60,18 @@ void ShadowMap2D::EndDepthPass()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMap2D::ExportUniformsTo(const std::string& shaderName, GLuint textureSlot)
+void ShadowMap2D::ExportUniformsTo(unsigned int shaderID, GLuint textureSlot)
 {
-    ShaderManager::Activate(shaderName);
+    ShaderManager::Activate(shaderID);
     glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
-    glUniform1i(ShaderManager::GetUniformLoc(shaderName, "shadowMap"), textureSlot);
-    glUniformMatrix4fv(ShaderManager::GetUniformLoc(shaderName, "shadowMapMatrix"), 1, GL_FALSE, glm::value_ptr(proj * view));
+    glUniform1i(ShaderManager::getLoc(shaderID, "shadowMap"), textureSlot);
+    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "shadowMapMatrix"), 1, GL_FALSE, glm::value_ptr(proj * view));
 }
 
-void ShadowMap2D::DrawDepthDebug(const std::string& shaderName)
+void ShadowMap2D::DrawDepthDebug(unsigned int shaderID)
 {
-    ShaderManager::Activate(shaderName);
+    ShaderManager::Activate(shaderID);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
     glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);

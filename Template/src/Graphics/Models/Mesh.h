@@ -22,15 +22,15 @@ public:
 
     VAO VAO;
 
-	std::unordered_set<std::string> configuredShaders;
+    std::unordered_set<unsigned int> configuredShaders;
 
     Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, std::vector<Texture>& textures);
-	void addTextureUnits(const std::string& shaderName);
+    void addTextureUnits(unsigned int shaderID);
 
     void Draw(
-        const std::string& shaderName,
-        glm::mat4          matrix      = glm::mat4(1.0f),
-        glm::vec3          translation = glm::vec3(1.0f),
-        glm::quat          rotation    = glm::quat(1.0f, 1.0f, 1.0f, 1.0f),
-        glm::vec3          scale       = glm::vec3(1.0f, 1.0f, 1.0f));
+        unsigned int shaderID,
+        glm::mat4    matrix      = glm::mat4(1.0f),
+        glm::vec3    translation = glm::vec3(1.0f),
+        glm::quat    rotation    = glm::quat(1.0f, 1.0f, 1.0f, 1.0f),
+        glm::vec3    scale       = glm::vec3(1.0f, 1.0f, 1.0f));
 };

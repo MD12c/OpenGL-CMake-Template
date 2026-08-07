@@ -28,7 +28,7 @@ public:
 
     Camera(GLFWwindow* window);
     static void ScrollCallback(GLFWwindow* win, double xoffset, double yoffset);
-    void        updateUniforms(const std::string& shaderName);
+    void        updateUniforms(unsigned int shaderID);
     glm::vec2   screenToWorld(const glm::vec2& pos);
 
     virtual void updateScreenSize()                                        = 0;

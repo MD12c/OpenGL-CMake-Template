@@ -48,10 +48,10 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::texUnit(const std::string& shaderName, const std::string& uniform)
+void Texture::texUnit(unsigned int shaderID, const std::string& uniform)
 {
-    ShaderManager::Activate(shaderName);
-    glUniform1i(ShaderManager::GetUniformLoc(shaderName, uniform), unit);
+    ShaderManager::Activate(shaderID);
+    glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
 }
 
 // Old! Dont use if using shader manager

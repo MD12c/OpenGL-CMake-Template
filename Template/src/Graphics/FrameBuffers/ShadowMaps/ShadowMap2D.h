@@ -26,10 +26,10 @@ public:
     ShadowMap2D(glm::vec3 lightPos, glm::vec3 direction, float fovDeg, float near, float far);
     void setView(glm::vec3 newPosition, glm::vec3 newDirection);
 
-    void BeginDepthPass(const std::string& shaderName) override;
+    void BeginDepthPass(unsigned int shaderID) override;
     void EndDepthPass() override;
-    void ExportUniformsTo(const std::string& shaderName, GLuint textureSlot) override;
-    void DrawDepthDebug(const std::string& shaderName);
+    void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot) override;
+    void DrawDepthDebug(unsigned int shaderID);
 };
 
 #endif

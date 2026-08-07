@@ -23,7 +23,7 @@ public:
     void ClearBuffer();
     void Resize(int w, int h);
     void Activate();
-    void Draw(const std::string& shaderName);
+    void Draw(unsigned int shaderID);
 };
 
 #endif
