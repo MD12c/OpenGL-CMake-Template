@@ -124,7 +124,8 @@ void My_ImGui::RenderInterfaceInput()
     // ImGui::ShowDemoWindow();
 }
 
-void My_ImGui::RenderOverlay(float x, float y, float z)
+void My_ImGui::RenderOverlay(float x, float y, float z,
+                             float r, float s, float t)
 {
     ImGui::SetNextWindowBgAlpha(0.35f);
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
@@ -134,6 +135,7 @@ void My_ImGui::RenderOverlay(float x, float y, float z)
     ImGui::Begin("Debug Overlay", nullptr, flags);
     ImGui::Text("FPS: %1.0f", ImGui::GetIO().Framerate);
     ImGui::Text("Camera Pos: (%.2f, %.2f, %.2f)", x, y, z);
+    ImGui::Text("Camera Pos: (%.2f, %.2f, %.2f)", r, s, t);
     ImGui::End();
 }
 

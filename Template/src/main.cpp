@@ -55,9 +55,14 @@ int main()
     glfwPtr.camera = &camera;
     Skybox skybox;
 
+    // glm::vec3 lightPos = glm::vec3(0.0f, 30.0f, 0.0f);
+    // glm::vec3 lightPosition = glm::vec3(-4.5f, 17.0f, 3.0f);
+    glm::vec3 lightPosition = glm::vec3(-3.0f, 11.5f, 11.5f);
+    glm::vec3 lightOrientation = glm::vec3(-0.15f, 0.0f, -1.0f);
+
     LightSystem lightSystem(0.1f, 400.0f);
-    lightSystem.addLight(lightPosition, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f);
-    lightSystem.addLight(lightPosition, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
+    //lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(1.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f);
+    //lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
     lightSystem.addLight(lightPosition, glm::vec3(0.0f, 0.0f, 1.0f));
 #pragma endregion
 
@@ -99,7 +104,8 @@ int main()
         // shadowCasters.DrawDepthDebug(IDs.depthDebug, 0);
         // UnbindSquare();
 
-        My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z);
+        My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z,
+                                camera.Orientation.x, camera.Orientation.y, camera.Orientation.z);
         // My_ImGui::RenderInterfaceInput();
         My_ImGui::RenderDockSpace();
         glfwSwapBuffers(VIEWPORT.getWindow());

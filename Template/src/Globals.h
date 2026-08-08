@@ -43,6 +43,3 @@ constexpr GLuint numSamples = 8;
 //-----------------------------------------------------------------------
 // Temporary Globals Below
 //-----------------------------------------------------------------------
-
-// glm::vec3 lightPos = glm::vec3(0.0f, 30.0f, 0.0f);
-inline glm::vec3 lightPosition = glm::vec3(-4.5f, 17.0f, 3.0f);

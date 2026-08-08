@@ -14,5 +14,5 @@ void RenderDockSpace();
 void Shutdown();
 
 void RenderInterfaceInput();
-void RenderOverlay(float x, float y, float z);
+void RenderOverlay(float x, float y, float z,float r, float s, float t);
 };  // namespace My_ImGui
