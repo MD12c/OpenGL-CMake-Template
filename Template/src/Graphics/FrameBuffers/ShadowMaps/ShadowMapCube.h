@@ -1,8 +1,6 @@
 #ifndef SHADOW_MAP_CUBE_CLASS_H
 #define SHADOW_MAP_CUBE_CLASS_H
 
-#include <optional>
-
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 
@@ -13,6 +11,10 @@ class ShadowMapCube : public ShadowCaster
 private:
     GLuint shadowCubeTexture;
     float  farPlane;
+    
+    glm::mat4 proj     = glm::mat4(1.0f);
+    glm::vec3 lightPos = glm::vec3(1.0f);
+    glm::vec3 color    = glm::vec3(1.0f);
 
     struct CubeFace
     {
@@ -29,19 +31,16 @@ private:
         { { 0.0f, 0.0f, -1.0f }, { 0.0f, -1.0f, 0.0f } },
     };
 
-    std::optional<GLuint> debugTexture = {};
-
 public:
     glm::mat4 shadowMatrices[6];
-    glm::vec3 lightPos;
-    glm::mat4 proj;
 
-    ShadowMapCube(glm::vec3 lightPos, float near, float far);
-    void setView(glm::vec3 newPosition);
+    ShadowMapCube(glm::vec3 lightPos, glm::vec3 lightColor, float zNear, float zFar);
+    ~ShadowMapCube();
 
+    void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
     void BeginDepthPass(unsigned int shaderID) override;
     void EndDepthPass() override;
-    void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot) override;
+    void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot, int lightIndex) override;
     void DrawDepthDebug(unsigned int shaderID, int faceIndex);
 };
 

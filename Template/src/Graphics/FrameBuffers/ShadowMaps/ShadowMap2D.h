@@ -16,19 +16,26 @@ private:
     GLuint shadowMapTexture;
     void   genTexture();
 
+    glm::mat4 proj  = glm::mat4(1.0f);
+    glm::mat4 view  = glm::mat4(1.0f);
+    glm::vec3 color = glm::vec3(1.0f);
+
+    // Spot Light only
+    GLfloat innerCone;
+    GLfloat outerCone;
+
 public:
     glm::vec3 lightPos;
     glm::vec3 direction;
-    glm::mat4 proj = glm::mat4(1.0f);
-    glm::mat4 view = glm::mat4(1.0f);
 
-    ShadowMap2D(glm::vec3 lightPos, glm::vec3 direction, float left, float right, float bottom, float top, float zNear, float zFar);
-    ShadowMap2D(glm::vec3 lightPos, glm::vec3 direction, float fovDeg, float near, float far);
-    void setView(glm::vec3 newPosition, glm::vec3 newDirection);
+    ShadowMap2D(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top, float zNear, float zFar);
+    ShadowMap2D(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone, float zNear, float zFar);
+    ~ShadowMap2D();
 
+    void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
     void BeginDepthPass(unsigned int shaderID) override;
     void EndDepthPass() override;
-    void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot) override;
+    void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot, int lightIndex) override;
     void DrawDepthDebug(unsigned int shaderID);
 };
 

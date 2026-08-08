@@ -41,8 +41,8 @@ unsigned int Load(const std::string& vertPath, const std::string& fragPath, cons
 unsigned int Load(const std::string& vertPath, const std::string& fragPath);
 Shader&      Get(unsigned int ID);
 
-void                                    addUniforms(unsigned int ID, const std::unordered_map<std::string, GLint>& uniforms);
-void                                    addUniform(unsigned int ID, const std::string& uniformName, GLint uniformLoc);
+void                                    addUniforms(unsigned int ID, const std::vector<std::string>& uniforms);
+void                                    addUniform(unsigned int ID, const std::string& uniformName);
 std::unordered_map<std::string, GLint>& getUniforms(unsigned int ID);
 GLint                                   getLoc(unsigned int ID, const std::string& uniformName);
 

@@ -10,16 +10,17 @@ Shader& Get(unsigned int ID)
     return shaderResources.at(ID).shader;
 }
 
-void addUniforms(unsigned int ID, const std::unordered_map<std::string, GLint>& uniforms)
-{
-    auto& resource    = shaderResources.at(ID);
-    resource.uniforms = uniforms;
-}
-
-void addUniform(unsigned int ID, const std::string& uniformName, GLint uniformLoc)
+void addUniforms(unsigned int ID, const std::vector<std::string>& uniforms)
 {
     auto& resource = shaderResources.at(ID);
-    resource.uniforms.emplace(uniformName, uniformLoc);
+    for (const auto& u : uniforms)
+        resource.uniforms.insert({ u, getLoc(ID, u) });
+}
+
+void addUniform(unsigned int ID, const std::string& uniformName)
+{
+    auto& resource = shaderResources.at(ID);
+    resource.uniforms.emplace(uniformName, getLoc(ID, uniformName));
 }
 
 GLint getLoc(unsigned int ID, const std::string& uniformName)
@@ -31,8 +32,9 @@ GLint getLoc(unsigned int ID, const std::string& uniformName)
         return it->second;
 
     GLint loc = glGetUniformLocation(resource.shader.ID, uniformName.c_str());
-    if (loc == -1)
-        std::cerr << "[ERROR] uniform location not found, Shader ID: " + std::to_string(ID) << std::endl;
+    if (loc == -1)  // GLSL compiler strips unused uniforms
+        std::cerr << "[WARNING] uniform location not found,  Shader ID: " << std::to_string(ID) << "  Uniform Name: " << uniformName << std::endl;
+
     resource.uniforms[uniformName] = loc;
     return loc;
 }

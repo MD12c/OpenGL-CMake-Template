@@ -2,9 +2,11 @@
 #include "../../Shaders/ShaderManager.h"
 #include "Globals.h"
 
-ShadowMapCube::ShadowMapCube(glm::vec3 lightPos, float zNear, float zFar)
-    : lightPos(lightPos), farPlane(zFar)
+ShadowMapCube::ShadowMapCube(glm::vec3 lightPos, glm::vec3 lightColor, float zNear, float zFar)
+    : lightPos(lightPos), farPlane(zFar), color(lightColor)
 {
+    lightType = LightType::POINT;
+
     glGenFramebuffers(1, &ID);
     glGenTextures(1, &shadowCubeTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeTexture);
@@ -31,10 +33,16 @@ ShadowMapCube::ShadowMapCube(glm::vec3 lightPos, float zNear, float zFar)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     proj = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, farPlane);
-    setView(lightPos);
+    setView(lightPos, glm::vec3(0.0f));
 }
 
-void ShadowMapCube::setView(glm::vec3 newPosition)
+ShadowMapCube::~ShadowMapCube()
+{
+    glDeleteTextures(1, &shadowCubeTexture);
+    shadowCubeTexture = 0;
+}
+
+void ShadowMapCube::setView(glm::vec3 newPosition, glm::vec3 newDirection)
 {
     lightPos = newPosition;
     for (int i = 0; i < 6; i++)
@@ -44,6 +52,7 @@ void ShadowMapCube::setView(glm::vec3 newPosition)
 void ShadowMapCube::BeginDepthPass(unsigned int shaderID)
 {
     ShaderManager::Activate(shaderID);
+
     for (int i = 0; i < 6; i++)
         glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "shadowMatrices[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(shadowMatrices[i]));
 
@@ -61,14 +70,15 @@ void ShadowMapCube::EndDepthPass()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowMapCube::ExportUniformsTo(unsigned int shaderID, GLuint textureSlot)
+void ShadowMapCube::ExportUniformsTo(unsigned int shaderID, GLuint textureSlot, int lightIndex)
 {
     ShaderManager::Activate(shaderID);
     glActiveTexture(GL_TEXTURE0 + textureSlot);
     glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeTexture);
-    glUniform1i(ShaderManager::getLoc(shaderID, "shadowCubeMap"), textureSlot);
-    glUniform1f(ShaderManager::getLoc(shaderID, "farPlane"), farPlane);
-    glUniform3fv(ShaderManager::getLoc(shaderID, "lightPos"), 1, glm::value_ptr(lightPos));
+    glUniform1i(ShaderManager::getLoc(shaderID, "pointShadowCubeMap[" + std::to_string(lightIndex) + "]"), textureSlot);
+    glUniform1f(ShaderManager::getLoc(shaderID, "pointFarPlane[" + std::to_string(lightIndex) + "]"), farPlane);
+    glUniform3fv(ShaderManager::getLoc(shaderID, "pointLightPos[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightPos));
+    glUniform3fv(ShaderManager::getLoc(shaderID, "pointLightColor[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(color));
 }
 
 void ShadowMapCube::DrawDepthDebug(unsigned int shaderID, int faceIndex)

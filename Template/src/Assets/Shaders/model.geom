@@ -7,7 +7,6 @@ out vec3 Normal;
 out vec3 color;
 out vec2 texCoord;
 out vec3 crntPos;
-out vec4 fragPosLight;
 
 in DATA
 {
@@ -16,7 +15,6 @@ in DATA
     vec3 color;
     vec2 texCoord;
     mat4 camMatrix;
-    vec4 fragPosLight;
 }
 data_in[];
 
@@ -26,21 +24,21 @@ void main()
     Normal       = data_in[0].Normal;
     texCoord     = data_in[0].texCoord;
     crntPos      = data_in[0].Position;
-    fragPosLight = data_in[0].fragPosLight;
+    color        = data_in[0].color;
     EmitVertex();
 
     gl_Position  = data_in[1].camMatrix * vec4(data_in[1].Position, 1.0f);
     Normal       = data_in[1].Normal;
     texCoord     = data_in[1].texCoord;
     crntPos      = data_in[1].Position;
-    fragPosLight = data_in[1].fragPosLight;
+    color        = data_in[1].color;
     EmitVertex();
 
     gl_Position  = data_in[2].camMatrix * vec4(data_in[2].Position, 1.0f);
     Normal       = data_in[2].Normal;
     texCoord     = data_in[2].texCoord;
     crntPos      = data_in[2].Position;
-    fragPosLight = data_in[2].fragPosLight;
+    color        = data_in[2].color;
     EmitVertex();
 
     EndPrimitive();
