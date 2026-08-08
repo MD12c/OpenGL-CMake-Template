@@ -9,9 +9,9 @@
 class ShadowMapCube : public ShadowCaster
 {
 private:
-    GLuint shadowCubeTexture;
+    GLuint layerIndex;
     float  farPlane;
-    
+
     glm::mat4 proj     = glm::mat4(1.0f);
     glm::vec3 lightPos = glm::vec3(1.0f);
     glm::vec3 color    = glm::vec3(1.0f);
@@ -34,13 +34,11 @@ private:
 public:
     glm::mat4 shadowMatrices[6];
 
-    ShadowMapCube(glm::vec3 lightPos, glm::vec3 lightColor, float zNear, float zFar);
-    ~ShadowMapCube();
+    ShadowMapCube(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 lightColor, float zNear, float zFar);
 
     void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
-    void BeginDepthPass(unsigned int shaderID) override;
-    void EndDepthPass() override;
-    void ExportUniformsTo(unsigned int shaderID, GLuint textureSlot, int lightIndex) override;
+    void BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem) override;
+    void ExportUniformsTo(unsigned int shaderID, int lightIndex) override;
     void DrawDepthDebug(unsigned int shaderID, int faceIndex);
 };
 

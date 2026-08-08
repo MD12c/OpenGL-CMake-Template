@@ -15,6 +15,7 @@
   src/Graphics/Shaders/Shader.h
   src/Graphics/Shaders/ShaderManager.h
   src/Graphics/Shaders/ShaderManager.cpp
+  src/Graphics/Shaders/ShaderLoader.cpp
   src/Graphics/FrameBuffers/Texture.cpp
   src/Graphics/FrameBuffers/Texture.h
   src/Graphics/Window.cpp
@@ -47,7 +48,10 @@
   src/Graphics/FrameBuffers/ShadowMaps/ShadowCaster.cpp
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.h
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.cpp
-  src/Graphics/Shaders/ShaderLoader.cpp
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowSystem.h
+  src/Graphics/FrameBuffers/ShadowMaps/ShadowSystem.cpp
+  src/Graphics/LightSystem.h
+  src/Graphics/LightSystem.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)

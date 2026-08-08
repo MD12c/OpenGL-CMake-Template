@@ -2,13 +2,13 @@
 
 #include <stdexcept>
 
-unsigned int ShadowCaster::getShaderIDfromType(LightType type)
+unsigned int ShadowCaster::getShaderIDfromType(LightSystem::LightType type)
 {
-    if (type == DIRECTION)
+    if (type == LightSystem::LightType::DIRECTION)
         return ShaderManager::IDs.shadowMap2D;
-    else if (type == SPOT)
+    else if (type == LightSystem::LightType::SPOT)
         return ShaderManager::IDs.shadowMap2D;
-    else if (type == POINT)
+    else if (type == LightSystem::LightType::POINT)
         return ShaderManager::IDs.shadowMapCube;
     else
         throw std::runtime_error("[ERROR] Invalid light type");

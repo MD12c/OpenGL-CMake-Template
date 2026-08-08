@@ -18,6 +18,7 @@
 #include "FrameBuffers/ShadowMaps/ShadowCaster.h"
 #include "FrameBuffers/ShadowMaps/ShadowMap2D.h"
 #include "FrameBuffers/ShadowMaps/ShadowMapCube.h"
+#include "FrameBuffers/ShadowMaps/ShadowSystem.h"
 
 #include "Cameras/Camera.h"
 #include "Cameras/2Dcam.h"
@@ -27,3 +28,4 @@
 #include "Models/Mesh.h"
 #include "Models/Model.h"
 #include "Skybox.h"
+#include "LightSystem.h"
