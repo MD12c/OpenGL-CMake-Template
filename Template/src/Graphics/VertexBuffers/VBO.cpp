@@ -7,11 +7,11 @@ VBO::VBO(const void* vertices, GLsizeiptr size, int usageHint)
     glBufferData(GL_ARRAY_BUFFER, size, vertices, usageHint);
 }
 
-VBO::VBO(std::vector<Vertex> &vertices)
+VBO::VBO(std::vector<Vertex>& vertices)
 {
-	glGenBuffers(1, &ID);
-	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glGenBuffers(1, &ID);
+    glBindBuffer(GL_ARRAY_BUFFER, ID);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 }
 
 VBO::VBO()
@@ -26,23 +26,23 @@ void VBO::UpdateData(const void* vertices, GLsizeiptr size)
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }
 
-void VBO::UpdateData(std::vector<Vertex> &vertices)
+void VBO::UpdateData(std::vector<Vertex>& vertices)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, ID);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, ID);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 }
 
-void VBO::Bind()
+void VBO::Bind() const
 {
     glBindBuffer(GL_ARRAY_BUFFER, ID);
 }
 
-void VBO::Unbind()
+void VBO::Unbind() const
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VBO::Delete()
+void VBO::Delete() const
 {
     glDeleteBuffers(1, &ID);
 }

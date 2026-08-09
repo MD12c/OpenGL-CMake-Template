@@ -5,15 +5,11 @@ int main()
 // Window creation
 #pragma region
     Window VIEWPORT;
+    Renderer renderer;
     My_ImGui::Init(VIEWPORT.getWindow());
-
-    // Camera2D camera(VIEWPORT.getWindow());
-    // CameraOrbit camera(VIEWPORT.getWindow());
-    CameraFly camera(VIEWPORT.getWindow(), 45, 0.1f, 10000.0f);
-
-    MSAAbuffer  antiAlias;
-    Framebuffer postProcess;
     ShaderManager::LoadAllShaders();
+
+    Scene scene(VIEWPORT.getWindow());
 #pragma endregion
 
 // Square
@@ -45,63 +41,14 @@ int main()
     UnbindSquare();
 #pragma endregion
 
-// Models
-#pragma region
-    Model  model("Assets/Models/crow.obj");
-    Skybox skybox;
-
-    // glm::vec3 lightPosition = glm::vec3(0.0f, 30.0f, 0.0f);
-    // glm::vec3 lightPosition = glm::vec3(-4.5f, 17.0f, 3.0f);
-    glm::vec3 lightPosition    = glm::vec3(-3.0f, 11.5f, 11.5f);
-    glm::vec3 lightOrientation = glm::vec3(-0.15f, 0.0f, -1.0f);
-
-    LightSystem lightSystem(0.1f, 400.0f);
-    // lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(1.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f);
-    // lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
-    lightSystem.addLight(lightPosition, glm::vec3(0.0f, 0.0f, 10.0f));
-#pragma endregion
-
-    double timePrev = 0;
-    double timeCrnt = 0;
-    double timeDiff;
-
     while (!glfwWindowShouldClose(VIEWPORT.getWindow()))
     {
-        timeCrnt = glfwGetTime();
-        timeDiff = timeCrnt - timePrev;
-        if (timeDiff >= 1.0 / 60.0)
-        {
-            timePrev = timeCrnt;
-            if (!ImGui::GetIO().WantCaptureMouse)
-                camera.Inputs(VIEWPORT.getWindow());
-        }
         // VIEWPORT.updateFPS(); // Can be overlayed in imgui
-
         VIEWPORT.glClearCurrentColor();
         My_ImGui::ShowDockSpace();
 
-        lightSystem.ShadowPass(model);
-
-        antiAlias.Activate();
-
-        lightSystem.ExportUniforms(ShaderManager::IDs.model);
-
-        camera.updateUniforms(ShaderManager::IDs.model);
-        model.Draw(ShaderManager::IDs.model);
-        lightSystem.RenderLightModels(ShaderManager::IDs.model);
-
-        skybox.Draw(ShaderManager::IDs.skybox, camera.getRotationMat());
-
-        antiAlias.CopyResultsTo(postProcess.ID);
-        postProcess.Draw(ShaderManager::IDs.postProcess);
-
-        // BindSquare();
-        // shadowCasters.DrawDepthDebug(IDs.depthDebug, 0);
-        // UnbindSquare();
-
-        My_ImGui::RenderOverlay(camera.position.x, camera.position.y, camera.position.z,
-                                camera.Orientation.x, camera.Orientation.y, camera.Orientation.z);
-        // My_ImGui::RenderInterfaceInput();
+        renderer.Render(scene);
+        
         My_ImGui::RenderDockSpace();
         glfwSwapBuffers(VIEWPORT.getWindow());
         glfwPollEvents();

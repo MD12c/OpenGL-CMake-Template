@@ -40,7 +40,7 @@ Skybox::Skybox()
 	}
 }
 
-void Skybox::Draw(unsigned int shaderID, glm::mat4 cameraMatrix)
+void Skybox::Draw(unsigned int shaderID, glm::mat4 cameraMatrix) const
 {
     ShaderManager::Activate(shaderID);
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));

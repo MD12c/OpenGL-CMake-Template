@@ -13,9 +13,9 @@ public:
     EBO();
     void UpdateData(const void* indices, GLsizeiptr size);
     void UpdateData(std::vector<GLuint>& indices);
-    void Bind();
-    void Unbind();
-    void Delete();
+    void Bind() const;
+    void Unbind() const;
+    void Delete() const;
 };
 
 #endif

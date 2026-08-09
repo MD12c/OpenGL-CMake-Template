@@ -12,7 +12,7 @@ class ShadowSystem;
 class LightSystem
 {
 private:
-    std::unique_ptr<ShadowSystem> shadowSystem;
+    std::unique_ptr<ShadowSystem> shadowSystem = nullptr;
 
     struct Light
     {
@@ -42,11 +42,11 @@ private:
 public:
     LightSystem(float zNear, float zFar);
 
-    void ExportUniforms(unsigned int shaderID);
-    void ShadowPass(Model& model);
-    void RenderLightModels(unsigned int shaderID);
+    void ExportUniforms(unsigned int shaderID) const;
+    void ShadowPass(const Model& model) const;
+    void RenderLightModels(unsigned int shaderID) const;
 
-    unsigned int getShaderIDfromType(LightType type);
+    unsigned int getShaderIDfromType(LightType type) const;
 
     void addLight(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top);
     void addLight(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone);

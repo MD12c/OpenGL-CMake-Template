@@ -20,7 +20,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vec
     EBO.Unbind();
 }
 
-void Mesh::addTextureUnits(unsigned int shaderID)
+void Mesh::addTextureUnits(unsigned int shaderID) const
 {
     if (configuredShaders.count(shaderID))
         return;
@@ -46,7 +46,7 @@ void Mesh::Draw(
     glm::mat4    model,
     glm::vec3    translation,
     glm::quat    rotation,
-    glm::vec3    scale)
+    glm::vec3    scale) const
 {
     ShaderManager::Get(shaderID).Activate();
     addTextureUnits(shaderID);

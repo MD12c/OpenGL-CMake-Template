@@ -21,7 +21,7 @@ public:
     }
     ~Shader();
     void PrintError(GLuint shader);
-    void Activate();
+    void Activate() const;
     void Delete();
 };
 #endif

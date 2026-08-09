@@ -1,0 +1,36 @@
+#include "Scene.h"
+
+#include "ImguiSetup.h"
+#include "Cameras/Orbit.h"
+#include "Cameras/2Dcam.h"
+#include "Cameras/Fly.h"
+
+Scene::Scene(GLFWwindow* glfwWindowPtr)
+    : lightSystem(0.1f, 400.0f), skybox(), glfwWindowPtr(glfwWindowPtr)
+{
+    // cameras.emplace_back(std::make_unique<Camera2D>(glfwWindowPtr));
+    // cameras.emplace_back(std::make_unique<CameraOrbit>(glfwWindowPtr));
+    cameras.emplace_back(std::make_unique<CameraFly>(glfwWindowPtr, 45, 0.1f, 10000.0f));
+
+    models.emplace_back("Assets/Models/crow.obj");
+
+    // glm::vec3 lightPosition = glm::vec3(0.0f, 30.0f, 0.0f);
+    // glm::vec3 lightPosition = glm::vec3(-4.5f, 17.0f, 3.0f);
+    glm::vec3 lightPosition    = glm::vec3(-3.0f, 11.5f, 11.5f);
+    glm::vec3 lightOrientation = glm::vec3(-0.15f, 0.0f, -1.0f);
+
+    // lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(1.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f);
+    // lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
+    lightSystem.addLight(lightPosition, glm::vec3(0.0f, 0.0f, 10.0f));
+
+    imguiFunctions = [&]()
+    {
+        My_ImGui::RenderOverlay(cameras[activeCam]->position.x, cameras[activeCam]->position.y, cameras[activeCam]->position.z,
+                                cameras[activeCam]->Orientation.x, cameras[activeCam]->Orientation.y, cameras[activeCam]->Orientation.z);
+        // My_ImGui::RenderInterfaceInput();
+    };
+}
+
+Scene::~Scene()
+{
+}

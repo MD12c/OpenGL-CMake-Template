@@ -178,7 +178,7 @@ Shader::~Shader()
     Delete();
 }
 
-void Shader::Activate()
+void Shader::Activate() const
 {
     glUseProgram(ID);
 }

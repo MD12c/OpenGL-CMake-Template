@@ -5,7 +5,7 @@ Model::Model(const std::string& path)
     loadModel(path);
 }
 
-void Model::Draw(unsigned int shaderID)
+void Model::Draw(const unsigned int shaderID) const
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {

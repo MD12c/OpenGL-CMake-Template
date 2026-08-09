@@ -2,6 +2,8 @@
 
 #include "Window.h"
 #include "ImguiSetup.h"
+#include "Scene.h"
+#include "Renderer.h"
 
 #include "Shaders/Shader.h"
 #include "Shaders/ShaderManager.h"

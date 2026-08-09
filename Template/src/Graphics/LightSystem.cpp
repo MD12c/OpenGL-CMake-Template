@@ -12,13 +12,13 @@ LightSystem::LightSystem(float zNear, float zFar)
 {
 }
 
-void LightSystem::RenderLightModels(unsigned int shaderID)
+void LightSystem::RenderLightModels(unsigned int shaderID) const
 {
     ShaderManager::Activate(shaderID);
     icoSphere.Draw(shaderID);
 }
 
-void LightSystem::ExportUniforms(unsigned int shaderID)
+void LightSystem::ExportUniforms(unsigned int shaderID) const
 {
     shadowSystem->BindShadowTextures(shaderID, 2 /*start slot*/);
 
@@ -46,7 +46,7 @@ void LightSystem::ExportUniforms(unsigned int shaderID)
     glUniform1i(ShaderManager::getLoc(shaderID, "numPointLights"), pointIdx);
 }
 
-unsigned int LightSystem::getShaderIDfromType(LightType type)
+unsigned int LightSystem::getShaderIDfromType(LightType type) const
 {
     if (type == LightType::DIRECTION)
         return ShaderManager::IDs.shadowMap2D;
@@ -58,11 +58,11 @@ unsigned int LightSystem::getShaderIDfromType(LightType type)
         throw std::runtime_error("[ERROR] Invalid light type");
 };
 
-void LightSystem::ShadowPass(Model& model)
+void LightSystem::ShadowPass(const Model& model) const
 {
     for (auto& light : lights)
     {
-        unsigned int shaderID = getShaderIDfromType(light.type);
+        const unsigned int shaderID = getShaderIDfromType(light.type);
         light.caster->BeginDepthPass(shaderID, *shadowSystem, light.pos);
         model.Draw(shaderID);
         light.caster->EndDepthPass();

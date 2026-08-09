@@ -48,32 +48,32 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::texUnit(unsigned int shaderID, const std::string& uniform)
+void Texture::texUnit(const unsigned int shaderID, const std::string& uniform) const
 {
     ShaderManager::Activate(shaderID);
     glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
 }
 
 // Old! Dont use if using shader manager
-void Texture::texUnit(Shader& shader, const std::string& uniform, GLuint unit)
+void Texture::texUnit(const Shader& shader, const std::string& uniform, const GLuint unit) const
 {
     GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
     shader.Activate();
     glUniform1i(texUni, unit);
 }
 
-void Texture::Bind()
+void Texture::Bind() const
 {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
 }
 
-void Texture::Unbind()
+void Texture::Unbind() const
 {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::Delete()
+void Texture::Delete() const
 {
     glDeleteTextures(1, &ID);
 }

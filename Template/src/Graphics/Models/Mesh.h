@@ -22,15 +22,15 @@ public:
 
     VAO VAO;
 
-    std::unordered_set<unsigned int> configuredShaders;
+    mutable std::unordered_set<unsigned int> configuredShaders;
 
     Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, std::vector<Texture>& textures);
-    void addTextureUnits(unsigned int shaderID);
+    void addTextureUnits(unsigned int shaderID) const;
 
     void Draw(
         unsigned int shaderID,
         glm::mat4    model       = glm::mat4(1.0f),
         glm::vec3    translation = glm::vec3(1.0f),
         glm::quat    rotation    = glm::quat(1.0f, 1.0f, 1.0f, 1.0f),
-        glm::vec3    scale       = glm::vec3(1.0f, 1.0f, 1.0f));
+        glm::vec3    scale       = glm::vec3(1.0f, 1.0f, 1.0f)) const;
 };

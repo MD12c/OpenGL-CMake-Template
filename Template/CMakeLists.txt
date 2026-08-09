@@ -51,6 +51,10 @@
   src/Graphics/FrameBuffers/ShadowMaps/ShadowSystem.cpp
   src/Graphics/LightSystem.h
   src/Graphics/LightSystem.cpp
+  src/Graphics/Scene.h
+  src/Graphics/Scene.cpp
+  src/Graphics/Renderer.h
+  src/Graphics/Renderer.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE src/)
