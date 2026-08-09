@@ -60,7 +60,8 @@ void LoadAllShaders()
           "model",
           "translation",
           "rotation",
-          "scale" });
+          "scale",
+          "normal" });
 
     addUniforms(
         IDs.model,

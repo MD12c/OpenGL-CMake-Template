@@ -37,11 +37,14 @@ private:
 
     float zNear, zFar;
 
+    Model icoSphere;
+
 public:
     LightSystem(float zNear, float zFar);
 
     void ExportUniforms(unsigned int shaderID);
     void ShadowPass(Model& model);
+    void RenderLightModels(unsigned int shaderID);
 
     unsigned int getShaderIDfromType(LightType type);
 

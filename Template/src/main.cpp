@@ -13,10 +13,6 @@ int main()
 
     MSAAbuffer  antiAlias;
     Framebuffer postProcess;
-#pragma endregion
-
-// Shaders
-#pragma region
     ShaderManager::LoadAllShaders();
 #pragma endregion
 
@@ -51,25 +47,23 @@ int main()
 
 // Models
 #pragma region
-    Model model("Assets/Models/crow.obj");
-    glfwPtr.camera = &camera;
+    Model  model("Assets/Models/crow.obj");
     Skybox skybox;
 
-    // glm::vec3 lightPos = glm::vec3(0.0f, 30.0f, 0.0f);
+    // glm::vec3 lightPosition = glm::vec3(0.0f, 30.0f, 0.0f);
     // glm::vec3 lightPosition = glm::vec3(-4.5f, 17.0f, 3.0f);
-    glm::vec3 lightPosition = glm::vec3(-3.0f, 11.5f, 11.5f);
+    glm::vec3 lightPosition    = glm::vec3(-3.0f, 11.5f, 11.5f);
     glm::vec3 lightOrientation = glm::vec3(-0.15f, 0.0f, -1.0f);
 
     LightSystem lightSystem(0.1f, 400.0f);
-    //lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(1.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f);
-    //lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
-    lightSystem.addLight(lightPosition, glm::vec3(1.0f, 0.0f, 1.0f));
+    // lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(1.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f);
+    // lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
+    lightSystem.addLight(lightPosition, glm::vec3(0.0f, 0.0f, 10.0f));
 #pragma endregion
 
     double timePrev = 0;
     double timeCrnt = 0;
     double timeDiff;
-    glfwPtr.camera = &camera;
 
     while (!glfwWindowShouldClose(VIEWPORT.getWindow()))
     {
@@ -94,6 +88,7 @@ int main()
 
         camera.updateUniforms(ShaderManager::IDs.model);
         model.Draw(ShaderManager::IDs.model);
+        lightSystem.RenderLightModels(ShaderManager::IDs.model);
 
         skybox.Draw(ShaderManager::IDs.skybox, camera.getRotationMat());
 

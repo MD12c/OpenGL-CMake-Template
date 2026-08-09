@@ -21,11 +21,12 @@ uniform mat4 model;
 uniform mat4 translation;
 uniform mat4 rotation;
 uniform mat4 scale;
+uniform mat3 normal;
 
 void main()
 {
     data_out.Position     = vec3(model * translation * rotation * scale * vec4(aPos, 1.0f));
-    data_out.Normal       = aNormal;
+    data_out.Normal       = normal * aNormal;
     data_out.color        = aColor;
     data_out.texCoord     = aTex;
     data_out.camMatrix    = proj * view;

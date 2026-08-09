@@ -8,8 +8,14 @@
 #include "FrameBuffers/ShadowMaps/ShadowMapCube.h"
 
 LightSystem::LightSystem(float zNear, float zFar)
-    : shadowSystem(std::make_unique<ShadowSystem>()), zNear(zNear), zFar(zFar)
+    : shadowSystem(std::make_unique<ShadowSystem>()), zNear(zNear), zFar(zFar), icoSphere("Assets/Models/crow.obj")
 {
+}
+
+void LightSystem::RenderLightModels(unsigned int shaderID)
+{
+    ShaderManager::Activate(shaderID);
+    icoSphere.Draw(shaderID);
 }
 
 void LightSystem::ExportUniforms(unsigned int shaderID)

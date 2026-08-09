@@ -72,7 +72,7 @@ vec4 pointLight(int i)
     float currentDepth = length(fragToLight);
     float bias         = max(0.025f * (1.0f - dot(normal, lightDirection)), 0.0005f);
 
-    int   sampleRadius = 2;  // half the width of a square Smoothens out the shadows
+    int   sampleRadius = 1;  // half the width of a square Smoothens out the shadows
     float offset       = 0.02f;
     for (int z = -sampleRadius; z <= sampleRadius; z++)
     {
@@ -123,7 +123,7 @@ vec4 direcLight(int i)
         float currentDepth = lightCoords.z;
         float bias         = max(0.0025f * (1.0f - dot(normal, lightDir)), 0.0005f);
 
-        int  sampleRadius = 2;
+        int  sampleRadius = 1;
         vec2 pixelSize    = 1.0 / textureSize(dirShadowMaps, 0).xy;
         for (int y = -sampleRadius; y <= sampleRadius; y++)
         {
@@ -174,7 +174,7 @@ vec4 spotLight(int i)
         float currentDepth = lightCoords.z;
         float bias         = max(0.0025f * (1.0f - dot(normal, surfaceToLightPos)), 0.00005f);
 
-        int  sampleRadius = 2;
+        int  sampleRadius = 1;
         vec2 pixelSize    = 1.0 / textureSize(spotShadowMaps, 0).xy;
         for (int y = -sampleRadius; y <= sampleRadius; y++)
         {

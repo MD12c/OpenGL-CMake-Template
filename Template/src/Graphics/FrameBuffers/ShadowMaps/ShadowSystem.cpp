@@ -59,9 +59,9 @@ void ShadowSystem::attachTexture(GLuint frameBuf, GLuint texture, GLuint layer)
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuf);
     glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0, layer);
 
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ShadowMap2D FBO incomplete: " << status << std::endl;
+    // GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    // if (status != GL_FRAMEBUFFER_COMPLETE)
+    //     std::cout << "ShadowMap2D FBO incomplete: " << status << std::endl;
 }
 
 void ShadowSystem::attachTextureLayered(GLuint frameBuf, GLuint texture)
@@ -69,9 +69,9 @@ void ShadowSystem::attachTextureLayered(GLuint frameBuf, GLuint texture)
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuf);
     glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
 
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (status != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "ShadowMapCube FBO incomplete: " << status << std::endl;
+    // GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    // if (status != GL_FRAMEBUFFER_COMPLETE)
+    //     std::cout << "ShadowMapCube FBO incomplete: " << status << std::endl;
 }
 
 void ShadowSystem::BindShadowTextures(unsigned int shaderID, GLuint startSlot)
