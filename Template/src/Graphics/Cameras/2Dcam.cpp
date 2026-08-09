@@ -1,5 +1,6 @@
 #include "2Dcam.h"
 #include "Globals.h"
+#include "../Window.h"
 
 Camera2D::Camera2D(GLFWwindow* window)
     : Camera(window)

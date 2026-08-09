@@ -2,7 +2,9 @@
 
 #include <iostream>
 
+#include "Globals.h"
 #include "ShadowCaster.h"
+#include "../../Shaders/ShaderManager.h"
 
 ShadowSystem::ShadowSystem()
 {
@@ -42,13 +44,13 @@ void ShadowSystem::setupFBO(GLuint frameBuf)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void ShadowSystem::BindDepthTarget(LightSystem::LightType type, GLuint layerIndex)
+void ShadowSystem::BindDepthTarget(LightType type, GLuint layerIndex)
 {
-    if (type == LightSystem::LightType::DIRECTION)
+    if (type == LightType::DIRECTION)
         attachTexture(frameBuf2D, shadowMapDirArray, layerIndex);
-    else if (type == LightSystem::LightType::SPOT)
+    else if (type == LightType::SPOT)
         attachTexture(frameBuf2D, shadowMapSpotArray, layerIndex);
-    else if (type == LightSystem::LightType::POINT)
+    else if (type == LightType::POINT)
         attachTextureLayered(frameBufCube, shadowMapPointArray);
 }
 
@@ -91,19 +93,19 @@ void ShadowSystem::BindShadowTextures(unsigned int shaderID, GLuint startSlot)
 
 
 
-GLint ShadowSystem::RegisterCaster(LightSystem::LightType type)
+GLint ShadowSystem::RegisterCaster(LightType type)
 {
     switch (type)
     {
-        case LightSystem::LightType::DIRECTION:
+        case LightType::DIRECTION:
             if (nextDirLayer >= MAX_DIR_LIGHTS) return -1;
             return nextDirLayer++;
 
-        case LightSystem::LightType::SPOT:
+        case LightType::SPOT:
             if (nextSpotLayer >= MAX_SPOT_LIGHTS) return -1;
             return nextSpotLayer++;
 
-        case LightSystem::LightType::POINT:
+        case LightType::POINT:
             if (nextPointLayer >= MAX_POINT_LIGHTS) return -1;
             return nextPointLayer++;
 

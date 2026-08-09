@@ -15,25 +15,21 @@ class ShadowMap2D : public ShadowCaster
 private:
     GLuint layerIndex;
 
-    glm::mat4 proj  = glm::mat4(1.0f);
-    glm::mat4 view  = glm::mat4(1.0f);
-    glm::vec3 color = glm::vec3(1.0f);
+    glm::mat4 proj = glm::mat4(1.0f);
+    glm::mat4 view = glm::mat4(1.0f);
 
     // Spot Light only
     GLfloat innerCone;
     GLfloat outerCone;
 
 public:
-    glm::vec3 lightPos;
-    glm::vec3 direction;
-
-    ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top, float zNear, float zFar);
-    ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone, float zNear, float zFar);
+    ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float left, float right, float bottom, float top, float zNear, float zFar);
+    ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float fovDeg, float innerCone, float outerCone, float zNear, float zFar);
 
     void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
-    void BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem) override;
-    void ExportUniformsTo(unsigned int shaderID, int lightIndex) override;
-    
+    void BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
+    void ExportUniformsTo(unsigned int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
+
     void DrawDepthDebug(unsigned int shaderID, ShadowSystem& shadowSystem);
 };
 

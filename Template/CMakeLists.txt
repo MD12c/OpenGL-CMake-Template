@@ -45,7 +45,6 @@
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMap2D.h
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMap2D.cpp
   src/Graphics/FrameBuffers/ShadowMaps/ShadowCaster.h
-  src/Graphics/FrameBuffers/ShadowMaps/ShadowCaster.cpp
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.h
   src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.cpp
   src/Graphics/FrameBuffers/ShadowMaps/ShadowSystem.h

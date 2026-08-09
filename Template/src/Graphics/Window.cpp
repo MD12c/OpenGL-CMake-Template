@@ -1,5 +1,8 @@
 #include "Window.h"
 #include "../Globals.h"
+#include "Cameras/Camera.h"
+#include "FrameBuffers/MSAABuffer.h"
+#include "FrameBuffers/PostProcess.h"
 
 Window::Window()
 {

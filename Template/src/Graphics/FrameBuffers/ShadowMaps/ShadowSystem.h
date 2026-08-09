@@ -3,7 +3,7 @@
 
 #include "glad/glad.h"
 
-#include "../../LightSystem.h"
+#include "Globals.h"
 
 class ShadowSystem
 {
@@ -27,8 +27,8 @@ public:
     ShadowSystem();
     ~ShadowSystem();
 
-    GLint RegisterCaster(LightSystem::LightType type);
-    void  BindDepthTarget(LightSystem::LightType type, GLuint layerIndex);
+    GLint RegisterCaster(LightType type);
+    void  BindDepthTarget(LightType type, GLuint layerIndex);
     void  BindShadowTextures(unsigned int shaderID, GLuint startSlot);
     void  ShadowPass();
 

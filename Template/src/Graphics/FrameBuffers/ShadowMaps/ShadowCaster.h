@@ -6,9 +6,8 @@
 #include "glad/glad.h"
 #include "glm/glm.hpp"
 
+#include "Globals.h"
 #include "ShadowSystem.h"
-#include "../../Shaders/ShaderManager.h"
-#include "../../LightSystem.h"
 
 class ShadowCaster
 {
@@ -18,19 +17,17 @@ public:
     static constexpr float        clampColor[4]     = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 protected:
-    LightSystem::LightType lightType;
+    const LightType lightType;
 
 public:
+    ShadowCaster(LightType lightType) : lightType(lightType) {};
     virtual ~ShadowCaster() = default;
 
-    virtual void setView(glm::vec3 newPosition, glm::vec3 newDirection)            = 0;
-    virtual void BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem) = 0;
-    virtual void ExportUniformsTo(unsigned int shaderID, int lightIndex)           = 0;
+    virtual void setView(glm::vec3 newPosition, glm::vec3 newDirection)                                                                      = 0;
+    virtual void BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos)                                       = 0;
+    virtual void ExportUniformsTo(unsigned int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) = 0;
 
     inline void EndDepthPass() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
-
-    inline LightSystem::LightType getType() { return lightType; }
-    unsigned int                  getShaderIDfromType(LightSystem::LightType type);
 };
 
 #endif

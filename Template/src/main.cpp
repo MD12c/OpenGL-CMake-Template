@@ -63,7 +63,7 @@ int main()
     LightSystem lightSystem(0.1f, 400.0f);
     //lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(1.0f, 0.0f, 0.0f), -35.0f, 35.0f, -35.0f, 35.0f);
     //lightSystem.addLight(lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
-    lightSystem.addLight(lightPosition, glm::vec3(0.0f, 0.0f, 1.0f));
+    lightSystem.addLight(lightPosition, glm::vec3(1.0f, 0.0f, 1.0f));
 #pragma endregion
 
     double timePrev = 0;

@@ -1,11 +1,7 @@
 #pragma once
 #include <string>
-#include <glm/glm.hpp>
 #include <glad/glad.h>
-#include "Graphics/Window.h"
-#include "Graphics/Cameras/Camera.h"
-#include "Graphics/FrameBuffers/PostProcess.h"
-#include "Graphics/FrameBuffers/MSAABuffer.h"
+#include <glm/glm.hpp>
 
 inline int         width        = 2560;
 inline int         height       = 1440;
@@ -14,6 +10,11 @@ inline GLfloat     gamma        = 2;
 inline GLfloat     windowRGB[3] = {
     pow(0.8f, gamma), pow(0.8f, gamma), pow(0.8f, gamma)
 };
+
+class Window;
+class Camera;
+class Framebuffer;
+class MSAAbuffer;
 
 inline struct glfwPointers
 {
@@ -39,6 +40,13 @@ constexpr glm::vec2 BOT_LEFT_BOUNDERY  = glm::vec2(square[0], square[1]);
 constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[6], square[7]);
 
 constexpr GLuint numSamples = 8;
+
+enum LightType
+{
+    DIRECTION,
+    SPOT,
+    POINT
+};
 
 //-----------------------------------------------------------------------
 // Temporary Globals Below

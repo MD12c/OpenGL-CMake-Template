@@ -3,31 +3,28 @@
 #include "Globals.h"
 #include "ShadowSystem.h"
 #include "../../Shaders/ShaderManager.h"
+#include "../../LightSystem.h"
 
-ShadowMap2D::ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top, float zNear, float zFar)
-    : layerIndex(layerIndex), lightPos(lightPos), direction(direction), color(lightColor)
+ShadowMap2D::ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float left, float right, float bottom, float top, float zNear, float zFar)
+    : layerIndex(layerIndex), ShadowCaster(LightType::DIRECTION)
 {
-    lightType = LightSystem::LightType::DIRECTION;
-    proj      = glm::ortho(left, right, bottom, top, zNear, zFar);
-    view      = glm::lookAt(lightPos, lightPos + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+    proj = glm::ortho(left, right, bottom, top, zNear, zFar);
+    view = glm::lookAt(lightPos, lightPos + direction, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-ShadowMap2D::ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone, float zNear, float zFar)
-    : layerIndex(layerIndex), lightPos(lightPos), direction(direction), color(lightColor), innerCone(innerCone), outerCone(outerCone)
+ShadowMap2D::ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float fovDeg, float innerCone, float outerCone, float zNear, float zFar)
+    : layerIndex(layerIndex), innerCone(innerCone), outerCone(outerCone), ShadowCaster(LightType::SPOT)
 {
-    lightType = LightSystem::LightType::SPOT;
-    proj      = glm::perspective(glm::radians(fovDeg), (float)SHADOW_MAP_WIDTH / (float)SHADOW_MAP_HEIGHT, zNear, zFar);
-    view      = glm::lookAt(lightPos, lightPos + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+    proj = glm::perspective(glm::radians(fovDeg), (float)SHADOW_MAP_WIDTH / (float)SHADOW_MAP_HEIGHT, zNear, zFar);
+    view = glm::lookAt(lightPos, lightPos + direction, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 void ShadowMap2D::setView(glm::vec3 newPosition, glm::vec3 newDirection)
 {
-    direction = newDirection;
-    lightPos  = newPosition;
-    view      = glm::lookAt(lightPos, lightPos + direction, glm::vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(newPosition, newPosition + newDirection, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void ShadowMap2D::BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem)
+void ShadowMap2D::BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos)
 {
     ShaderManager::Activate(shaderID);
 
@@ -40,16 +37,16 @@ void ShadowMap2D::BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSyst
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void ShadowMap2D::ExportUniformsTo(unsigned int shaderID, int lightIndex)
+void ShadowMap2D::ExportUniformsTo(unsigned int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor)
 {
     ShaderManager::Activate(shaderID);
 
     std::string type;
     glm::mat4   projView = proj * view;
 
-    if (lightType == LightSystem::LightType::DIRECTION)
+    if (lightType == LightType::DIRECTION)
         type = "dir";
-    else if (lightType == LightSystem::LightType::SPOT)
+    else if (lightType == LightType::SPOT)
     {
         type = "spot";
         glUniform3fv(ShaderManager::getLoc(shaderID, type + "LightPos[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightPos));
@@ -60,8 +57,8 @@ void ShadowMap2D::ExportUniformsTo(unsigned int shaderID, int lightIndex)
         throw std::runtime_error("[ERROR] Invalid light type ShadowMap2D::ExportUniformsTo()");
 
     glUniform1i(ShaderManager::getLoc(shaderID, type + "LayerIndex[" + std::to_string(lightIndex) + "]"), layerIndex);
-    glUniform3fv(ShaderManager::getLoc(shaderID, type + "LightDirection[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(direction));
-    glUniform3fv(ShaderManager::getLoc(shaderID, type + "LightColor[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(color));
+    glUniform3fv(ShaderManager::getLoc(shaderID, type + "LightDirection[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightDirection));
+    glUniform3fv(ShaderManager::getLoc(shaderID, type + "LightColor[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightColor));
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, type + "ShadowMatrix[" + std::to_string(lightIndex) + "]"), 1, GL_FALSE, glm::value_ptr(projView));
 }
 
