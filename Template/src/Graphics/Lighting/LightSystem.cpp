@@ -1,11 +1,11 @@
 #include "LightSystem.h"
 
-#include "Shaders/ShaderManager.h"
+#include "../Shaders/ShaderManager.h"
 
-#include "FrameBuffers/ShadowMaps/ShadowCaster.h"
-#include "FrameBuffers/ShadowMaps/ShadowSystem.h"
-#include "FrameBuffers/ShadowMaps/ShadowMap2D.h"
-#include "FrameBuffers/ShadowMaps/ShadowMapCube.h"
+#include "ShadowCaster.h"
+#include "ShadowSystem.h"
+#include "ShadowMap2D.h"
+#include "ShadowMapCube.h"
 
 LightSystem::LightSystem(float zNear, float zFar)
     : shadowSystem(std::make_unique<ShadowSystem>()), zNear(zNear), zFar(zFar), icoSphere("Assets/Models/crow.obj")

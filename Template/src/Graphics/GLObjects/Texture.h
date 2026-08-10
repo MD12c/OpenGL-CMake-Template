@@ -6,7 +6,7 @@
 
 #include <glad/glad.h>
 
-#include "../Shaders/ShaderManager.h"
+#include "..\Shaders\ShaderManager.h"
 
 class Texture
 {

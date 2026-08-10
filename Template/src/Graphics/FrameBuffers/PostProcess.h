@@ -3,10 +3,10 @@
 
 #include <glad/glad.h>
 
-#include "../VertexBuffers/VAO.h"
-#include "../VertexBuffers/VBO.h"
-#include "../VertexBuffers/EBO.h"
-#include "Texture.h"
+#include "..\GLObjects\VAO.h"
+#include "..\GLObjects\VBO.h"
+#include "..\GLObjects\EBO.h"
+#include "..\GLObjects\Texture.h"
 #include "RBO.h"
 
 class Framebuffer

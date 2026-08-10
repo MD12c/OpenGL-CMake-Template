@@ -5,22 +5,22 @@ set(GRAPHICS_SOURCES
     src/Graphics/Window.cpp
     src/Graphics/ImguiSetup.h
     src/Graphics/ImguiSetup.cpp
-    src/Graphics/LightSystem.h
-    src/Graphics/LightSystem.cpp
     src/Graphics/Scene.h
     src/Graphics/Scene.cpp
     src/Graphics/Renderer.h
     src/Graphics/Renderer.cpp)
 
 set(VERTEX_BUFFERS_SOURCES
-    src/Graphics/VertexBuffers/EBO.cpp
-    src/Graphics/VertexBuffers/EBO.h
-    src/Graphics/VertexBuffers/VAO.cpp
-    src/Graphics/VertexBuffers/VAO.h
-    src/Graphics/VertexBuffers/VBO.cpp
-    src/Graphics/VertexBuffers/VBO.h
-    src/Graphics/VertexBuffers/SSBO.h
-    src/Graphics/VertexBuffers/SSBO.cpp)
+    src/Graphics/GLObjects/EBO.cpp
+    src/Graphics/GLObjects/EBO.h
+    src/Graphics/GLObjects/VAO.cpp
+    src/Graphics/GLObjects/VAO.h
+    src/Graphics/GLObjects/VBO.cpp
+    src/Graphics/GLObjects/VBO.h
+    src/Graphics/GLObjects/SSBO.h
+    src/Graphics/GLObjects/SSBO.cpp
+    src/Graphics/GLObjects/Texture.cpp
+    src/Graphics/GLObjects/Texture.h)
 
 set(SHADERS_SOURCES
     src/Graphics/Shaders/Shader.h src/Graphics/Shaders/Shader.cpp
@@ -40,21 +40,20 @@ set(CAMERA_SOURCES
 set(MODEL_SOURCES
     src/Graphics/Models/Mesh.h src/Graphics/Models/Mesh.cpp
     src/Graphics/Models/Model.h src/Graphics/Models/Model.cpp
-    src/Graphics/Skybox.h src/Graphics/Skybox.cpp)
+    src/Graphics/Models/Skybox.h src/Graphics/Models/Skybox.cpp)
 
-set(SHADOW_SOURCES
-    src/Graphics/FrameBuffers/ShadowMaps/ShadowMap2D.h
-    src/Graphics/FrameBuffers/ShadowMaps/ShadowMap2D.cpp
-    src/Graphics/FrameBuffers/ShadowMaps/ShadowCaster.h
-    src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.h
-    src/Graphics/FrameBuffers/ShadowMaps/ShadowMapCube.cpp
-    src/Graphics/FrameBuffers/ShadowMaps/ShadowSystem.h
-    src/Graphics/FrameBuffers/ShadowMaps/ShadowSystem.cpp)
+set(LIGHTING_SOURCES
+  src/Graphics/Lighting/LightSystem.h
+  src/Graphics/Lighting/LightSystem.cpp
+    src/Graphics/Lighting/ShadowMap2D.h
+    src/Graphics/Lighting/ShadowMap2D.cpp
+    src/Graphics/Lighting/ShadowCaster.h
+    src/Graphics/Lighting/ShadowMapCube.h
+    src/Graphics/Lighting/ShadowMapCube.cpp
+    src/Graphics/Lighting/ShadowSystem.h
+    src/Graphics/Lighting/ShadowSystem.cpp)
 
 set(FRAMEBUFFER_SOURCES
-    ${SHADOW_SOURCES}
-    src/Graphics/FrameBuffers/Texture.cpp
-    src/Graphics/FrameBuffers/Texture.h
     src/Graphics/FrameBuffers/PostProcess.h
     src/Graphics/FrameBuffers/PostProcess.cpp
     src/Graphics/FrameBuffers/RBO.h
@@ -62,16 +61,19 @@ set(FRAMEBUFFER_SOURCES
     src/Graphics/FrameBuffers/MSAABuffer.h
     src/Graphics/FrameBuffers/MSAABuffer.cpp)
 
+set(UTILITY_SOURCES include/libraries/Benchmarks/Instrumentatior.h)
+
 add_executable(
   ${PROJECT_NAME}
   ${CORE_SOURCES}
   ${GRAPHICS_SOURCES}
+  ${LIGHTING_SOURCES}
   ${VERTEX_BUFFERS_SOURCES}
   ${SHADERS_SOURCES}
   ${CAMERA_SOURCES}
   ${MODEL_SOURCES}
   ${FRAMEBUFFER_SOURCES}
-  include/libraries/Benchmarks/Instrumentatior.h)
+  ${UTILITY_SOURCES})
 
 target_include_directories(${PROJECT_NAME}
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include src/)

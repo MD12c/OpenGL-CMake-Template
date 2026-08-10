@@ -4,7 +4,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "../../Shaders/ShaderManager.h"
+#include "../Shaders/ShaderManager.h"
 #include "Globals.h"
 
 ShadowMapCube::ShadowMapCube(GLuint layerIndex, glm::vec3 lightPos, float zNear, float zFar)

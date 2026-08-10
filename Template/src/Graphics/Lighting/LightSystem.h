@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "Globals.h"
-#include "Models/Model.h"
-#include "FrameBuffers/ShadowMaps/ShadowCaster.h"
+#include "..\Models\Model.h"
+#include "ShadowCaster.h"
 
 class ShadowSystem;
 

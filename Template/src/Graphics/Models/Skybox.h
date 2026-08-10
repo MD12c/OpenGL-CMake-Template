@@ -4,11 +4,11 @@
 #include <string>
 #include <iostream>
 
-#include "VertexBuffers/VAO.h"
-#include "VertexBuffers/VBO.h"
-#include "VertexBuffers/EBO.h"
+#include "..\GLObjects\VAO.h"
+#include "..\GLObjects\VBO.h"
+#include "..\GLObjects\EBO.h"
 
-#include "Shaders/ShaderManager.h"
+#include "..\Shaders\ShaderManager.h"
 
 #include "stb/stb_image.h"
 #include <glm/glm.hpp>

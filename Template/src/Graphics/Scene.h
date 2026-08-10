@@ -4,9 +4,9 @@
 #include <vector>
 #include <functional>
 
-#include "LightSystem.h"
+#include "Lighting\LightSystem.h"
 #include "Models/Model.h"
-#include "Skybox.h"
+#include "Models\Skybox.h"
 #include "Cameras/Camera.h"
 
 

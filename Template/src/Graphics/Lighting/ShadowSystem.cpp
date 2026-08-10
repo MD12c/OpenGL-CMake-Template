@@ -3,8 +3,9 @@
 #include <iostream>
 
 #include "Globals.h"
+#include "../Shaders/ShaderManager.h"
+
 #include "ShadowCaster.h"
-#include "../../Shaders/ShaderManager.h"
 
 ShadowSystem::ShadowSystem()
 {

@@ -7,10 +7,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-#include "../VertexBuffers/VAO.h"
-#include "../VertexBuffers/EBO.h"
+#include "..\GLObjects\VAO.h"
+#include "..\GLObjects\EBO.h"
 #include "../Cameras/Camera.h"
-#include "../FrameBuffers/Texture.h"
+#include "..\GLObjects\Texture.h"
 #include "../Shaders/ShaderManager.h"
 
 class Mesh

@@ -1,7 +1,7 @@
 #include "Renderer.h"
 
 #include "imgui.h"
-#include "LightSystem.h"
+#include "Lighting\LightSystem.h"
 
 Renderer::Renderer()
     : antiAlias(),

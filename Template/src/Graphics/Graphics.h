@@ -8,19 +8,21 @@
 #include "Shaders/Shader.h"
 #include "Shaders/ShaderManager.h"
 
-#include "VertexBuffers/VAO.h"
-#include "VertexBuffers/VBO.h"
-#include "VertexBuffers/EBO.h"
-#include "VertexBuffers/SSBO.h"
+#include "GLObjects\VAO.h"
+#include "GLObjects\VBO.h"
+#include "GLObjects\EBO.h"
+#include "GLObjects\SSBO.h"
+#include "GLObjects\Texture.h"
 
-#include "FrameBuffers/Texture.h"
 #include "FrameBuffers/RBO.h"
 #include "FrameBuffers/PostProcess.h"
 #include "FrameBuffers/MSAABuffer.h"
-#include "FrameBuffers/ShadowMaps/ShadowCaster.h"
-#include "FrameBuffers/ShadowMaps/ShadowMap2D.h"
-#include "FrameBuffers/ShadowMaps/ShadowMapCube.h"
-#include "FrameBuffers/ShadowMaps/ShadowSystem.h"
+
+#include "Lighting\LightSystem.h"
+#include "Lighting\ShadowCaster.h"
+#include "Lighting\ShadowMap2D.h"
+#include "Lighting\ShadowMapCube.h"
+#include "Lighting\ShadowSystem.h"
 
 #include "Cameras/Camera.h"
 #include "Cameras/2Dcam.h"
@@ -29,5 +31,4 @@
 
 #include "Models/Mesh.h"
 #include "Models/Model.h"
-#include "Skybox.h"
-#include "LightSystem.h"
+#include "Models\Skybox.h"
