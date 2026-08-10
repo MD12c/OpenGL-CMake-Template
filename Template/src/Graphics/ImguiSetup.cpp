@@ -11,7 +11,8 @@
 
 namespace My_ImGui
 {
-GLFWwindow* m_VIEWPORT  = nullptr;
+GLFWwindow* m_VIEWPORT = nullptr;
+ImGuiIO*    m_io;
 bool        m_dockBuild = false;
 
 int My_ImGui::Init(GLFWwindow* VIEWPORT)
@@ -23,22 +24,23 @@ int My_ImGui::Init(GLFWwindow* VIEWPORT)
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui::GetIO().ConfigFlags |=
+    m_io = &ImGui::GetIO();
+    m_io->ConfigFlags |=
         ImGuiConfigFlags_ViewportsEnable |
         ImGuiConfigFlags_DockingEnable |
         ImGuiConfigFlags_NoMouseCursorChange;
 
-    ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF("Assets/Fonts/DejaVuSans.ttf", 26.0f);
+    ImFont* font = m_io->Fonts->AddFontFromFileTTF("Assets/Fonts/DejaVuSans.ttf", 26.0f);
     if (!font)
     {
         std::cerr << "Failed to load font, falling back to default font\n";
-        ImGui::GetIO().Fonts->AddFontDefault();
+        m_io->Fonts->AddFontDefault();
     }
 
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(m_VIEWPORT, true);
     ImGui_ImplOpenGL3_Init("#version 460");
-    ImGui::GetIO().FontGlobalScale = 1.0f;
+    m_io->FontGlobalScale = 1.0f;
 
     return 0;
 }
@@ -78,6 +80,8 @@ void My_ImGui::ShowDockSpace()
         m_dockBuild = true;
 
         ImGui::DockBuilderRemoveNode(dockspace_id);
+        std::cerr << "DockingEnable flag set: " << ((ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0) << "\n";
+        std::cerr << "Nodes count before DockSpace: " << ImGui::GetCurrentContext()->DockContext.Nodes.Data.Size << "\n";
         ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
         ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
@@ -100,7 +104,7 @@ void My_ImGui::RenderDockSpace()
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    if (m_io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
         GLFWwindow* backup = glfwGetCurrentContext();
         ImGui::UpdatePlatformWindows();

@@ -1,17 +1,21 @@
 #ifndef SETUP
 #define SETUP
 
-#include<iostream>
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
+#include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-class Window {
+class Window
+{
 private:
     GLFWwindow* m_window = nullptr;
 
 public:
     Window();
-    void glClearCurrentColor();
+    void StartFrame();
+    void EndFrame();
+    bool ShouldClose() { return glfwWindowShouldClose(m_window); };
+
     void updateFPS();
 
     GLFWwindow* getWindow();

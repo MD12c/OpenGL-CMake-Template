@@ -88,7 +88,13 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::glClearCurrentColor()
+void Window::StartFrame()
 {
     glClearColor(windowRGB[0], windowRGB[1], windowRGB[2], 1.0f);
+}
+
+void Window::EndFrame()
+{
+    glfwSwapBuffers(m_window);
+    glfwPollEvents();
 }

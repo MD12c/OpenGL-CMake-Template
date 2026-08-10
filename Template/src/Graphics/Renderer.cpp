@@ -15,15 +15,6 @@ Renderer::~Renderer()
 
 void Renderer::Render(const Scene& scene)
 {
-    timeCrnt = glfwGetTime();
-    timeDiff = timeCrnt - timePrev;
-    if (timeDiff >= 1.0 / 60.0)
-    {
-        timePrev = timeCrnt;
-        if (!ImGui::GetIO().WantCaptureMouse)
-            scene.cameras[scene.activeCam]->Inputs(scene.glfwWindowPtr);
-    }
-
     for (const auto& model : scene.models)
         scene.lightSystem.ShadowPass(model);
 

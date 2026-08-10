@@ -2,29 +2,12 @@
 
 int main()
 {
-// Window creation
-#pragma region
-    Window VIEWPORT;
-    Renderer renderer;
-    My_ImGui::Init(VIEWPORT.getWindow());
-    ShaderManager::LoadAllShaders();
+    App app;
 
-    Scene scene(VIEWPORT.getWindow());
-#pragma endregion
-
-    while (!glfwWindowShouldClose(VIEWPORT.getWindow()))
+    while (!app.ShouldClose())
     {
-        // VIEWPORT.updateFPS(); // Can be overlayed in imgui
-        VIEWPORT.glClearCurrentColor();
-        My_ImGui::ShowDockSpace();
-
-        renderer.Render(scene);
-        
-        My_ImGui::RenderDockSpace();
-        glfwSwapBuffers(VIEWPORT.getWindow());
-        glfwPollEvents();
+        app.RunFrame();
     }
-#pragma endregion
 
     return 0;
 }

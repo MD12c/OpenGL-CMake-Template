@@ -12,10 +12,6 @@ private:
     MSAAbuffer  antiAlias;
     Framebuffer postProcess;
 
-    double timePrev = 0;
-    double timeCrnt = 0;
-    double timeDiff;
-
 public:
     Renderer();
     ~Renderer();

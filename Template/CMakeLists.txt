@@ -2,6 +2,8 @@
   ${PROJECT_NAME}
   src/main.cpp
   src/main.h
+  src/App.h
+  src/App.cpp
   include/libraries/Benchmarks/Instrumentatior.h
   src/Graphics/VertexBuffers/EBO.cpp
   src/Graphics/VertexBuffers/EBO.h
