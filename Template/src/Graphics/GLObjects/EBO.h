@@ -11,11 +11,11 @@ public:
     EBO(const void* indices, GLsizeiptr size);
     EBO(std::vector<GLuint>& indices);
     EBO();
+    ~EBO();
     void UpdateData(const void* indices, GLsizeiptr size);
     void UpdateData(std::vector<GLuint>& indices);
     void Bind() const;
     void Unbind() const;
-    void Delete() const;
 };
 
 #endif

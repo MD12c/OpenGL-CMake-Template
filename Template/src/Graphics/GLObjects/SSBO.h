@@ -5,14 +5,14 @@
 
 class SSBO
 {
+public:
     GLuint ID;
 
-public:
     SSBO(const void* data, GLsizeiptr size, int usageHint);
     SSBO();
+    ~SSBO();
     void UpdateSSBO(const void* data, GLsizeiptr size, GLsizeiptr offset);
     void Bind(unsigned int index);
-    void Delete();
 };
 
 #endif

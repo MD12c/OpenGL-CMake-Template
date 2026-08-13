@@ -48,6 +48,11 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Texture::~Texture()
+{
+    glDeleteTextures(1, &ID);
+}
+
 void Texture::texUnit(const unsigned int shaderID, const std::string& uniform) const
 {
     ShaderManager::Activate(shaderID);
@@ -71,9 +76,4 @@ void Texture::Bind() const
 void Texture::Unbind() const
 {
     glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-void Texture::Delete() const
-{
-    glDeleteTextures(1, &ID);
 }

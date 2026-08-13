@@ -20,6 +20,11 @@ VBO::VBO()
     glBindBuffer(GL_ARRAY_BUFFER, ID);
 }
 
+VBO::~VBO()
+{
+    glDeleteBuffers(1, &ID);
+}
+
 void VBO::UpdateData(const void* vertices, GLsizeiptr size)
 {
     glBindBuffer(GL_ARRAY_BUFFER, ID);
@@ -40,9 +45,4 @@ void VBO::Bind() const
 void VBO::Unbind() const
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void VBO::Delete() const
-{
-    glDeleteBuffers(1, &ID);
 }

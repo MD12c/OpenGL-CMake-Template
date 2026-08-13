@@ -12,6 +12,11 @@ void VAO::LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type,
     glEnableVertexAttribArray(layout);
 }
 
+VAO::~VAO()
+{
+    glDeleteVertexArrays(1, &ID);
+}
+
 void VAO::Bind() const
 {
     glBindVertexArray(ID);
@@ -20,9 +25,4 @@ void VAO::Bind() const
 void VAO::Unbind() const
 {
     glBindVertexArray(0);
-}
-
-void VAO::Delete() const
-{
-    glDeleteVertexArrays(1, &ID);
 }

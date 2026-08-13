@@ -20,12 +20,12 @@ public:
     VBO(const void* vertices, GLsizeiptr size, int usageHint);
     VBO(std::vector<Vertex>& vertices);
     VBO();
+    ~VBO();
 
     void UpdateData(const void* vertices, GLsizeiptr size);
     void UpdateData(std::vector<Vertex>& vertices);
     void Bind() const;
     void Unbind() const;
-    void Delete() const;
 };
 
 #endif

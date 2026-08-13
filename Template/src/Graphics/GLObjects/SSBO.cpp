@@ -9,6 +9,11 @@ SSBO::SSBO(const void* data, GLsizeiptr size, int usageHint)
         glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, nullptr);
 }
 
+SSBO::~SSBO()
+{
+    glDeleteBuffers(1, &ID);
+}
+
 void SSBO::UpdateSSBO(const void* data, GLsizeiptr size, GLsizeiptr offset)
 {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID);
@@ -23,9 +28,4 @@ SSBO::SSBO()
 void SSBO::Bind(unsigned int index)
 {
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, ID);
-}
-
-void SSBO::Delete()
-{
-    glDeleteBuffers(1, &ID);
 }

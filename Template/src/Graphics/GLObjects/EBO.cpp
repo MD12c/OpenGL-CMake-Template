@@ -19,6 +19,11 @@ EBO::EBO()
     glGenBuffers(1, &ID);
 }
 
+EBO::~EBO()
+{
+    glDeleteBuffers(1, &ID);
+}
+
 void EBO::UpdateData(const void* indices, GLsizeiptr size)
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
@@ -39,9 +44,4 @@ void EBO::Bind() const
 void EBO::Unbind() const
 {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
-
-void EBO::Delete() const
-{
-    glDeleteBuffers(1, &ID);
 }

@@ -17,11 +17,11 @@ public:
     GLuint      unit;
 
     Texture(const std::string& image, const std::string& texType, GLuint slot);
+    ~Texture();
 
     void texUnit(const unsigned int shaderID, const std::string& uniform) const;
     void texUnit(const Shader& shader, const std::string& uniform, const GLuint unit) const;  // Old
     void Bind() const;
     void Unbind() const;
-    void Delete() const;
 };
 #endif
