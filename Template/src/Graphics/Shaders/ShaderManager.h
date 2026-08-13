@@ -30,6 +30,7 @@ struct ShaderIDs
     unsigned int shadowMapCube;
     unsigned int depthDebug;
     unsigned int depthDebugCube;
+    unsigned int lightSphere;
     unsigned int def;
 };
 extern ShaderIDs IDs;

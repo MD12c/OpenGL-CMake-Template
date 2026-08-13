@@ -80,8 +80,6 @@ void My_ImGui::ShowDockSpace()
         m_dockBuild = true;
 
         ImGui::DockBuilderRemoveNode(dockspace_id);
-        std::cerr << "DockingEnable flag set: " << ((ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0) << "\n";
-        std::cerr << "Nodes count before DockSpace: " << ImGui::GetCurrentContext()->DockContext.Nodes.Data.Size << "\n";
         ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
         ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 

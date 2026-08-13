@@ -73,11 +73,6 @@ void LoadAllShaders()
           "numSpotLights",
           "numPointLights" });
 
-    Activate(IDs.model);
-    // glUniform4f(getLoc(IDs.model, "lightColor"), 1.0f, 1.0f, 1.0f, 1.0f);
-    // glUniform3fv(getLoc(IDs.model, "lightPos"), 1, glm::value_ptr(lightPosition));
-    // glUniform3f(getLoc(IDs.model, "lightDirection"), 0.0f, -1.0f, 0.0f);
-
     // SkyBox 1
     IDs.skybox = LoadWithUniforms(
         "Assets/shaders/skybox.vert",
@@ -143,7 +138,19 @@ void LoadAllShaders()
             "faceUp",
         });
 
-    // Default 7
+    // Light 7
+    IDs.lightSphere = LoadWithUniforms(
+        "Assets/shaders/lightSphere.vert",
+        "Assets/shaders/lightSphere.frag",
+        { "proj",
+          "view",
+          "model",
+          "translation",
+          "rotation",
+          "scale",
+          "lightColor" });
+
+    // Default 8
     IDs.def = LoadWithUniforms(
         "Assets/shaders/default.vert",
         "Assets/shaders/default.frag",
