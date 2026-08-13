@@ -3,6 +3,8 @@
 #include "imgui.h"
 #include "Lighting\LightSystem.h"
 
+using namespace ShaderManager;
+
 Renderer::Renderer()
     : antiAlias(),
       postProcess()
@@ -15,22 +17,23 @@ Renderer::~Renderer()
 
 void Renderer::Render(const Scene& scene)
 {
-    for (const auto& model : scene.models)
-        scene.lightSystem.ShadowPass(model);
+    scene.lightSystem.ShadowPass(scene.models, scene.lights);
 
     antiAlias.Activate();
 
-    scene.lightSystem.ExportUniforms(ShaderManager::IDs.model);
+    scene.lightSystem.ExportUniforms(IDs.model, scene.lights);
 
-    scene.cameras[scene.activeCam]->updateUniforms(ShaderManager::IDs.model);
+    scene.cameras[scene.activeCam]->updateUniforms(IDs.model);
+
     for (const auto& model : scene.models)
-        model.Draw(ShaderManager::IDs.model);
-    scene.lightSystem.RenderLightModels(ShaderManager::IDs.model);
+        model.Draw(IDs.model);
 
-    scene.skybox.Draw(ShaderManager::IDs.skybox, scene.cameras[scene.activeCam]->getRotationMat());
+    scene.lightSystem.DrawLightSpheres(IDs.model, scene.lights);
+
+    scene.skybox.Draw(IDs.skybox, scene.cameras[scene.activeCam]->getRotationMat());
 
     antiAlias.CopyResultsTo(postProcess.ID);
-    postProcess.Draw(ShaderManager::IDs.postProcess);
+    postProcess.Draw(IDs.postProcess);
 
     // BindSquare();
     // shadowCasters.DrawDepthDebug(IDs.depthDebug, 0);

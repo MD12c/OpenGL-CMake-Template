@@ -24,5 +24,6 @@ public:
 
     Model(const std::string& path);
 
-    void Draw(const unsigned int shaderID) const;
+    void Draw(unsigned int shaderID) const;
+    void Draw(unsigned int shaderID, glm::mat4 model, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) const;
 };

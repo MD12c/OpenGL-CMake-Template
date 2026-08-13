@@ -5,7 +5,7 @@ Model::Model(const std::string& path)
     loadModel(path);
 }
 
-void Model::Draw(const unsigned int shaderID) const
+void Model::Draw(unsigned int shaderID) const
 {
     for (unsigned int i = 0; i < meshes.size(); i++)
     {
@@ -15,6 +15,19 @@ void Model::Draw(const unsigned int shaderID) const
             glm::vec3(0.0f, 0.0f, 0.0f),
             glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
             glm::vec3(1.0f, 1.0f, 1.0f));
+    }
+}
+
+void Model::Draw(unsigned int shaderID, glm::mat4 model, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) const
+{
+    for (unsigned int i = 0; i < meshes.size(); i++)
+    {
+        meshes[i].Draw(
+            shaderID,
+            model,
+            translation,
+            rotation,
+            scale);
     }
 }
 

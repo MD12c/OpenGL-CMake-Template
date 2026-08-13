@@ -14,11 +14,18 @@ class LightSystem
 private:
     std::unique_ptr<ShadowSystem> shadowSystem = nullptr;
 
+    float zNear, zFar;
+    Model icoSphere;
+
+public:
     struct Light
     {
+    private:
+        LightType type;
+        glm::vec3 pos, dir, color;
+
+    public:
         std::unique_ptr<ShadowCaster> caster = nullptr;
-        LightType                     type;
-        glm::vec3                     pos, dir, color;
 
         Light(LightType type, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, std::unique_ptr<ShadowCaster> caster)
             : type(type), pos(lightPos), dir(direction), color(lightColor), caster(std::move(caster)) {}
@@ -29,36 +36,26 @@ private:
             dir = newDirection;
             if (caster) caster->setView(pos, dir);
         }
-        void setPosition(glm::vec3 newPos) { updateCaster(newPos, dir); }
-        void setDirection(glm::vec3 newDirection) { updateCaster(pos, newDirection); }
-        void setColor(glm::vec3 newColor) { color = newColor; }
+        void      setPosition(glm::vec3 newPos) { updateCaster(newPos, dir); }
+        void      setDirection(glm::vec3 newDirection) { updateCaster(pos, newDirection); }
+        void      setColor(glm::vec3 newColor) { color = newColor; }
+        LightType getType() const { return type; }
+        glm::vec3 getPosition() const { return pos; }
+        glm::vec3 getDirection() const { return dir; }
+        glm::vec3 getColor() const { return color; }
     };
-    std::vector<Light> lights;
 
-    float zNear, zFar;
-
-    Model icoSphere;
-
-public:
     LightSystem(float zNear, float zFar);
 
-    void ExportUniforms(unsigned int shaderID) const;
-    void ShadowPass(const Model& model) const;
-    void RenderLightModels(unsigned int shaderID) const;
+    void ExportUniforms(unsigned int shaderID, const std::vector<Light>& lights) const;
+    void ShadowPass(const std::vector<Model>& models, const std::vector<Light>& lights) const;
+    void DrawLightSpheres(unsigned int shaderID, const std::vector<Light>& lights) const;
 
     unsigned int getShaderIDfromType(LightType type) const;
 
-    void addLight(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top);
-    void addLight(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone);
-    void addLight(glm::vec3 lightPos, glm::vec3 lightColor);
-
-    inline glm::vec3 getLightPos(int index) { return lights.at(index).pos; }
-    inline glm::vec3 getLightDir(int index) { return lights.at(index).dir; }
-    inline glm::vec3 getLightColor(int index) { return lights.at(index).color; }
-
-    inline void setLightPos(int index, glm::vec3 pos) { lights.at(index).setPosition(pos); }
-    inline void setLightDir(int index, glm::vec3 dir) { lights.at(index).setDirection(dir); }
-    inline void setLightColor(int index, glm::vec3 color) { lights.at(index).setColor(color); }
+    void addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top);
+    void addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone);
+    void addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 lightColor);
 };
 
 #endif
