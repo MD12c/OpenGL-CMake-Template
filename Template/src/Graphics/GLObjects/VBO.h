@@ -9,7 +9,6 @@ struct Vertex
 {
     glm::vec3 position;
     glm::vec3 normal;
-    glm::vec3 color;
     glm::vec2 texUV;
 };
 
@@ -20,6 +19,13 @@ public:
     VBO(const void* vertices, GLsizeiptr size, int usageHint);
     VBO(std::vector<Vertex>& vertices);
     VBO();
+
+    VBO(const VBO&)            = delete;
+    VBO& operator=(const VBO&) = delete;
+
+    VBO(VBO&& other) noexcept;
+    VBO& operator=(VBO&& other) noexcept;
+
     ~VBO();
 
     void UpdateData(const void* vertices, GLsizeiptr size);

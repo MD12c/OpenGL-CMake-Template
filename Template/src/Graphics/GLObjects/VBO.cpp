@@ -20,6 +20,25 @@ VBO::VBO()
     glBindBuffer(GL_ARRAY_BUFFER, ID);
 }
 
+VBO& VBO::operator=(VBO&& other) noexcept
+{
+    if (this != &other)
+    {
+        glDeleteBuffers(1, &ID);
+
+        ID       = other.ID;
+        other.ID = 0;
+    }
+
+    return *this;
+}
+
+VBO::VBO(VBO&& other) noexcept
+    : ID(other.ID)
+{
+    other.ID = 0;
+}
+
 VBO::~VBO()
 {
     glDeleteBuffers(1, &ID);

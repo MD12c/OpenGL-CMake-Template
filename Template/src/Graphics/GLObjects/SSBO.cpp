@@ -9,6 +9,26 @@ SSBO::SSBO(const void* data, GLsizeiptr size, int usageHint)
         glClearBufferData(GL_SHADER_STORAGE_BUFFER, GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE, nullptr);
 }
 
+SSBO& SSBO::operator=(SSBO&& other) noexcept
+{
+    if (this != &other)
+    {
+        glDeleteBuffers(1, &ID);
+
+        ID       = other.ID;
+        other.ID = 0;
+    }
+
+    return *this;
+}
+
+SSBO::SSBO(SSBO&& other) noexcept
+    : ID(other.ID)
+{
+    other.ID = 0;
+}
+
+
 SSBO::~SSBO()
 {
     glDeleteBuffers(1, &ID);

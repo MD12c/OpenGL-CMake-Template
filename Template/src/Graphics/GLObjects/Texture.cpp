@@ -48,6 +48,34 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Texture& Texture::operator=(Texture&& other) noexcept
+{
+    if (this != &other)
+    {
+        glDeleteTextures(1, &ID);
+
+        ID         = other.ID;
+        type       = other.type;
+        unit       = other.unit;
+        path       = other.path;
+        other.ID   = 0;
+        other.type = "";
+        other.unit = 0;
+        other.path = "";
+    }
+
+    return *this;
+}
+
+Texture::Texture(Texture&& other) noexcept
+: ID(other.ID), type(other.type), unit(other.unit), path(other.path)
+{
+    other.ID   = 0;
+    other.type = "";
+    other.unit = 0;
+    other.path = "";
+}
+
 Texture::~Texture()
 {
     glDeleteTextures(1, &ID);
@@ -75,5 +103,6 @@ void Texture::Bind() const
 
 void Texture::Unbind() const
 {
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
