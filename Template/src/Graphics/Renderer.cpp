@@ -24,7 +24,6 @@ void Renderer::Render(const Scene& scene)
     scene.lightSystem.ExportUniforms(IDs.model, scene.lights);
 
     scene.cameras[scene.activeCam]->updateUniforms(IDs.model);
-
     for (const auto& model : scene.models)
         model.Draw(IDs.model);
 

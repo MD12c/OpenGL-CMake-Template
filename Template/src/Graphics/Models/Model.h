@@ -7,20 +7,19 @@
 #include <assimp/postprocess.h>
 
 #include "../Shaders/ShaderManager.h"
+#include "../Materials/MaterialManager.h"
 
 class Model
 {
 private:
     std::vector<Mesh> meshes;
 
-    void                 loadModel(const std::string& path);
-    void                 processNode(aiNode*, const aiScene*);
-    Mesh                 processMesh(aiMesh*, const aiScene*);
-    std::vector<Texture> loadMaterialTextures(aiMaterial*, aiTextureType, std::string);
+    void loadModel(const std::string& path);
+    void processNode(aiNode*, const aiScene*);
+    Mesh processMesh(aiMesh*, const aiScene*);
 
 public:
-    std::string          directory;
-    std::vector<Texture> loadedTextures;
+    std::string directory;
 
     Model(const std::string& path);
 

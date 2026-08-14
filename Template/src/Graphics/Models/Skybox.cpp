@@ -63,8 +63,5 @@ void Skybox::Draw(unsigned int shaderID, glm::mat4 cameraMatrix) const
 
 Skybox::~Skybox()
 {
-    skyboxVAO.Delete();
-    skyboxEBO.Delete();
-    skyboxVBO.Delete();
     glDeleteTextures(1, &cubemapTexture);
 }

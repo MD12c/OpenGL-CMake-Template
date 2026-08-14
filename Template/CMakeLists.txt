@@ -42,9 +42,16 @@ set(MODEL_SOURCES
     src/Graphics/Models/Model.h src/Graphics/Models/Model.cpp
     src/Graphics/Models/Skybox.h src/Graphics/Models/Skybox.cpp)
 
+set(MATERIAL_SOURCES
+src/Graphics/Materials/Material.h
+src/Graphics/Materials/Material.cpp
+src/Graphics/Materials/MaterialManager.h
+src/Graphics/Materials/MaterialManager.cpp
+)
+
 set(LIGHTING_SOURCES
-  src/Graphics/Lighting/LightSystem.h
-  src/Graphics/Lighting/LightSystem.cpp
+    src/Graphics/Lighting/LightSystem.h
+    src/Graphics/Lighting/LightSystem.cpp
     src/Graphics/Lighting/ShadowMap2D.h
     src/Graphics/Lighting/ShadowMap2D.cpp
     src/Graphics/Lighting/ShadowCaster.h
@@ -72,6 +79,7 @@ add_executable(
   ${SHADERS_SOURCES}
   ${CAMERA_SOURCES}
   ${MODEL_SOURCES}
+  ${MATERIAL_SOURCES}
   ${FRAMEBUFFER_SOURCES}
   ${UTILITY_SOURCES})
 

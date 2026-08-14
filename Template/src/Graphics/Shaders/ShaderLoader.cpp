@@ -71,7 +71,10 @@ void LoadAllShaders()
           "camPos",
           "numDirLights",
           "numSpotLights",
-          "numPointLights" });
+          "numPointLights",
+          "shininess",
+          "diffuseColor",
+          "useTexture" });
 
     // SkyBox 1
     IDs.skybox = LoadWithUniforms(

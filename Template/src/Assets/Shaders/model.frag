@@ -1,7 +1,6 @@
 #version 460 core
 out vec4 FragColor;
 
-in vec3 color;
 in vec2 texCoord;
 in vec3 Normal;
 in vec3 crntPos;
@@ -10,6 +9,10 @@ in vec4 fragPosLight;
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
 uniform vec3      camPos;
+
+uniform float shininess;
+uniform vec3  diffuseColor;
+uniform bool  useTexture;
 
 #define MAX_DIR_LIGHTS 2
 #define MAX_SPOT_LIGHTS 4
@@ -63,7 +66,7 @@ vec4 pointLight(int i)
         float specularLight = 0.50f;
         vec3  viewDirection = normalize(camPos - crntPos);
         vec3  halfwayVec    = normalize(viewDirection + lightDirection);
-        float specAmount    = pow(max(dot(normal, halfwayVec), 0.0f), 16);
+        float specAmount    = pow(max(dot(normal, halfwayVec), 0.0f), shininess);
         specular            = specAmount * specularLight;
     };
 
@@ -90,7 +93,10 @@ vec4 pointLight(int i)
     // Average shadow
     shadow /= pow((sampleRadius * 2 + 1), 3);
 
-    return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, texCoord).r * specular * (1.0f - shadow) * inten) * vec4(pointLightColor[i], 1.0f);
+    if (useTexture)
+        return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, texCoord).r * specular * (1.0f - shadow) * inten) * vec4(pointLightColor[i], 1.0f);
+    else
+        return (vec4(diffuseColor, 1.0f) * (diffuse * (1.0f - shadow)) + vec4(diffuseColor, 1.0f) * specular * (1.0f - shadow)) * vec4(pointLightColor[i], 1.0f);
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
@@ -111,7 +117,7 @@ vec4 direcLight(int i)
         float specularLight = 0.50f;
         vec3  viewDirection = normalize(camPos - crntPos);
         vec3  halfwayVec    = normalize(viewDirection + lightDir);
-        float specAmount    = pow(max(dot(normal, halfwayVec), 0.0f), 16);
+        float specAmount    = pow(max(dot(normal, halfwayVec), 0.0f), shininess);
         specular            = specAmount * specularLight;
     };
 
@@ -137,7 +143,10 @@ vec4 direcLight(int i)
         shadow /= pow((sampleRadius * 2 + 1), 2);
     }
 
-    return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow)) + texture(specular0, texCoord).r * specular * (1.0f - shadow)) * vec4(dirLightColor[i], 1.0f);
+    if (useTexture)
+        return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow)) + texture(specular0, texCoord).r * specular * (1.0f - shadow)) * vec4(dirLightColor[i], 1.0f);
+    else
+        return (vec4(diffuseColor, 1.0f) * (diffuse * (1.0f - shadow)) + vec4(diffuseColor, 1.0f) * specular * (1.0f - shadow)) * vec4(dirLightColor[i], 1.0f);
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
@@ -158,7 +167,7 @@ vec4 spotLight(int i)
         float specularLight = 0.50f;
         vec3  viewDirection = normalize(camPos - crntPos);
         vec3  halfwayVec    = normalize(viewDirection + surfaceToLightPos);
-        float specAmount    = pow(max(dot(normal, halfwayVec), 0.0f), 16);
+        float specAmount    = pow(max(dot(normal, halfwayVec), 0.0f), shininess);
         specular            = specAmount * specularLight;
     };
 
@@ -188,19 +197,26 @@ vec4 spotLight(int i)
         shadow /= pow((sampleRadius * 2 + 1), 2);
     }
 
-    return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, texCoord).r * specular * (1.0f - shadow) * inten) * vec4(spotLightColor[i], 1.0f);
+    if (useTexture)
+        return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, texCoord).r * specular * (1.0f - shadow) * inten) * vec4(spotLightColor[i], 1.0f);
+    else
+        return (vec4(diffuseColor, 1.0f) * (diffuse * (1.0f - shadow)) + vec4(diffuseColor, 1.0f) * specular * (1.0f - shadow)) * vec4(spotLightColor[i], 1.0f);
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
 void main()
 {
     float ambient = 0.20f;
-    vec4  result  = texture(diffuse0, texCoord) * ambient;
+    vec4  result  = vec4(1.0f, 0.0f, 0.0f, 1.0f);  // debug red
+    if (useTexture)
+        result = texture(diffuse0, texCoord) * ambient;
+    else
+        result = vec4(diffuseColor, 1.0f) * ambient;
 
     for (int i = 0; i < numDirLights; i++) result += direcLight(i);
     for (int i = 0; i < numSpotLights; i++) result += spotLight(i);
     for (int i = 0; i < numPointLights; i++) result += pointLight(i);
-    // result += pointLight(0);
+    result += pointLight(0);
 
     FragColor = result;
     // FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);

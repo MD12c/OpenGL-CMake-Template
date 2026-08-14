@@ -13,6 +13,7 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     cameras.emplace_back(std::make_unique<CameraFly>(glfwWindowPtr, 45, 0.1f, 10000.0f));
 
     models.emplace_back("Assets/Models/crow/scene.gltf");
+    // models.emplace_back("Assets/Models/crow.obj");
     //models.emplace_back("Assets/Models/icoSphere.obj");
 
     // glm::vec3 lightPosition = glm::vec3(0.0f, 30.0f, 0.0f);
