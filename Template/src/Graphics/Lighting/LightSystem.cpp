@@ -17,7 +17,7 @@ void LightSystem::DrawLightSpheres(unsigned int shaderID, const std::vector<Ligh
     {
         glm::vec4 col = glm::vec4(light.getColor(), 1.0f);
         glUniform4fv(ShaderManager::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
-        icoSphere.Draw(shaderID, glm::mat4(1.0f), light.getPosition(), glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        icoSphere.Draw(shaderID, light.getPosition(), glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
     }
 }
 

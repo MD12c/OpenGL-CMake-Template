@@ -5,30 +5,18 @@ Model::Model(const std::string& path)
     loadModel(path);
 }
 
-void Model::Draw(unsigned int shaderID) const
+void Model::Draw(unsigned int shaderID, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) const
 {
-    for (unsigned int i = 0; i < meshes.size(); i++)
-    {
-        meshes[i].Draw(
-            shaderID,
-            glm::mat4(1.0f),
-            glm::vec3(0.0f, 0.0f, 0.0f),
-            glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
-            glm::vec3(1.0f, 1.0f, 1.0f));
-    }
-}
+    glm::mat4 trans = glm::translate(glm::mat4(1.0f), translation);
+    glm::mat4 rot   = glm::mat4_cast(rotation);
+    glm::mat4 sca   = glm::scale(glm::mat4(1.0f), scale);
 
-void Model::Draw(unsigned int shaderID, glm::mat4 model, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) const
-{
+    glm::mat4 model = trans * rot * sca;
+
+    glm::mat3 normal = glm::transpose(glm::inverse(glm::mat3(model)));
+
     for (unsigned int i = 0; i < meshes.size(); i++)
-    {
-        meshes[i].Draw(
-            shaderID,
-            model,
-            translation,
-            rotation,
-            scale);
-    }
+        meshes[i].Draw(shaderID, model, normal);
 }
 
 void Model::loadModel(const std::string& path)
@@ -128,7 +116,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
         materialID = MaterialManager::LoadMaterial(std::string(material->GetName().C_Str()), diffPath, specPath);
     }
-    
+
     std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
     return Mesh(vertices, indices, materialID);
 }

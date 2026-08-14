@@ -18,12 +18,7 @@ Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int mat
     EBO.Unbind();
 }
 
-void Mesh::Draw(
-    unsigned int shaderID,
-    glm::mat4    model,
-    glm::vec3    translation,
-    glm::quat    rotation,
-    glm::vec3    scale) const
+void Mesh::Draw(unsigned int shaderID, const glm::mat4& model, const glm::mat4& normal) const
 {
     ShaderManager::Activate(shaderID);
 
@@ -34,19 +29,6 @@ void Mesh::Draw(
     else
         MaterialManager::Unbind();
 
-    glm::mat4 trans  = glm::mat4(1.0f);
-    glm::mat4 rot    = glm::mat4(1.0f);
-    glm::mat4 sca    = glm::mat4(1.0f);
-    glm::mat3 normal = glm::mat3(1.0f);
-
-    trans  = glm::translate(trans, translation);
-    rot    = glm::mat4_cast(rotation);
-    sca    = glm::scale(sca, scale);
-    normal = glm::transpose(glm::inverse(glm::mat3(model)));
-
-    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "translation"), 1, GL_FALSE, glm::value_ptr(trans));
-    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "rotation"), 1, GL_FALSE, glm::value_ptr(rot));
-    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix3fv(ShaderManager::getLoc(shaderID, "normal"), 1, GL_FALSE, glm::value_ptr(normal));
 

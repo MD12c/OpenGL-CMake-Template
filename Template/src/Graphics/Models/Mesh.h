@@ -28,10 +28,5 @@ public:
     Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int materialID);
     void addTextureUnits(unsigned int shaderID) const;
 
-    void Draw(
-        unsigned int shaderID,
-        glm::mat4    model       = glm::mat4(1.0f),
-        glm::vec3    translation = glm::vec3(1.0f),
-        glm::quat    rotation    = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
-        glm::vec3    scale       = glm::vec3(1.0f, 1.0f, 1.0f)) const;
+    void Draw(unsigned int shaderID, const glm::mat4& model = glm::mat4(1.0f), const glm::mat4& normal = glm::mat4(1.0f)) const;
 };
