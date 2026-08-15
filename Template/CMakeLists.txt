@@ -43,11 +43,9 @@ set(MODEL_SOURCES
     src/Graphics/Models/Skybox.h src/Graphics/Models/Skybox.cpp)
 
 set(MATERIAL_SOURCES
-src/Graphics/Materials/Material.h
-src/Graphics/Materials/Material.cpp
-src/Graphics/Materials/MaterialManager.h
-src/Graphics/Materials/MaterialManager.cpp
-)
+    src/Graphics/Materials/Material.h src/Graphics/Materials/Material.cpp
+    src/Graphics/Materials/MaterialManager.h
+    src/Graphics/Materials/MaterialManager.cpp)
 
 set(LIGHTING_SOURCES
     src/Graphics/Lighting/LightSystem.h
@@ -68,7 +66,8 @@ set(FRAMEBUFFER_SOURCES
     src/Graphics/FrameBuffers/MSAABuffer.h
     src/Graphics/FrameBuffers/MSAABuffer.cpp)
 
-set(UTILITY_SOURCES include/libraries/Benchmarks/Instrumentatior.h)
+set(UTILITY_SOURCES include/libraries/Benchmarks/Instrumentatior.h
+                    include/libraries/Benchmarks/GPUtimer.h)
 
 add_executable(
   ${PROJECT_NAME}
