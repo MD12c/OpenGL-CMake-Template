@@ -75,6 +75,15 @@ void ShadowSystem::attachTextureLayered(GLuint frameBuf, GLuint texture)
     //     std::cout << "ShadowMapCube FBO incomplete: " << status << std::endl;
 }
 
+void ShadowSystem::ClearAllTargets()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBuf2D);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBufCube);
+    glClear(GL_DEPTH_BUFFER_BIT);
+}
+
 void ShadowSystem::BindShadowTextures(unsigned int shaderID, GLuint startSlot)
 {
     ShaderManager::Activate(shaderID);
@@ -91,8 +100,6 @@ void ShadowSystem::BindShadowTextures(unsigned int shaderID, GLuint startSlot)
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, shadowMapPointArray);
     glUniform1i(ShaderManager::getLoc(shaderID, "pointShadowMaps"), startSlot + 2);
 }
-
-
 
 GLint ShadowSystem::RegisterCaster(LightType type)
 {

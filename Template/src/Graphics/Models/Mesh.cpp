@@ -19,7 +19,7 @@ Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int mat
     EBO.Unbind();
 }
 
-void Mesh::Draw(unsigned int shaderID, const glm::mat4& model, const glm::mat4& normal) const
+void Mesh::Draw(unsigned int shaderID, const glm::mat4& model, const glm::mat3& normal) const
 {
     ShaderManager::Activate(shaderID);
 

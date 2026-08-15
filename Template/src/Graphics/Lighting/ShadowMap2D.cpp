@@ -35,7 +35,6 @@ void ShadowMap2D::BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSyst
     shadowSystem.BindDepthTarget(lightType, layerIndex);
     glEnable(GL_DEPTH_TEST);
     glViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
-    glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void ShadowMap2D::ExportUniformsTo(unsigned int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor)

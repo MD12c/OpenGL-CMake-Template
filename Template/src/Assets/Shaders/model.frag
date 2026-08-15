@@ -235,7 +235,6 @@ void main()
     for (int i = 0; i < numDirLights; i++) result += direcLight(i);
     for (int i = 0; i < numSpotLights; i++) result += spotLight(i);
     for (int i = 0; i < numPointLights; i++) result += pointLight(i);
-    result += pointLight(0);
 
     FragColor = result;
     // FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
