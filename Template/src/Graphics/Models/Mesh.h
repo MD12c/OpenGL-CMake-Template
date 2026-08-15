@@ -26,7 +26,6 @@ public:
     EBO EBO;
 
     Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int materialID);
-    void addTextureUnits(unsigned int shaderID) const;
 
     void Draw(unsigned int shaderID, const glm::mat4& model = glm::mat4(1.0f), const glm::mat4& normal = glm::mat4(1.0f)) const;
 };

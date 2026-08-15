@@ -6,6 +6,7 @@ layout(triangle_strip, max_vertices = 3) out;
 out vec3 Normal;
 out vec2 texCoord;
 out vec3 crntPos;
+out vec3 Tangent;
 
 in DATA
 {
@@ -13,28 +14,21 @@ in DATA
     vec3 Normal;
     vec2 texCoord;
     mat4 camMatrix;
+    vec3 Tangent;
 }
 data_in[];
 
 void main()
 {
-    gl_Position  = data_in[0].camMatrix * vec4(data_in[0].Position, 1.0f);
-    Normal       = data_in[0].Normal;
-    texCoord     = data_in[0].texCoord;
-    crntPos      = data_in[0].Position;
-    EmitVertex();
-
-    gl_Position  = data_in[1].camMatrix * vec4(data_in[1].Position, 1.0f);
-    Normal       = data_in[1].Normal;
-    texCoord     = data_in[1].texCoord;
-    crntPos      = data_in[1].Position;
-    EmitVertex();
-
-    gl_Position  = data_in[2].camMatrix * vec4(data_in[2].Position, 1.0f);
-    Normal       = data_in[2].Normal;
-    texCoord     = data_in[2].texCoord;
-    crntPos      = data_in[2].Position;
-    EmitVertex();
+    for (int i = 0; i < 3; i++)
+    {
+        gl_Position = data_in[i].camMatrix * vec4(data_in[i].Position, 1.0f);
+        Normal      = data_in[i].Normal;
+        texCoord    = data_in[i].texCoord;
+        crntPos     = data_in[i].Position;
+        Tangent     = data_in[i].Tangent;
+        EmitVertex();
+    }
 
     EndPrimitive();
 }

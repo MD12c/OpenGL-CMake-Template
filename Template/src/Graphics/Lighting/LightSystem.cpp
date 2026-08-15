@@ -23,7 +23,7 @@ void LightSystem::DrawLightSpheres(unsigned int shaderID, const std::vector<Ligh
 
 void LightSystem::ExportUniforms(unsigned int shaderID, const std::vector<Light>& lights) const
 {
-    shadowSystem->BindShadowTextures(shaderID, 2 /*start slot*/);
+    shadowSystem->BindShadowTextures(shaderID, 3 /*start slot*/);
 
     int dirIdx = 0, spotIdx = 0, pointIdx = 0;
     for (auto& light : lights)

@@ -8,7 +8,8 @@ Material::Material(int                      ID,
                    glm::vec3                specularColor,
                    float                    shininess,
                    std::shared_ptr<Texture> diffuseMap,
-                   std::shared_ptr<Texture> specularMap)
+                   std::shared_ptr<Texture> specularMap,
+                   std::shared_ptr<Texture> normalMap)
 
     : ID(ID),
       name(name),
@@ -16,19 +17,22 @@ Material::Material(int                      ID,
       specularColor(specularColor),
       shininess(shininess),
       diffuseMap(diffuseMap),
-      specularMap(specularMap)
+      specularMap(specularMap),
+      normalMap(normalMap)
 {
 }
 
 Material::Material(int                      ID,
                    std::string              name,
                    std::shared_ptr<Texture> diffuseMap,
-                   std::shared_ptr<Texture> specularMap)
+                   std::shared_ptr<Texture> specularMap,
+                   std::shared_ptr<Texture> normalMap)
 
     : ID(ID),
       name(name),
       diffuseMap(diffuseMap),
-      specularMap(specularMap)
+      specularMap(specularMap),
+      normalMap(normalMap)
 {
 }
 
@@ -38,14 +42,17 @@ void Material::Apply(unsigned int shaderID) const
     glUniform3fv(ShaderManager::getLoc(shaderID, "diffuseColor"), 1, glm::value_ptr(diffuseColor));
     glUniform1f(ShaderManager::getLoc(shaderID, "shininess"), shininess);
 
-    bool hasTexture = (diffuseMap != nullptr);
-    glUniform1i(ShaderManager::getLoc(shaderID, "useTexture"), hasTexture);
+    glUniform1i(ShaderManager::getLoc(shaderID, "useTexture"), (diffuseMap != nullptr));
+    glUniform1i(ShaderManager::getLoc(shaderID, "useNormal"), (normalMap != nullptr));
+    // glUniform1i(ShaderManager::getLoc(shaderID, "useNormal"), 0);
 
     Bind();
     if (diffuseMap)
         diffuseMap->texUnit(shaderID, "diffuse0");
     if (specularMap)
         specularMap->texUnit(shaderID, "specular0");
+    if (normalMap)
+        normalMap->texUnit(shaderID, "normal0");
 }
 
 void Material::Bind() const
@@ -54,4 +61,6 @@ void Material::Bind() const
         diffuseMap->Bind();
     if (specularMap)
         specularMap->Bind();
+    if (normalMap)
+        normalMap->Bind();
 }

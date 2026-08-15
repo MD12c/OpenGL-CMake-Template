@@ -4,15 +4,19 @@ out vec4 FragColor;
 in vec2 texCoord;
 in vec3 Normal;
 in vec3 crntPos;
-in vec4 fragPosLight;
+in vec3 Tangent;
 
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
-uniform vec3      camPos;
+uniform sampler2D normal0;
+
+uniform bool useTexture;
+uniform bool useNormal;
+
+uniform vec3 camPos;
 
 uniform float shininess;
 uniform vec3  diffuseColor;
-uniform bool  useTexture;
 
 #define MAX_DIR_LIGHTS 2
 #define MAX_SPOT_LIGHTS 4
@@ -42,6 +46,21 @@ uniform float            pointFarPlane[MAX_POINT_LIGHTS];
 uniform int              pointLayerIndex[MAX_POINT_LIGHTS];
 uniform samplerCubeArray pointShadowMaps;
 
+vec3 getNormal()
+{
+    if (!useNormal)
+        return normalize(Normal);
+
+    vec3 N    = normalize(Normal);
+    vec3 rawT = Tangent - N * dot(Tangent, N);
+    vec3 T    = (dot(rawT, rawT) > 1e-8) ? normalize(rawT) : normalize(cross(N, vec3(0, 1, 0)));
+    vec3 B    = cross(N, T);
+    mat3 TBN  = mat3(T, B, N);
+
+    vec3 mapped = texture(normal0, texCoord).rgb * 2.0f - 1.0f;
+    return normalize(TBN * mapped);
+}
+
 vec4 pointLight(int i)
 {
     vec3 SurfaceToLightPos = pointLightPos[i] - crntPos;
@@ -55,7 +74,7 @@ vec4 pointLight(int i)
     float inten     = 1.0f / (quadratic * dist * dist + linear * dist + constant);
 
     // diffuse lighting
-    vec3  normal         = normalize(Normal);
+    vec3  normal         = getNormal();
     vec3  lightDirection = normalize(SurfaceToLightPos);
     float diffuse        = max(dot(normal, lightDirection), 0.0f);
 
@@ -107,7 +126,7 @@ vec4 direcLight(int i)
     vec3 lightDir = normalize(-dirLightDirection[i]);
 
     // diffuse lighting
-    vec3  normal  = normalize(Normal);
+    vec3  normal  = getNormal();
     float diffuse = max(dot(normal, lightDir), 0.0f);
 
     // specular lighting
@@ -156,7 +175,7 @@ vec4 spotLight(int i)
 
     // diffuse lighting
     vec3  lightDir          = normalize(-spotLightDirection[i]);
-    vec3  normal            = normalize(Normal);
+    vec3  normal            = getNormal();
     vec3  surfaceToLightPos = normalize(spotLightPos[i] - crntPos);
     float diffuse           = max(dot(normal, surfaceToLightPos), 0.0f);
 

@@ -21,6 +21,8 @@ void App::Update()
         timePrev = timeCrnt;
         if (!My_ImGui::m_io->WantCaptureMouse)
             scene.cameras[scene.activeCam]->Inputs(scene.glfwWindowPtr);
+        if (glfwGetKey(window.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
+            scene.lights.at(0).setPosition(scene.cameras[scene.activeCam]->position);
     }
 }
 

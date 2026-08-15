@@ -30,7 +30,7 @@ void Model::loadModel(const std::string& path)
         return;
     }
     std::cout << "Loading model from: " << path << std::endl;
-    
+
     directory = path.substr(0, path.find_last_of('/'));
 
     processNode(scene->mRootNode, scene);
@@ -93,19 +93,56 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             indices[index++] = face.mIndices[j];
     }
 
+    // Tangents
+    for (size_t i = 0; i < indices.size(); i += 3)
+    {
+        Vertex& v0 = vertices[indices[i]];
+        Vertex& v1 = vertices[indices[i + 1]];
+        Vertex& v2 = vertices[indices[i + 2]];
+
+        glm::vec3 edge1    = v1.position - v0.position;
+        glm::vec3 edge2    = v2.position - v0.position;
+        glm::vec2 deltaUV1 = v1.texUV - v0.texUV;
+        glm::vec2 deltaUV2 = v2.texUV - v0.texUV;
+
+        float denom = (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+        if (std::abs(denom) < 1e-8f)
+            continue;
+
+        float     invDet  = 1.0f / denom;
+        glm::vec3 tangent = invDet * (deltaUV2.y * edge1 - deltaUV1.y * edge2);
+
+        v0.tangent += tangent;
+        v1.tangent += tangent;
+        v2.tangent += tangent;
+    }
+    for (auto& v : vertices)
+    {
+        if (glm::length(v.tangent) > 1e-8f)
+            v.tangent = glm::normalize(v.tangent);
+        else
+        {
+            glm::vec3 up = (abs(v.normal.y) < 0.99f) ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0);
+            v.tangent    = glm::normalize(glm::cross(up, v.normal));
+        }
+    }
+
     // materials / textures
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        aiString    diff;
-        bool        diffSuccess = (material->GetTexture(aiTextureType_DIFFUSE, 0, &diff) == AI_SUCCESS);
-        std::string diffPath    = diff.length ? directory + "/" + diff.C_Str() : "";
+        auto findPath = [&](aiTextureType type) -> std::string
+        {
+            aiString relPath;
+            bool     success = (material->GetTexture(type, 0, &relPath) == AI_SUCCESS);
+            return (relPath.length && success) ? directory + "/" + relPath.C_Str() : "";
+        };
 
-        aiString    spec;
-        bool        specSuccess = (material->GetTexture(aiTextureType_SPECULAR, 0, &spec) == AI_SUCCESS);
-        std::string specPath    = spec.length ? directory + "/" + spec.C_Str() : "";
-
-        materialID = MaterialManager::LoadMaterial(std::string(material->GetName().C_Str()), diffPath, specPath);
+        materialID = MaterialManager::LoadMaterial(
+            std::string(material->GetName().C_Str()),
+            findPath(aiTextureType_DIFFUSE),
+            findPath(aiTextureType_SPECULAR),
+            findPath(aiTextureType_NORMALS));
     }
 
     std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;

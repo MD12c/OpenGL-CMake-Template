@@ -3,20 +3,17 @@
 #include "Globals.h"
 
 Texture::Texture(const std::string& image, const std::string& texType, GLuint slot)
+    : path(image), type(texType), unit(slot)
 {
-    type = texType;
-    path = image;
-
     int widthImg, heightImg, numColCh;
     stbi_set_flip_vertically_on_load(false);
-    unsigned char* bytes = stbi_load(image.c_str(), &widthImg, &heightImg, &numColCh, 0);
+    unsigned char* bytes = stbi_load(path.c_str(), &widthImg, &heightImg, &numColCh, 0);
 
     if (bytes == nullptr)
         throw std::runtime_error("Couldn't Load Texture");
 
     glGenTextures(1, &ID);
-    glActiveTexture(GL_TEXTURE0 + slot);
-    unit = slot;
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
@@ -28,11 +25,11 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     // float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
     // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
 
-    // if (type == "normal")
-    //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    // else if (type == "displacement")
-    //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    if (numColCh == 4)
+    if (type == "normal")
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+    else if (type == "displacement")
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+    else if (numColCh == 4)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
     else if (numColCh == 3)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, widthImg, heightImg, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
@@ -68,7 +65,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
 }
 
 Texture::Texture(Texture&& other) noexcept
-: ID(other.ID), type(other.type), unit(other.unit), path(other.path)
+    : ID(other.ID), type(other.type), unit(other.unit), path(other.path)
 {
     other.ID   = 0;
     other.type = "";

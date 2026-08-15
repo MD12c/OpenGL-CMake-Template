@@ -15,6 +15,7 @@ public:
 
     std::shared_ptr<Texture> diffuseMap  = nullptr;
     std::shared_ptr<Texture> specularMap = nullptr;
+    std::shared_ptr<Texture> normalMap   = nullptr;
 
     Material(int                      ID,
              std::string              name,
@@ -22,12 +23,14 @@ public:
              glm::vec3                specularColor,
              float                    shininess,
              std::shared_ptr<Texture> diffuseMap,
-             std::shared_ptr<Texture> specularMap);
+             std::shared_ptr<Texture> specularMap,
+             std::shared_ptr<Texture> normalMap);
 
     Material(int                      ID,
              std::string              name,
              std::shared_ptr<Texture> diffuseMap,
-             std::shared_ptr<Texture> specularMap);
+             std::shared_ptr<Texture> specularMap,
+             std::shared_ptr<Texture> normalMap);
 
     void Apply(unsigned int shaderID) const;
 

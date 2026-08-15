@@ -5,17 +5,20 @@ namespace MaterialManager
 std::deque<Material>                                      materials              = {};
 std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDiffuseTextures  = {};
 std::unordered_map<std::string, std::shared_ptr<Texture>> loadedSpecularTextures = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>> loadedNormalTextures   = {};
 
 unsigned int LoadMaterial(const std::string& name,
                           const std::string& diffuseMapPath,
-                          const std::string& specularMapPath)
+                          const std::string& specularMapPath,
+                          const std::string& normalMapPath)
 {
     materials.emplace_back(
         Material(
             (int)materials.size(),
             name,
             makeTexture(diffuseMapPath, "diffuse"),
-            makeTexture(specularMapPath, "specular")));
+            makeTexture(specularMapPath, "specular"),
+            makeTexture(normalMapPath, "normal")));
 
     return materials.back().ID;
 }
@@ -25,7 +28,8 @@ unsigned int LoadMaterial(const std::string& name,
                           glm::vec3          specularColor,
                           float              shininess,
                           const std::string& diffuseMapPath,
-                          const std::string& specularMapPath)
+                          const std::string& specularMapPath,
+                          const std::string& normalMapPath)
 {
     materials.emplace_back(
         Material(
@@ -35,7 +39,8 @@ unsigned int LoadMaterial(const std::string& name,
             specularColor,
             shininess,
             makeTexture(diffuseMapPath, "diffuse"),
-            makeTexture(specularMapPath, "specular")));
+            makeTexture(specularMapPath, "specular"),
+            makeTexture(normalMapPath, "normal")));
 
     return materials.back().ID;
 }
@@ -56,6 +61,11 @@ std::shared_ptr<Texture> makeTexture(const std::string& texturePath, const std::
     {
         unit  = 1;
         cache = &loadedSpecularTextures;
+    }
+    else if (type == "normal")
+    {
+        unit  = 2;
+        cache = &loadedNormalTextures;
     }
     else
         throw std::runtime_error("[ERROR] invalid texture type");
@@ -80,6 +90,9 @@ void Unbind()
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
