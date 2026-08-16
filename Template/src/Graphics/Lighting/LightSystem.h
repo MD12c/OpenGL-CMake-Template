@@ -47,9 +47,9 @@ public:
 
     LightSystem(float zNear, float zFar);
 
-    void ExportUniforms(unsigned int shaderID, const std::vector<Light>& lights) const;
+    void ExportUniforms(int shaderID, const std::vector<Light>& lights) const;
     void ShadowPass(const std::vector<Model>& models, const std::vector<Light>& lights) const;
-    void DrawLightSpheres(unsigned int shaderID, const std::vector<Light>& lights) const;
+    void DrawLightSpheres(int shaderID, const std::vector<Light>& lights) const;
 
     unsigned int getShaderIDfromType(LightType type) const;
 

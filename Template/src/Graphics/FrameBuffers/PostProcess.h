@@ -13,7 +13,7 @@ class Framebuffer
 {
 public:
     GLuint       ID;
-    unsigned int shaderID;
+    int shaderID;
     VAO          framebufferVAO;
     VBO          framebufferVBO;
     EBO          framebufferEBO;
@@ -24,7 +24,7 @@ public:
     void ClearBuffer();
     void Resize(int w, int h);
     void Activate();
-    void Draw(unsigned int shaderID);
+    void Draw(int shaderID);
 };
 
 #endif

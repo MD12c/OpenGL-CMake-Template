@@ -86,7 +86,7 @@ Texture::~Texture()
     glDeleteTextures(1, &ID);
 }
 
-void Texture::texUnit(const unsigned int shaderID, const std::string& uniform) const
+void Texture::texUnit(const int shaderID, const std::string& uniform) const
 {
     ShaderManager::Activate(shaderID);
     glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);

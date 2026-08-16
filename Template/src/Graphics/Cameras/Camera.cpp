@@ -10,7 +10,7 @@ Camera::Camera(GLFWwindow* window)
     glfwSetScrollCallback(window, ScrollCallback);
 }
 
-void Camera::updateUniforms(unsigned int shaderID) const
+void Camera::updateUniforms(int shaderID) const
 {
     ShaderManager::Activate(shaderID);
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "proj"), 1, GL_FALSE, glm::value_ptr(proj));

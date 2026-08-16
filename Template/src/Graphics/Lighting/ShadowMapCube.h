@@ -34,9 +34,9 @@ public:
     ShadowMapCube(GLuint layerIndex, glm::vec3 lightPos, float zNear, float zFar);
 
     void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
-    void BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
-    void ExportUniformsTo(unsigned int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
-    void DrawDepthDebug(unsigned int shaderID, int faceIndex);
+    void BeginDepthPass(int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
+    void ExportUniformsTo(int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
+    void DrawDepthDebug(int shaderID, int faceIndex);
 };
 
 #endif

@@ -52,7 +52,7 @@ void Framebuffer::Activate()
     glFrontFace(GL_CCW);
 }
 
-void Framebuffer::Draw(unsigned int shaderID)
+void Framebuffer::Draw(int shaderID)
 {
     glfwPtr.framebuffer = this;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

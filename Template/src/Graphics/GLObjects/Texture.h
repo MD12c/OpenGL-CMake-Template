@@ -26,7 +26,7 @@ public:
 
     ~Texture();
 
-    void texUnit(const unsigned int shaderID, const std::string& uniform) const;
+    void texUnit(const int shaderID, const std::string& uniform) const;
     void texUnit(const Shader& shader, const std::string& uniform, const GLuint unit) const;  // Old
     void Bind() const;
     void Unbind() const;

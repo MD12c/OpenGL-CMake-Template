@@ -40,7 +40,7 @@ Material::Material(int                      ID,
 {
 }
 
-void Material::Apply(unsigned int shaderID) const
+void Material::Apply(int shaderID) const
 {
     ShaderManager::Activate(shaderID);
     glUniform3fv(ShaderManager::getLoc(shaderID, "diffuseColor"), 1, glm::value_ptr(diffuseColor));

@@ -69,7 +69,7 @@ public:
 public:
     Skybox();
     ~Skybox();
-    void Draw(unsigned int shaderID, glm::mat4 cameraMatrix) const;
+    void Draw(int shaderID, glm::mat4 cameraMatrix) const;
 };
 
 #endif

@@ -27,10 +27,10 @@ public:
     ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float fovDeg, float innerCone, float outerCone, float zNear, float zFar);
 
     void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
-    void BeginDepthPass(unsigned int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
-    void ExportUniformsTo(unsigned int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
+    void BeginDepthPass(int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
+    void ExportUniformsTo(int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
 
-    void DrawDepthDebug(unsigned int shaderID, ShadowSystem& shadowSystem);
+    void DrawDepthDebug(int shaderID, ShadowSystem& shadowSystem);
 };
 
 #endif

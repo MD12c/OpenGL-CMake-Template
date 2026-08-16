@@ -11,7 +11,7 @@ LightSystem::LightSystem(float zNear, float zFar)
     : shadowSystem(std::make_unique<ShadowSystem>()), zNear(zNear), zFar(zFar), icoSphere("Assets/Models/icoSphere.obj")
 {
 }
-void LightSystem::DrawLightSpheres(unsigned int shaderID, const std::vector<Light>& lights) const
+void LightSystem::DrawLightSpheres(int shaderID, const std::vector<Light>& lights) const
 {
     glEnable(GL_CULL_FACE);
     for (const auto& light : lights)
@@ -23,7 +23,7 @@ void LightSystem::DrawLightSpheres(unsigned int shaderID, const std::vector<Ligh
     glDisable(GL_CULL_FACE);
 }
 
-void LightSystem::ExportUniforms(unsigned int shaderID, const std::vector<Light>& lights) const
+void LightSystem::ExportUniforms(int shaderID, const std::vector<Light>& lights) const
 {
     shadowSystem->BindShadowTextures(shaderID, 4 /*start slot*/);
 
@@ -69,7 +69,7 @@ void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector
 
     for (const auto& light : lights)
     {
-        const unsigned int shaderID = getShaderIDfromType(light.getType());
+        const int shaderID = getShaderIDfromType(light.getType());
         light.caster->BeginDepthPass(shaderID, *shadowSystem, light.getPosition());
         for (const auto& model : models)
             model.Draw(shaderID);

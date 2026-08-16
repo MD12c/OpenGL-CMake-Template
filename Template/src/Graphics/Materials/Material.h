@@ -35,7 +35,7 @@ public:
              std::shared_ptr<Texture> normalMap,
              std::shared_ptr<Texture> displacementMap);
 
-    void Apply(unsigned int shaderID) const;
+    void Apply(int shaderID) const;
 
     void Bind() const;
 };

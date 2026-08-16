@@ -84,7 +84,7 @@ void ShadowSystem::ClearAllTargets()
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void ShadowSystem::BindShadowTextures(unsigned int shaderID, GLuint startSlot)
+void ShadowSystem::BindShadowTextures(int shaderID, GLuint startSlot)
 {
     ShaderManager::Activate(shaderID);
 

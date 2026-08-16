@@ -29,7 +29,7 @@ public:
 
     GLint RegisterCaster(LightType type);
     void  BindDepthTarget(LightType type, GLuint layerIndex);
-    void  BindShadowTextures(unsigned int shaderID, GLuint startSlot);
+    void  BindShadowTextures(int shaderID, GLuint startSlot);
     void  ClearAllTargets();
 
     void genTexture(GLenum type, GLsizei maxDepth, GLuint* shadowMapTexture);
