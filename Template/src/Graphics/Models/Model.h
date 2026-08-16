@@ -23,9 +23,9 @@ public:
 
     Model(const std::string& path);
 
-    //void Draw(int shaderID) const;
-    void Draw(int shaderID,
-              glm::vec3    translation = glm::vec3(0.0f, 0.0f, 0.0f),
-              glm::quat    rotation    = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
-              glm::vec3    scale       = glm::vec3(1.0f, 1.0f, 1.0f)) const;
+    // void Draw(int shaderID) const;
+    void Draw(int       shaderID,
+              glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f),
+              glm::quat rotation    = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
+              glm::vec3 scale       = glm::vec3(1.0f, 1.0f, 1.0f)) const;
 };

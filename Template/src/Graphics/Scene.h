@@ -16,8 +16,8 @@ public:
     GLFWwindow*               glfwWindowPtr;
     std::function<void(void)> imguiFunctions = {};
 
-    Skybox             skybox;
-    std::vector<Model> models;
+    Skybox                          skybox;
+    std::vector<Model>              models;
     std::vector<LightSystem::Light> lights;
 
     int                                  activeCam = 0;

@@ -59,7 +59,7 @@ void PrintLoadedUniforms()
         std::string name = getName(i);
         std::cout << name << ":\n";
         for (const auto& pair : map)
-            std::cout <<  "   " << pair.first << "\n";
+            std::cout << "   " << pair.first << "\n";
         std::cout << std::endl;
         i++;
     }

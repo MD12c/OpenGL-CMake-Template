@@ -8,7 +8,7 @@ std::string get_file_contents(const std::string& filename);
 class Shader
 {
 public:
-    GLuint ID;
+    GLuint      ID;
     std::string filename;
     Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile);
     Shader(const std::string& vertexFile, const std::string& fragmentFile);
@@ -17,9 +17,9 @@ public:
     Shader& operator=(const Shader&) = delete;
     Shader(Shader&& other) noexcept
     {
-        ID       = other.ID;
-        filename = other.filename;
-        other.ID = 0;
+        ID             = other.ID;
+        filename       = other.filename;
+        other.ID       = 0;
         other.filename = "";
     }
     ~Shader();

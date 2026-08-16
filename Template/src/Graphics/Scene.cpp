@@ -13,7 +13,7 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     cameras.emplace_back(std::make_unique<CameraFly>(glfwWindowPtr, 45.0f, 0.1f, 10000.0f));
 
     models.emplace_back("Assets/Models/crow/scene.gltf");
-    //models.emplace_back("Assets/Models/Brick wall/wall.gltf");
+    // models.emplace_back("Assets/Models/Brick wall/wall.gltf");
     models.emplace_back("Assets/Models/Brick wall/wall.obj");
     // models.emplace_back("Assets/Models/crow.obj");
     // models.emplace_back("Assets/Models/icoSphere.obj");
@@ -24,8 +24,8 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     glm::vec3 lightPosition    = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 lightOrientation = glm::vec3(-0.15f, 1.0f, -1.0f);
 
-    //lightSystem.addLight(lights, lightPosition, lightOrientation, glm::vec3(1.0f, 1.0f, 1.0f), -35.0f, 35.0f, -35.0f, 35.0f);
-    // lightSystem.addLight(lights, lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
+    // lightSystem.addLight(lights, lightPosition, lightOrientation, glm::vec3(1.0f, 1.0f, 1.0f), -35.0f, 35.0f, -35.0f, 35.0f);
+    //  lightSystem.addLight(lights, lightPosition, lightOrientation, glm::vec3(0.0f, 1.0f, 0.0f), 90.0f, 0.1f, 0.90f);
     lightSystem.addLight(lights, lightPosition, glm::vec3(1.0f, 1.0f, 1.0f));
 
     imguiFunctions = [&]()

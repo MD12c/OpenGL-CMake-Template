@@ -9,15 +9,15 @@ namespace ShaderManager
 ShaderIDs IDs;
 
 int Load(const std::string& vertPath,
-                  const std::string& fragPath,
-                  const std::string& geomPath)
+         const std::string& fragPath,
+         const std::string& geomPath)
 {
     shaderResources.emplace_back(ShaderResources(Shader(vertPath, fragPath, geomPath), {}));
     return (int)shaderResources.size() - 1;
 }
 
 int Load(const std::string& vertPath,
-                  const std::string& fragPath)
+         const std::string& fragPath)
 {
     shaderResources.emplace_back(ShaderResources(Shader(vertPath, fragPath), {}));
     return (int)shaderResources.size() - 1;

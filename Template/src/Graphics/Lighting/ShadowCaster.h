@@ -23,7 +23,7 @@ public:
     ShadowCaster(LightType lightType) : lightType(lightType) {};
     virtual ~ShadowCaster() = default;
 
-    virtual void setView(glm::vec3 newPosition, glm::vec3 newDirection)                                                                      = 0;
+    virtual void setView(glm::vec3 newPosition, glm::vec3 newDirection)                                                             = 0;
     virtual void BeginDepthPass(int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos)                                       = 0;
     virtual void ExportUniformsTo(int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) = 0;
 
