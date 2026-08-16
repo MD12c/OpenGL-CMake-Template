@@ -138,11 +138,18 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             return (relPath.length && success) ? directory + "/" + relPath.C_Str() : "";
         };
 
+        std::cout << "DIFFUSE:      " << findPath(aiTextureType_DIFFUSE) << "\n";
+        std::cout << "SPECULAR:     " << findPath(aiTextureType_SPECULAR) << "\n";
+        std::cout << "HEIGHT:       " << findPath(aiTextureType_HEIGHT) << "\n";
+        std::cout << "DISPLACEMENT: " << findPath(aiTextureType_DISPLACEMENT) << "\n";
+        std::cout << "NORMALS:      " << findPath(aiTextureType_NORMALS) << "\n";
+
         materialID = MaterialManager::LoadMaterial(
             std::string(material->GetName().C_Str()),
             findPath(aiTextureType_DIFFUSE),
             findPath(aiTextureType_SPECULAR),
-            findPath(aiTextureType_NORMALS));
+            findPath(aiTextureType_NORMALS),
+            findPath(aiTextureType_DISPLACEMENT));
     }
 
     std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;

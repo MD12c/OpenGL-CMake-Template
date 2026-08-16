@@ -3,15 +3,17 @@ out vec4 FragColor;
 
 in vec2 texCoord;
 in vec3 Normal;
-in vec3 crntPos;
+in vec3 crntPos;  // fragment position
 in vec3 Tangent;
 
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
 uniform sampler2D normal0;
+uniform sampler2D displacement0;
 
 uniform bool useTexture;
 uniform bool useNormal;
+uniform bool useDisplacement;
 
 uniform vec3 camPos;
 
@@ -46,22 +48,65 @@ uniform float            pointFarPlane[MAX_POINT_LIGHTS];
 uniform int              pointLayerIndex[MAX_POINT_LIGHTS];
 uniform samplerCubeArray pointShadowMaps;
 
-vec3 getNormal()
+mat3 getTBN()
+{
+    vec3 N = normalize(Normal);
+    vec3 T = normalize(Tangent - N * dot(Tangent, N));  // re-orthogonalize against N (Gram-Schmidt), cheap, standard practice even with precomputed tangents
+    vec3 B = cross(N, T);
+    return mat3(T, B, N);
+}
+
+vec3 getNormal(vec2 UVs)
 {
     if (!useNormal)
         return normalize(Normal);
 
-    vec3 N    = normalize(Normal);
-    vec3 rawT = Tangent - N * dot(Tangent, N);
-    vec3 T    = (dot(rawT, rawT) > 1e-8) ? normalize(rawT) : normalize(cross(N, vec3(0, 1, 0)));
-    vec3 B    = cross(N, T);
-    mat3 TBN  = mat3(T, B, N);
-
-    vec3 mapped = texture(normal0, texCoord).rgb * 2.0f - 1.0f;
+    mat3 TBN    = getTBN();
+    vec3 mapped = texture(normal0, UVs).rgb * 2.0f - 1.0f;
     return normalize(TBN * mapped);
 }
 
-vec4 pointLight(int i)
+vec2 getUVs()
+{
+    if (!useDisplacement)
+        return texCoord;
+
+    mat3 TBN            = transpose(getTBN());
+    vec3 viewDirTangent = normalize(TBN * (camPos - crntPos));
+
+    float       heightScale       = 0.07f;
+    const float minLayers         = 8.0f;
+    const float maxLayers         = 64.0f;
+    float       numLayers         = mix(maxLayers, minLayers, abs(dot(vec3(0.0f, 0.0f, 1.0f), viewDirTangent)));
+    float       layerDepth        = 1.0f / numLayers;
+    float       currentLayerDepth = 0.0f;
+
+    vec2 S        = viewDirTangent.xy / viewDirTangent.z * heightScale;
+    vec2 deltaUVs = S / numLayers;
+
+    vec2  UVs                  = texCoord;
+float currentDepthMapValue = 1.0f - texture(displacement0, UVs).r;
+
+while (currentLayerDepth < currentDepthMapValue)
+{
+    UVs += deltaUVs;
+    currentDepthMapValue = 1.0f - texture(displacement0, UVs).r;
+    currentLayerDepth += layerDepth;
+}
+
+vec2  prevTexCoords = UVs - deltaUVs;
+float afterDepth    = currentDepthMapValue - currentLayerDepth;
+float beforeDepth   = 1.0f - texture(displacement0, prevTexCoords).r - currentLayerDepth + layerDepth;
+    float weight        = afterDepth / (afterDepth - beforeDepth);
+    UVs                 = prevTexCoords * weight + UVs * (1.0f - weight);
+
+    if (UVs.x > 1.0 || UVs.y > 1.0 || UVs.x < 0.0 || UVs.y < 0.0)
+        discard;
+
+    return UVs;
+}
+
+vec4 pointLight(int i, vec2 UVs)
 {
     vec3 SurfaceToLightPos = pointLightPos[i] - crntPos;
 
@@ -74,7 +119,7 @@ vec4 pointLight(int i)
     float inten     = 1.0f / (quadratic * dist * dist + linear * dist + constant);
 
     // diffuse lighting
-    vec3  normal         = getNormal();
+    vec3  normal         = getNormal(UVs);
     vec3  lightDirection = normalize(SurfaceToLightPos);
     float diffuse        = max(dot(normal, lightDirection), 0.0f);
 
@@ -113,20 +158,20 @@ vec4 pointLight(int i)
     shadow /= pow((sampleRadius * 2 + 1), 3);
 
     if (useTexture)
-        return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, texCoord).r * specular * (1.0f - shadow) * inten) * vec4(pointLightColor[i], 1.0f);
+        return (texture(diffuse0, UVs) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, UVs).r * specular * (1.0f - shadow) * inten) * vec4(pointLightColor[i], 1.0f);
     else
         return (vec4(diffuseColor, 1.0f) * (diffuse * (1.0f - shadow)) + vec4(diffuseColor, 1.0f) * specular * (1.0f - shadow)) * vec4(pointLightColor[i], 1.0f);
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
-vec4 direcLight(int i)
+vec4 direcLight(int i, vec2 UVs)
 {
     vec4 fragPosLight = dirShadowMatrix[i] * vec4(crntPos, 1.0);
 
     vec3 lightDir = normalize(-dirLightDirection[i]);
 
     // diffuse lighting
-    vec3  normal  = getNormal();
+    vec3  normal  = getNormal(UVs);
     float diffuse = max(dot(normal, lightDir), 0.0f);
 
     // specular lighting
@@ -163,19 +208,19 @@ vec4 direcLight(int i)
     }
 
     if (useTexture)
-        return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow)) + texture(specular0, texCoord).r * specular * (1.0f - shadow)) * vec4(dirLightColor[i], 1.0f);
+        return (texture(diffuse0, UVs) * (diffuse * (1.0f - shadow)) + texture(specular0, UVs).r * specular * (1.0f - shadow)) * vec4(dirLightColor[i], 1.0f);
     else
         return (vec4(diffuseColor, 1.0f) * (diffuse * (1.0f - shadow)) + vec4(diffuseColor, 1.0f) * specular * (1.0f - shadow)) * vec4(dirLightColor[i], 1.0f);
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
-vec4 spotLight(int i)
+vec4 spotLight(int i, vec2 UVs)
 {
     vec4 fragPosLight = spotShadowMatrix[i] * vec4(crntPos, 1.0);
 
     // diffuse lighting
     vec3  lightDir          = normalize(-spotLightDirection[i]);
-    vec3  normal            = getNormal();
+    vec3  normal            = getNormal(UVs);
     vec3  surfaceToLightPos = normalize(spotLightPos[i] - crntPos);
     float diffuse           = max(dot(normal, surfaceToLightPos), 0.0f);
 
@@ -217,7 +262,7 @@ vec4 spotLight(int i)
     }
 
     if (useTexture)
-        return (texture(diffuse0, texCoord) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, texCoord).r * specular * (1.0f - shadow) * inten) * vec4(spotLightColor[i], 1.0f);
+        return (texture(diffuse0, UVs) * (diffuse * (1.0f - shadow) * inten) + texture(specular0, UVs).r * specular * (1.0f - shadow) * inten) * vec4(spotLightColor[i], 1.0f);
     else
         return (vec4(diffuseColor, 1.0f) * (diffuse * (1.0f - shadow)) + vec4(diffuseColor, 1.0f) * specular * (1.0f - shadow)) * vec4(spotLightColor[i], 1.0f);
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
@@ -225,16 +270,14 @@ vec4 spotLight(int i)
 
 void main()
 {
-    float ambient = 0.20f;
-    vec4  result  = vec4(1.0f, 0.0f, 0.0f, 1.0f);  // debug red
-    if (useTexture)
-        result = texture(diffuse0, texCoord) * ambient;
-    else
-        result = vec4(diffuseColor, 1.0f) * ambient;
+    vec2 UVs = getUVs();
 
-    for (int i = 0; i < numDirLights; i++) result += direcLight(i);
-    for (int i = 0; i < numSpotLights; i++) result += spotLight(i);
-    for (int i = 0; i < numPointLights; i++) result += pointLight(i);
+    float ambient = 0.20f;
+    vec4  result  = useTexture ? texture(diffuse0, UVs) * ambient : vec4(diffuseColor, 1.0f) * ambient;
+
+    for (int i = 0; i < numDirLights; i++) result += direcLight(i, UVs);
+    for (int i = 0; i < numSpotLights; i++) result += spotLight(i, UVs);
+    for (int i = 0; i < numPointLights; i++) result += pointLight(i, UVs);
 
     FragColor = result;
     // FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);

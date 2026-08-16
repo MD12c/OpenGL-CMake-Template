@@ -2,15 +2,17 @@
 
 namespace MaterialManager
 {
-std::deque<Material>                                      materials              = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDiffuseTextures  = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedSpecularTextures = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedNormalTextures   = {};
+std::deque<Material>                                             materials                  = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>>        loadedDiffuseTextures      = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>>        loadedSpecularTextures     = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>>        loadedNormalTextures       = {};
+extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDisplacementTextures = {};
 
 unsigned int LoadMaterial(const std::string& name,
                           const std::string& diffuseMapPath,
                           const std::string& specularMapPath,
-                          const std::string& normalMapPath)
+                          const std::string& normalMapPath,
+                          const std::string& displacementMapPath)
 {
     materials.emplace_back(
         Material(
@@ -18,7 +20,8 @@ unsigned int LoadMaterial(const std::string& name,
             name,
             makeTexture(diffuseMapPath, "diffuse"),
             makeTexture(specularMapPath, "specular"),
-            makeTexture(normalMapPath, "normal")));
+            makeTexture(normalMapPath, "normal"),
+            makeTexture(displacementMapPath, "displacement")));
 
     return materials.back().ID;
 }
@@ -29,7 +32,8 @@ unsigned int LoadMaterial(const std::string& name,
                           float              shininess,
                           const std::string& diffuseMapPath,
                           const std::string& specularMapPath,
-                          const std::string& normalMapPath)
+                          const std::string& normalMapPath,
+                          const std::string& displacementMapPath)
 {
     materials.emplace_back(
         Material(
@@ -40,7 +44,8 @@ unsigned int LoadMaterial(const std::string& name,
             shininess,
             makeTexture(diffuseMapPath, "diffuse"),
             makeTexture(specularMapPath, "specular"),
-            makeTexture(normalMapPath, "normal")));
+            makeTexture(normalMapPath, "normal"),
+            makeTexture(displacementMapPath, "displacement")));
 
     return materials.back().ID;
 }
@@ -66,6 +71,11 @@ std::shared_ptr<Texture> makeTexture(const std::string& texturePath, const std::
     {
         unit  = 2;
         cache = &loadedNormalTextures;
+    }
+    else if (type == "displacement")
+    {
+        unit  = 3;
+        cache = &loadedDisplacementTextures;
     }
     else
         throw std::runtime_error("[ERROR] invalid texture type");
@@ -93,6 +103,9 @@ void Unbind()
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 

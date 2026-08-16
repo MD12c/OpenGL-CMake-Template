@@ -33,7 +33,7 @@ GLint getLoc(unsigned int ID, const std::string& uniformName)
 
     GLint loc = glGetUniformLocation(resource.shader.ID, uniformName.c_str());
     if (loc == -1)  // GLSL compiler strips unused uniforms
-        std::cerr << "[WARNING] uniform location not found,  Shader ID: " << std::to_string(ID) << "  Uniform Name: " << uniformName << std::endl;
+        std::cerr << "[WARNING] uniform location not found,  Shader ID: " << std::to_string(ID) << ",  Uniform Name: " << uniformName << std::endl;
 
     resource.uniforms[uniformName] = loc;
     return loc;

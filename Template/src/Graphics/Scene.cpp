@@ -13,7 +13,8 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     cameras.emplace_back(std::make_unique<CameraFly>(glfwWindowPtr, 45.0f, 0.1f, 10000.0f));
 
     models.emplace_back("Assets/Models/crow/scene.gltf");
-    models.emplace_back("Assets/Models/Brick wall/wall.gltf");
+    //models.emplace_back("Assets/Models/Brick wall/wall.gltf");
+    models.emplace_back("Assets/Models/Brick wall/wall.obj");
     // models.emplace_back("Assets/Models/crow.obj");
     // models.emplace_back("Assets/Models/icoSphere.obj");
 
