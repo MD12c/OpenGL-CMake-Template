@@ -9,6 +9,7 @@ class Shader
 {
 public:
     GLuint ID;
+    std::string filename;
     Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile);
     Shader(const std::string& vertexFile, const std::string& fragmentFile);
     Shader(const std::string& computeFile);
@@ -17,7 +18,9 @@ public:
     Shader(Shader&& other) noexcept
     {
         ID       = other.ID;
+        filename = other.filename;
         other.ID = 0;
+        other.filename = "";
     }
     ~Shader();
     void PrintError(GLuint shader);

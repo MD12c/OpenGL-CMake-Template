@@ -9,10 +9,13 @@ Renderer::Renderer()
     : antiAlias(),
       postProcess()
 {
+    LoadAllShaders();
 }
 
 Renderer::~Renderer()
 {
+    PrintLoadedUniforms();
+    Cleanup();
 }
 
 void Renderer::Render(const Scene& scene)

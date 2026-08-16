@@ -4,7 +4,6 @@ App::App()
     : window(), renderer(), scene(window.getWindow())
 {
     My_ImGui::Init(window.getWindow());
-    ShaderManager::LoadAllShaders();
 }
 
 App::~App()
@@ -33,7 +32,7 @@ void App::RunFrame()
     My_ImGui::ShowDockSpace();
 
     renderer.Render(scene);
-    
+
     My_ImGui::RenderDockSpace();
     window.EndFrame();
 }

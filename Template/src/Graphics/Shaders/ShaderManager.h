@@ -23,31 +23,29 @@ extern std::vector<ShaderResources> shaderResources;
 
 struct ShaderIDs
 {
-    unsigned int model;
-    unsigned int skybox;
-    unsigned int postProcess;
-    unsigned int shadowMap2D;
-    unsigned int shadowMapCube;
-    unsigned int depthDebug;
-    unsigned int depthDebugCube;
-    unsigned int lightSphere;
-    unsigned int def;
+    int model;
+    int skybox;
+    int postProcess;
+    int shadowMap2D;
+    int shadowMapCube;
+    int depthDebug;
+    int depthDebugCube;
+    int lightSphere;
+    int def;
 };
 extern ShaderIDs IDs;
 
-void         LoadAllShaders();
-unsigned int LoadWithUniforms(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath, const std::vector<std::string>& uniformNames);
-unsigned int LoadWithUniforms(const std::string& vertPath, const std::string& fragPath, const std::vector<std::string>& uniformNames);
-unsigned int Load(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
-unsigned int Load(const std::string& vertPath, const std::string& fragPath);
-Shader&      Get(unsigned int ID);
+void    LoadAllShaders();
+int     Load(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
+int     Load(const std::string& vertPath, const std::string& fragPath);
+Shader& Get(int ID);
+void    PrintLoadedUniforms();
 
-void                                    addUniforms(unsigned int ID, const std::vector<std::string>& uniforms);
-void                                    addUniform(unsigned int ID, const std::string& uniformName);
-std::unordered_map<std::string, GLint>& getUniforms(unsigned int ID);
-GLint                                   getLoc(unsigned int ID, const std::string& uniformName);
+std::unordered_map<std::string, GLint>& getUniforms(int ID);
+GLint                                   getLoc(int ID, const std::string& uniformName);
+std::string                             getName(int ID);
 
-void Activate(unsigned int ID);
+void Activate(int ID);
 void Cleanup();
 };  // namespace ShaderManager
 

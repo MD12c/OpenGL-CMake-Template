@@ -65,6 +65,7 @@ void ShadowMap2D::ExportUniformsTo(unsigned int shaderID, int lightIndex, glm::v
 void ShadowMap2D::DrawDepthDebug(unsigned int shaderID, ShadowSystem& shadowSystem)
 {
     // ShaderManager::Activate(shaderID);
+    // glUniform1i(ShaderManager::getLoc(shaderID, "depthMap"), 0);
     // glActiveTexture(GL_TEXTURE0);
     // glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
     // glDrawElements(GL_TRIANGLES, sizeof(squareIndices) / sizeof(GLuint), GL_UNSIGNED_INT, squareIndices);

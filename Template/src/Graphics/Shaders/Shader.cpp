@@ -57,7 +57,7 @@ void PrintProgramError(GLuint program)
               << infoLog << "\n";
 }
 
-Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile)
+Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) : filename(vertexFile)
 {
     std::string vertexCode   = get_file_contents(vertexFile);
     std::string fragmentCode = get_file_contents(fragmentFile);
@@ -96,7 +96,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile)
     glDeleteShader(fragmentShader);
 }
 
-Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile)
+Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile) : filename(vertexFile)
 {
     std::string vertexCode   = get_file_contents(vertexFile);
     std::string fragmentCode = get_file_contents(fragmentFile);
@@ -147,7 +147,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
     glDeleteShader(geometryShader);
 }
 
-Shader::Shader(const std::string& computeFile)
+Shader::Shader(const std::string& computeFile) : filename(computeFile)
 {
     std::string   computeCode   = get_file_contents(computeFile);
     const GLchar* computeSource = computeCode.c_str();

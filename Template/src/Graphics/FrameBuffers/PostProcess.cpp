@@ -57,6 +57,8 @@ void Framebuffer::Draw(unsigned int shaderID)
     glfwPtr.framebuffer = this;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     ShaderManager::Activate(shaderID);
+    glUniform1i(ShaderManager::getLoc(shaderID, "screenTexture"), 0);
+    glUniform1f(ShaderManager::getLoc(shaderID, "gamma"), gamma);
     framebufferVAO.Bind();
     framebufferVBO.Bind();
     framebufferEBO.Bind();

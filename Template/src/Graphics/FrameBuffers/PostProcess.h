@@ -12,12 +12,13 @@
 class Framebuffer
 {
 public:
-    GLuint ID;
-    VAO    framebufferVAO;
-    VBO    framebufferVBO;
-    EBO    framebufferEBO;
-    RBO    framebufferRBO;
-    GLuint textureID;
+    GLuint       ID;
+    unsigned int shaderID;
+    VAO          framebufferVAO;
+    VBO          framebufferVBO;
+    EBO          framebufferEBO;
+    RBO          framebufferRBO;
+    GLuint       textureID;
 
     Framebuffer();
     void ClearBuffer();
