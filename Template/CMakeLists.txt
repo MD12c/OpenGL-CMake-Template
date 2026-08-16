@@ -19,6 +19,8 @@ set(VERTEX_BUFFERS_SOURCES
     src/Graphics/GLObjects/VBO.h
     src/Graphics/GLObjects/SSBO.h
     src/Graphics/GLObjects/SSBO.cpp
+    src/Graphics/GLObjects/RBO.cpp
+    src/Graphics/GLObjects/RBO.h
     src/Graphics/GLObjects/Texture.cpp
     src/Graphics/GLObjects/Texture.h)
 
@@ -61,8 +63,6 @@ set(LIGHTING_SOURCES
 set(FRAMEBUFFER_SOURCES
     src/Graphics/FrameBuffers/PostProcess.h
     src/Graphics/FrameBuffers/PostProcess.cpp
-    src/Graphics/FrameBuffers/RBO.h
-    src/Graphics/FrameBuffers/RBO.cpp
     src/Graphics/FrameBuffers/MSAABuffer.h
     src/Graphics/FrameBuffers/MSAABuffer.cpp)
 

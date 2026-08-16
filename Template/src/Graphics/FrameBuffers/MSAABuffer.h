@@ -7,7 +7,7 @@
 #include "..\GLObjects\VBO.h"
 #include "..\GLObjects\EBO.h"
 #include "..\GLObjects\Texture.h"
-#include "RBO.h"
+#include "..\GLObjects\RBO.h"
 
 class MSAAbuffer
 {
