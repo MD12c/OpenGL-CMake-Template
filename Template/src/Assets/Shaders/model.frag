@@ -51,8 +51,8 @@ uniform samplerCubeArray pointShadowMaps;
 mat3 getTBN()
 {
     vec3 N = normalize(Normal);
-    vec3 T = normalize(Tangent - N * dot(Tangent, N));  // re-orthogonalize against N (Gram-Schmidt), cheap, standard practice even with precomputed tangents
-    vec3 B = cross(N, T);
+    vec3 T = normalize(Tangent - N * dot(Tangent, N));
+    vec3 B = cross(T, N);
     return mat3(T, B, N);
 }
 
@@ -85,18 +85,18 @@ vec2 getUVs()
     vec2 deltaUVs = S / numLayers;
 
     vec2  UVs                  = texCoord;
-float currentDepthMapValue = 1.0f - texture(displacement0, UVs).r;
+    float currentDepthMapValue = texture(displacement0, UVs).r;
 
-while (currentLayerDepth < currentDepthMapValue)
-{
-    UVs += deltaUVs;
-    currentDepthMapValue = 1.0f - texture(displacement0, UVs).r;
-    currentLayerDepth += layerDepth;
-}
+    while (currentLayerDepth < currentDepthMapValue)
+    {
+        UVs += deltaUVs;
+        currentDepthMapValue = texture(displacement0, UVs).r;
+        currentLayerDepth += layerDepth;
+    }
 
-vec2  prevTexCoords = UVs - deltaUVs;
-float afterDepth    = currentDepthMapValue - currentLayerDepth;
-float beforeDepth   = 1.0f - texture(displacement0, prevTexCoords).r - currentLayerDepth + layerDepth;
+    vec2  prevTexCoords = UVs - deltaUVs;
+    float afterDepth    = currentDepthMapValue - currentLayerDepth;
+    float beforeDepth   = texture(displacement0, prevTexCoords).r - currentLayerDepth + layerDepth;
     float weight        = afterDepth / (afterDepth - beforeDepth);
     UVs                 = prevTexCoords * weight + UVs * (1.0f - weight);
 
