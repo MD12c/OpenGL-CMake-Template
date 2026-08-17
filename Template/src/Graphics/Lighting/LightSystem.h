@@ -53,9 +53,9 @@ public:
 
     unsigned int getShaderIDfromType(LightType type) const;
 
-    void addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top);
-    void addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone);
-    void addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 lightColor);
+    void addDirectionLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top);
+    void addSpotLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone);
+    void addPointLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 lightColor);
 };
 
 #endif

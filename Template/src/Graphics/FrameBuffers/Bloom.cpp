@@ -31,10 +31,16 @@ GLuint Bloom::BlurPass(GLuint brightTexture, int shaderID, int numPasses)
             glBindTexture(GL_TEXTURE_2D, horizontal ? buffer2.textureIDs[0] : buffer1.textureIDs[0]);
 
         quad->DrawSquare();
-        horizontal = !horizontal;
+        horizontal      = !horizontal;
         first_iteration = false;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     return horizontal ? buffer2.textureIDs[0] : buffer1.textureIDs[0];
+}
+
+void Bloom::Resize(int w, int h)
+{
+    buffer1.Resize(w, h);
+    buffer2.Resize(w, h);
 }

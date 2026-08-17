@@ -4,12 +4,20 @@ App::App()
     : window(), renderer(), scene(window.getWindow())
 {
     My_ImGui::Init(window.getWindow());
+    setResizePointers();
     quad = new Square();
 }
 
 App::~App()
 {
     delete quad;
+}
+
+void App::setResizePointers()
+{
+    glfwPtr.window   = &window;
+    glfwPtr.camera   = scene.cameras[scene.activeCam].get();
+    glfwPtr.renderer = &renderer;
 }
 
 void App::Update()
@@ -30,6 +38,7 @@ void App::Update()
 void App::RunFrame()
 {
     Update();
+    setResizePointers();
     window.StartFrame();
     My_ImGui::ShowDockSpace();
 

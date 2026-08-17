@@ -5,7 +5,6 @@
 MSAAbuffer::MSAAbuffer()
     : MSAAbufferRBO(true)
 {
-    glfwPtr.msaabuffer = this;
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
@@ -28,7 +27,6 @@ MSAAbuffer::MSAAbuffer()
 
 void MSAAbuffer::Activate()
 {
-    glfwPtr.msaabuffer = this;
     glViewport(0, 0, width, height);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
     glEnable(GL_MULTISAMPLE);
@@ -49,7 +47,6 @@ void MSAAbuffer::Activate()
 
 void MSAAbuffer::CopyResultsTo(GLuint postProcessing)
 {
-    glfwPtr.msaabuffer = this;
     glBindFramebuffer(GL_READ_FRAMEBUFFER, ID);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postProcessing);
     glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);

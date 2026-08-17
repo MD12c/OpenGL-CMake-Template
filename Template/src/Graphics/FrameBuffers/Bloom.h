@@ -13,6 +13,7 @@ public:
     Bloom();
     
     GLuint BlurPass(GLuint brightTexture, int shaderID, int numPasses);
+    void Resize(int w, int h);
 };
 
 #endif

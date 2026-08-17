@@ -7,10 +7,9 @@
 
 class Renderer
 {
-private:
-    PostProcessSystem postProcessSystem;
-
 public:
+    PostProcessSystem postProcessSystem;
+    
     Renderer();
     ~Renderer();
 

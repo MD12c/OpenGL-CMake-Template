@@ -3,6 +3,7 @@
 #include "Cameras/Camera.h"
 #include "FrameBuffers/MSAABuffer.h"
 #include "FrameBuffers/Framebuffer.h"
+#include "Renderer.h"
 
 Window::Window()
 {
@@ -28,8 +29,9 @@ Window::Window()
         width  = w;
         height = h;
         ptr->camera->updateScreenSize();
-        ptr->framebuffer->Resize(w, h);
-        ptr->msaabuffer->Resize(w, h);
+        ptr->renderer->postProcessSystem.finalFrameBuffer.Resize(w, h);
+        ptr->renderer->postProcessSystem.antiAlias.Resize(w, h);
+        ptr->renderer->postProcessSystem.bloom.Resize(w, h);
     };
 
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);

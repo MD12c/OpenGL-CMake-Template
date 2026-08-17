@@ -8,7 +8,6 @@ Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil)
     : framebufferRBO(hasDepthStencil ? std::make_unique<RBO>(false) : nullptr),
       textureIDs(numRenderTargets)
 {
-    glfwPtr.framebuffer = this;
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
@@ -42,7 +41,6 @@ Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil)
 
 void Framebuffer::Activate()
 {
-    glfwPtr.framebuffer = this;
     glViewport(0, 0, width, height);
     ClearBuffer();
 

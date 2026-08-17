@@ -13,15 +13,13 @@ inline GLfloat     windowRGB[3] = {
 
 class Window;
 class Camera;
-class Framebuffer;
-class MSAAbuffer;
+class Renderer;
 
 inline struct glfwPointers
 {
-    Window*      window;
-    Camera*      camera;
-    Framebuffer* framebuffer;
-    MSAAbuffer*  msaabuffer;
+    Window*   window;
+    Camera*   camera;
+    Renderer* renderer;
 } glfwPtr;
 
 constexpr GLfloat square[20] = {
@@ -49,7 +47,7 @@ enum LightType
 };
 
 class Square;
-inline Square* quad;
+inline Square* quad = nullptr;
 
 //-----------------------------------------------------------------------
 // Temporary Globals Below

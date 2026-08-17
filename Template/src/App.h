@@ -20,6 +20,7 @@ private:
 
     void Render() { renderer.Render(scene); }
     void Update();
+    void setResizePointers();
 
 public:
     App();

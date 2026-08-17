@@ -7,7 +7,7 @@ uniform sampler2D tex0;
 uniform bool horizontal;
 
 // How far from the center to take samples from the fragment you are currently on
-const int radius = 10;
+const int radius = 7;
 // Keep it between 1.0f and 2.0f (the higher this is the further the blur reaches)
 float spreadBlur = 2.0f;
 float weights[radius];

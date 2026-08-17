@@ -77,7 +77,7 @@ void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector
     }
 }
 
-void LightSystem::addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top)
+void LightSystem::addDirectionLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top)
 {
     auto caster = std::make_unique<ShadowMap2D>(
         shadowSystem->RegisterCaster(LightType::DIRECTION),
@@ -85,7 +85,7 @@ void LightSystem::addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::
     lights.emplace_back(LightType::DIRECTION, lightPos, direction, lightColor, std::move(caster));
 }
 
-void LightSystem::addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone)
+void LightSystem::addSpotLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone)
 {
     auto caster = std::make_unique<ShadowMap2D>(
         shadowSystem->RegisterCaster(LightType::SPOT),
@@ -93,7 +93,7 @@ void LightSystem::addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::
     lights.emplace_back(LightType::SPOT, lightPos, direction, lightColor, std::move(caster));
 }
 
-void LightSystem::addLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 lightColor)
+void LightSystem::addPointLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 lightColor)
 {
     auto caster = std::make_unique<ShadowMapCube>(
         shadowSystem->RegisterCaster(LightType::POINT),
