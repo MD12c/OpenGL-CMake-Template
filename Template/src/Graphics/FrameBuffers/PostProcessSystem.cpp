@@ -22,7 +22,7 @@ void PostProcessSystem::Begin()
 void PostProcessSystem::End(int postShaderID, int blurShaderID)
 {
     antiAlias.CopyResultsTo(finalFrameBuffer.ID);
-    GLuint blurredTexture = bloom.BlurPass(finalFrameBuffer.textureIDs[1], blurShaderID, 10);
+    GLuint blurredTexture = bloom.BlurPass(finalFrameBuffer.textureIDs[1], blurShaderID, 5);
 
     ShaderManager::Activate(postShaderID);
     glUniform1f(ShaderManager::getLoc(postShaderID, "gamma"), gamma);

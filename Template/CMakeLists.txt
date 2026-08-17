@@ -91,22 +91,24 @@ add_executable(
 target_include_directories(${PROJECT_NAME}
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include src/)
 
+set(TEMPLATE_OUTPUT_DIR "${CMAKE_BINARY_DIR}/${PROJECT_NAME}")
+
 # Copy Assets folder into .exe directory
-add_custom_command(
-  TARGET ${PROJECT_NAME}
-  POST_BUILD
-  COMMAND
-    ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/src/Assets"
-    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/Assets")
+add_custom_target(copy_assets ALL
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/Assets"
+    "${TEMPLATE_OUTPUT_DIR}/Assets"
+  COMMENT "Copying assets"
+)
 
 # Copy binary file into .exe directory
-add_custom_command(
-  TARGET ${PROJECT_NAME}
-  POST_BUILD
-  COMMAND
-    ${CMAKE_COMMAND} -E copy
+add_custom_target(copy_assimp_dll ALL
+  COMMAND ${CMAKE_COMMAND} -E copy
     "${CMAKE_CURRENT_SOURCE_DIR}/include/binaries/assimp-vc143-mt.dll"
-    "$<TARGET_FILE_DIR:${PROJECT_NAME}>")
+    "${TEMPLATE_OUTPUT_DIR}"
+  COMMENT "Copying assimp DLL"
+)
+add_dependencies(${PROJECT_NAME} copy_assets copy_assimp_dll)
 
 # GLFW
 add_library(glfw STATIC IMPORTED)
