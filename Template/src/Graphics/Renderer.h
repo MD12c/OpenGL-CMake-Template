@@ -2,15 +2,13 @@
 #define RENDERER_CLASS_H
 
 #include "Scene.h"
-#include "FrameBuffers/MSAABuffer.h"
-#include "FrameBuffers/PostProcess.h"
 #include "Cameras/Camera.h"
+#include "FrameBuffers/PostProcessSystem.h"
 
 class Renderer
 {
 private:
-    MSAAbuffer  antiAlias;
-    Framebuffer postProcess;
+    PostProcessSystem postProcessSystem;
 
 public:
     Renderer();

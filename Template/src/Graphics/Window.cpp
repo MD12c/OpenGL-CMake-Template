@@ -2,7 +2,7 @@
 #include "../Globals.h"
 #include "Cameras/Camera.h"
 #include "FrameBuffers/MSAABuffer.h"
-#include "FrameBuffers/PostProcess.h"
+#include "FrameBuffers/Framebuffer.h"
 
 Window::Window()
 {

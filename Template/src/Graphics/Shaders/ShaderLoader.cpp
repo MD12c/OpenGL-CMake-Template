@@ -66,6 +66,11 @@ void LoadAllShaders()
     IDs.lightSphere = Load(
         "Assets/shaders/lightSphere.vert",
         "Assets/shaders/lightSphere.frag");
+    
+    // postProcess 2
+    IDs.blur = Load(
+        "Assets/shaders/blur.vert",
+        "Assets/shaders/blur.frag");
 
     // Default 8
     IDs.def = Load(

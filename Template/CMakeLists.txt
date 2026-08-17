@@ -61,10 +61,16 @@ set(LIGHTING_SOURCES
     src/Graphics/Lighting/ShadowSystem.cpp)
 
 set(FRAMEBUFFER_SOURCES
-    src/Graphics/FrameBuffers/PostProcess.h
-    src/Graphics/FrameBuffers/PostProcess.cpp
+    src/Graphics/FrameBuffers/Bloom.h
+    src/Graphics/FrameBuffers/Bloom.cpp
+    src/Graphics/FrameBuffers/FrameBuffer.h
+    src/Graphics/FrameBuffers/FrameBuffer.cpp
     src/Graphics/FrameBuffers/MSAABuffer.h
-    src/Graphics/FrameBuffers/MSAABuffer.cpp)
+    src/Graphics/FrameBuffers/MSAABuffer.cpp
+    src/Graphics/FrameBuffers/Square.h
+    src/Graphics/FrameBuffers/Square.cpp
+    src/Graphics/FrameBuffers/PostProcessSystem.h
+    src/Graphics/FrameBuffers/PostProcessSystem.cpp)
 
 set(UTILITY_SOURCES include/libraries/Benchmarks/Instrumentatior.h
                     include/libraries/Benchmarks/GPUtimer.h)

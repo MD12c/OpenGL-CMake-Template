@@ -1,9 +1,11 @@
 #ifndef APP_CLASS_H
 #define APP_CLASS_H
 
+#include "Globals.h"
 #include "Graphics/Window.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/ImguiSetup.h"
+#include "Graphics/FrameBuffers/Square.h"
 
 class App
 {

@@ -3,7 +3,8 @@
 out vec4 FragColor;
 in vec2  texCoords;
 
-uniform sampler2D screenTexture;
+uniform sampler2D tex0;
+uniform sampler2D tex1;
 uniform float     gamma;
 
 const float offset_x = 1.0f / 800.0f;
@@ -44,10 +45,13 @@ void main()
 {
     vec3 color = vec3(0.0f);
     for (int i = 0; i < 9; i++)
-        color += vec3(texture(screenTexture, texCoords.st + offsets[i])) * kernel[i];
+        color += vec3(texture(tex0, texCoords.st + offsets[i])) * kernel[i];
+
+    vec3 bloom = texture(tex1, texCoords).rgb;
+    color += bloom;
 
     float exposure   = 1.0f;
     vec3  toneMapped = vec3(1.0f) - exp(-color * exposure);
 
-    FragColor.rgb    = pow(toneMapped.rgb, vec3(1.0f / gamma));
+    FragColor = vec4(pow(toneMapped, vec3(1.0f / gamma)), 1.0f);
 }

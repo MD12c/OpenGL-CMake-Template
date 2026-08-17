@@ -4,10 +4,12 @@ App::App()
     : window(), renderer(), scene(window.getWindow())
 {
     My_ImGui::Init(window.getWindow());
+    quad = new Square();
 }
 
 App::~App()
 {
+    delete quad;
 }
 
 void App::Update()

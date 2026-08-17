@@ -1,13 +1,13 @@
 #include "Renderer.h"
 
 #include "imgui.h"
+#include "Globals.h"
 #include "Lighting\LightSystem.h"
 
 using namespace ShaderManager;
 
 Renderer::Renderer()
-    : antiAlias(),
-      postProcess()
+
 {
     LoadAllShaders();
 }
@@ -22,7 +22,7 @@ void Renderer::Render(const Scene& scene)
 {
     scene.lightSystem.ShadowPass(scene.models, scene.lights);
 
-    antiAlias.Activate();
+    postProcessSystem.Begin();
 
     scene.lightSystem.ExportUniforms(IDs.model, scene.lights);
 
@@ -37,8 +37,7 @@ void Renderer::Render(const Scene& scene)
 
     scene.skybox.Draw(IDs.skybox, scene.cameras[scene.activeCam]->getRotationMat());
 
-    antiAlias.CopyResultsTo(postProcess.ID);
-    postProcess.Draw(IDs.postProcess);
+    postProcessSystem.End(IDs.postProcess, IDs.blur);
 
     // BindSquare();
     // shadowCasters.DrawDepthDebug(IDs.depthDebug, 0);
