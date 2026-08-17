@@ -2,6 +2,33 @@
 #include <stb/stb_image.h>
 #include "Globals.h"
 
+std::pair<GLenum, GLenum> getImageType(int numColCh, std::string_view texType)
+{
+    GLenum colorType;
+    GLenum colorChannels;
+
+    if (numColCh == 1)
+        colorChannels = GL_RED;
+    else if (numColCh == 3)
+        colorChannels = GL_RGB;
+    else if (numColCh == 4)
+        colorChannels = GL_RGBA;
+    else
+        throw std::runtime_error("[ERROR] Couldn't Load Texture, Invalid number of color channels");
+
+    if (texType == "displacement" || texType == "normal" || texType == "specular")
+        return std::pair<GLenum, GLenum>(colorChannels, colorChannels);
+
+    if (colorChannels == GL_RED)
+        colorType = GL_SRGB;
+    if (colorChannels == GL_RGB)
+        colorType = GL_SRGB;
+    if (colorChannels == GL_RGBA)
+        colorType = GL_SRGB;
+
+    return std::pair<GLenum, GLenum>(colorType, colorChannels);
+}
+
 Texture::Texture(const std::string& image, const std::string& texType, GLuint slot)
     : path(image), type(texType), unit(slot)
 {
@@ -10,7 +37,9 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     unsigned char* bytes = stbi_load(path.c_str(), &widthImg, &heightImg, &numColCh, 0);
 
     if (bytes == nullptr)
-        throw std::runtime_error("Couldn't Load Texture");
+        throw std::runtime_error("[ERROR] Couldn't Load Texture");
+
+    std::pair<GLenum, GLenum> imageParameters = getImageType(numColCh, texType);
 
     glGenTextures(1, &ID);
     glActiveTexture(GL_TEXTURE0 + unit);
@@ -33,18 +62,7 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     // float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
     // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
 
-    if (type == "normal")
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    else if (type == "displacement")
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    else if (numColCh == 4)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB_ALPHA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    else if (numColCh == 3)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, widthImg, heightImg, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
-    else if (numColCh == 1)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB, widthImg, heightImg, 0, GL_RED, GL_UNSIGNED_BYTE, bytes);
-    else
-        throw std::invalid_argument("Automatic Texture type recognition failed");
+    glTexImage2D(GL_TEXTURE_2D, 0, imageParameters.first, widthImg, heightImg, 0, imageParameters.second, GL_UNSIGNED_BYTE, bytes);
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
