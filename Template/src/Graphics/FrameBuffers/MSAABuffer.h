@@ -15,6 +15,7 @@ public:
     GLuint ID;
     RBO    MSAAbufferRBO;
     GLuint textureID;
+    GLuint bloomTextureID;
 
     MSAAbuffer();
     void Resize(int w, int h);

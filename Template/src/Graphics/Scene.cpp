@@ -15,7 +15,7 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     //models.emplace_back("Assets/Models/crow/scene.gltf");
     // models.emplace_back("Assets/Models/crow.obj");
 
-    // models.emplace_back("Assets/Models/Brick wall/wall.gltf");
+    //models.emplace_back("Assets/Models/Brick wall/wall.gltf");
     //models.emplace_back("Assets/Models/Brick wall/wall.obj");
 
     models.emplace_back("Assets/Models/Lava Wall/lava.obj");
