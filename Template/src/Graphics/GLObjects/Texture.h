@@ -11,12 +11,22 @@
 class Texture
 {
 public:
+    enum TextureType
+    {
+        NONE,
+        DIFFUSE,
+        SPECULAR,
+        ALBEDO,
+        AO,
+        NORMAL,
+        DISPLACEMENT
+    } type;
+
     GLuint      ID;
-    std::string type;
     std::string path;
     GLuint      unit;
 
-    Texture(const std::string& image, const std::string& texType, GLuint slot);
+    Texture(const std::string& image, TextureType texType, GLuint slot);
 
     Texture(const Texture&)            = delete;
     Texture& operator=(const Texture&) = delete;
@@ -30,5 +40,8 @@ public:
     void texUnit(const Shader& shader, const std::string& uniform, const GLuint unit) const;  // Old
     void Bind() const;
     void Unbind() const;
+
+private:
+    std::pair<GLenum, GLenum> getImageType(int numColCh, TextureType texType);
 };
 #endif

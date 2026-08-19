@@ -2,7 +2,7 @@
 #include <stb/stb_image.h>
 #include "Globals.h"
 
-std::pair<GLenum, GLenum> getImageType(int numColCh, std::string_view texType)
+std::pair<GLenum, GLenum> Texture::getImageType(int numColCh, TextureType texType)
 {
     GLenum colorType;
     GLenum colorChannels;
@@ -16,7 +16,7 @@ std::pair<GLenum, GLenum> getImageType(int numColCh, std::string_view texType)
     else
         throw std::runtime_error("[ERROR] Couldn't Load Texture, Invalid number of color channels");
 
-    if (texType == "displacement" || texType == "normal" || texType == "specular")
+    if (texType == DISPLACEMENT || texType == NORMAL || texType == SPECULAR)
         return std::pair<GLenum, GLenum>(colorChannels, colorChannels);
 
     if (colorChannels == GL_RED)
@@ -29,7 +29,7 @@ std::pair<GLenum, GLenum> getImageType(int numColCh, std::string_view texType)
     return std::pair<GLenum, GLenum>(colorType, colorChannels);
 }
 
-Texture::Texture(const std::string& image, const std::string& texType, GLuint slot)
+Texture::Texture(const std::string& image, TextureType texType, GLuint slot)
     : path(image), type(texType), unit(slot)
 {
     int widthImg, heightImg, numColCh;
@@ -45,7 +45,7 @@ Texture::Texture(const std::string& image, const std::string& texType, GLuint sl
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
 
-    if (type == "displacement")
+    if (type == DISPLACEMENT)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -82,7 +82,7 @@ Texture& Texture::operator=(Texture&& other) noexcept
         unit       = other.unit;
         path       = other.path;
         other.ID   = 0;
-        other.type = "";
+        other.type = NONE;
         other.unit = 0;
         other.path = "";
     }
@@ -94,7 +94,7 @@ Texture::Texture(Texture&& other) noexcept
     : ID(other.ID), type(other.type), unit(other.unit), path(other.path)
 {
     other.ID   = 0;
-    other.type = "";
+    other.type = NONE;
     other.unit = 0;
     other.path = "";
 }
