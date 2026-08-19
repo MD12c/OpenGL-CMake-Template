@@ -1,84 +1,118 @@
 #include "MaterialManager.h"
 
+using enum Texture::TextureType;
+
 namespace MaterialManager
 {
-std::deque<Material>                                             materials                  = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>>        loadedDiffuseTextures      = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>>        loadedSpecularTextures     = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>>        loadedNormalTextures       = {};
-extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDisplacementTextures = {};
+std::deque<std::unique_ptr<Material>>                     materials                  = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDiffuseTextures      = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>> loadedAlbedoTextures       = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>> loadedSpecularTextures     = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>> loadedAOTextures           = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>> loadedNormalTextures       = {};
+std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDisplacementTextures = {};
 
-unsigned int LoadMaterial(const std::string& name,
-                          const std::string& diffuseMapPath,
-                          const std::string& specularMapPath,
-                          const std::string& normalMapPath,
-                          const std::string& displacementMapPath)
+int LoadMaterialSpecular(const std::string& name,
+                         const std::string& diffuseMapPath,
+                         const std::string& specularMapPath,
+                         const std::string& normalMapPath,
+                         const std::string& displacementMapPath)
 {
     materials.emplace_back(
-        Material(
+        std::make_unique<SpecularMaterial>(
             (int)materials.size(),
             name,
-            makeTexture(diffuseMapPath, "diffuse"),
-            makeTexture(specularMapPath, "specular"),
-            makeTexture(normalMapPath, "normal"),
-            makeTexture(displacementMapPath, "displacement")));
+            makeTexture(diffuseMapPath, DIFFUSE),
+            makeTexture(specularMapPath, SPECULAR),
+            makeTexture(normalMapPath, NORMAL),
+            makeTexture(displacementMapPath, DISPLACEMENT)));
 
-    return materials.back().ID;
+    return materials.back()->ID;
 }
 
-unsigned int LoadMaterial(const std::string& name,
-                          glm::vec3          diffuseColor,
-                          glm::vec3          specularColor,
-                          float              shininess,
-                          const std::string& diffuseMapPath,
-                          const std::string& specularMapPath,
-                          const std::string& normalMapPath,
-                          const std::string& displacementMapPath)
+int LoadMaterialSpecular(const std::string& name,
+                         glm::vec3          diffuseColor,
+                         glm::vec3          specularColor,
+                         float              shininess,
+                         const std::string& diffuseMapPath,
+                         const std::string& specularMapPath,
+                         const std::string& normalMapPath,
+                         const std::string& displacementMapPath)
 {
     materials.emplace_back(
-        Material(
+        std::make_unique<SpecularMaterial>(
             (int)materials.size(),
             name,
             diffuseColor,
             specularColor,
             shininess,
-            makeTexture(diffuseMapPath, "diffuse"),
-            makeTexture(specularMapPath, "specular"),
-            makeTexture(normalMapPath, "normal"),
-            makeTexture(displacementMapPath, "displacement")));
+            makeTexture(diffuseMapPath, DIFFUSE),
+            makeTexture(specularMapPath, SPECULAR),
+            makeTexture(normalMapPath, NORMAL),
+            makeTexture(displacementMapPath, DISPLACEMENT)));
 
-    return materials.back().ID;
+    return materials.back()->ID;
 }
 
-std::shared_ptr<Texture> makeTexture(const std::string& texturePath, const std::string& type)
+int LoadMaterialPBR(const std::string& name,
+                    float              roughness,
+                    float              metalic,
+                    const std::string& albedoMapPath,
+                    const std::string& aoMapPath,
+                    const std::string& normalMapPath,
+                    const std::string& displacementMapPath)
+{
+    materials.emplace_back(
+        std::make_unique<PBRMaterial>(
+            (int)materials.size(),
+            name,
+            roughness,
+            metalic,
+            makeTexture(albedoMapPath, ALBEDO),
+            makeTexture(aoMapPath, AO),
+            makeTexture(normalMapPath, NORMAL),
+            makeTexture(displacementMapPath, DISPLACEMENT)));
+
+    return materials.back()->ID;
+}
+
+std::shared_ptr<Texture> makeTexture(const std::string& texturePath, Texture::TextureType type)
 {
     if (texturePath.empty())
         return nullptr;
 
     std::unordered_map<std::string, std::shared_ptr<Texture>>* cache;
     int                                                        unit;
-    if (type == "diffuse")
+
+    switch (type)
     {
-        unit  = 0;
-        cache = &loadedDiffuseTextures;
+        case DIFFUSE:
+            unit  = 0;
+            cache = &loadedDiffuseTextures;
+            break;
+        case ALBEDO:
+            unit  = 0;
+            cache = &loadedAlbedoTextures;
+            break;
+        case SPECULAR:
+            unit  = 1;
+            cache = &loadedSpecularTextures;
+            break;
+        case AO:
+            unit  = 1;
+            cache = &loadedAOTextures;
+            break;
+        case NORMAL:
+            unit  = 2;
+            cache = &loadedNormalTextures;
+            break;
+        case DISPLACEMENT:
+            unit  = 3;
+            cache = &loadedDisplacementTextures;
+            break;
+        default:
+            throw std::runtime_error("[ERROR] invalid texture type");
     }
-    else if (type == "specular")
-    {
-        unit  = 1;
-        cache = &loadedSpecularTextures;
-    }
-    else if (type == "normal")
-    {
-        unit  = 2;
-        cache = &loadedNormalTextures;
-    }
-    else if (type == "displacement")
-    {
-        unit  = 3;
-        cache = &loadedDisplacementTextures;
-    }
-    else
-        throw std::runtime_error("[ERROR] invalid texture type");
 
     auto it = cache->find(texturePath);
     if (it != cache->end())
@@ -91,7 +125,7 @@ std::shared_ptr<Texture> makeTexture(const std::string& texturePath, const std::
 
 Material& getMatAt(int ID)
 {
-    return materials.at(ID);
+    return *materials.at(ID);
 }
 
 void Unbind()
