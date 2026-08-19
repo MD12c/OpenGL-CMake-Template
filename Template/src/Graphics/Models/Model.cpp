@@ -152,7 +152,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         //     findPath(aiTextureType_DISPLACEMENT));
         materialID = MaterialManager::LoadMaterialPBR(
             std::string(material->GetName().C_Str()),
-            0.2f, 0.0f,
+            0.85f, 0.0f,
             findPath(aiTextureType_DIFFUSE),
             "",
             findPath(aiTextureType_NORMALS),

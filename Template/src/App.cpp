@@ -31,7 +31,10 @@ void App::Update()
         if (!My_ImGui::m_io->WantCaptureMouse)
             scene.cameras[scene.activeCam]->Inputs(scene.glfwWindowPtr);
         if (glfwGetKey(window.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
+        {
             scene.lights.at(0).setPosition(scene.cameras[scene.activeCam]->position);
+            scene.lights.at(0).setDirection(scene.cameras[scene.activeCam]->Orientation);
+        }
     }
 }
 
