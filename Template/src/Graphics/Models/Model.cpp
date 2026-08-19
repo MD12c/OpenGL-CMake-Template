@@ -144,10 +144,17 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         std::cout << "DISPLACEMENT: " << findPath(aiTextureType_DISPLACEMENT) << "\n";
         std::cout << "NORMALS:      " << findPath(aiTextureType_NORMALS) << "\n";
 
-        materialID = MaterialManager::LoadMaterial(
+        // materialID = MaterialManager::LoadMaterialSpecular(
+        //     std::string(material->GetName().C_Str()),
+        //     findPath(aiTextureType_DIFFUSE),
+        //     findPath(aiTextureType_SPECULAR),
+        //     findPath(aiTextureType_NORMALS),
+        //     findPath(aiTextureType_DISPLACEMENT));
+        materialID = MaterialManager::LoadMaterialPBR(
             std::string(material->GetName().C_Str()),
+            0.2f, 0.0f,
             findPath(aiTextureType_DIFFUSE),
-            findPath(aiTextureType_SPECULAR),
+            "",
             findPath(aiTextureType_NORMALS),
             findPath(aiTextureType_DISPLACEMENT));
     }

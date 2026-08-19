@@ -24,11 +24,11 @@ void Renderer::Render(const Scene& scene)
 
     postProcessSystem.Begin();
 
-    scene.lightSystem.ExportUniforms(IDs.model, scene.lights);
+    scene.lightSystem.ExportUniforms(IDs.PBR, scene.lights);
 
-    scene.cameras[scene.activeCam]->updateUniforms(IDs.model);
+    scene.cameras[scene.activeCam]->updateUniforms(IDs.PBR);
     for (const auto& model : scene.models)
-        model.Draw(IDs.model, glm::vec3(0.0f, 0.0f, 0.0f),
+        model.Draw(IDs.PBR, glm::vec3(0.0f, 0.0f, 0.0f),
                    glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
                    glm::vec3(1.0f, 1.0f, 1.0f));
 

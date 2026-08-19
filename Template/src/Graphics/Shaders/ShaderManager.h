@@ -24,6 +24,7 @@ extern std::vector<ShaderResources> shaderResources;
 struct ShaderIDs
 {
     int model;
+    int PBR;
     int skybox;
     int postProcess;
     int shadowMap2D;
@@ -32,7 +33,6 @@ struct ShaderIDs
     int depthDebugCube;
     int lightSphere;
     int blur;
-    int def;
 };
 extern ShaderIDs IDs;
 

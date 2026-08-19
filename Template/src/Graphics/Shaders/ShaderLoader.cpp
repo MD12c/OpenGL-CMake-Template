@@ -25,56 +25,57 @@ int Load(const std::string& vertPath,
 
 void LoadAllShaders()
 {
-    // Model 0
+    // Model
     IDs.model = Load(
         "Assets/shaders/model.vert",
         "Assets/shaders/model.frag",
         "Assets/shaders/model.geom");
 
-    // SkyBox 1
+    // PBR
+    IDs.PBR = Load(
+        "Assets/shaders/PBR.vert",
+        "Assets/shaders/PBR.frag",
+        "Assets/shaders/PBR.geom");
+
+    // SkyBox
     IDs.skybox = Load(
         "Assets/shaders/skybox.vert",
         "Assets/shaders/skybox.frag");
 
-    // postProcess 2
+    // postProcess
     IDs.postProcess = Load(
         "Assets/shaders/postProcess.vert",
         "Assets/shaders/postProcess.frag");
 
-    // shadowMap2D 3
+    // shadowMap2D
     IDs.shadowMap2D = Load(
         "Assets/shaders/shadowMap2D.vert",
         "Assets/shaders/shadowMap2D.frag");
 
-    // shadowMapCube 4
+    // shadowMapCube
     IDs.shadowMapCube = Load(
         "Assets/shaders/shadowMapCube.vert",
         "Assets/shaders/shadowMapCube.frag",
         "Assets/shaders/shadowMapCube.geom");
 
-    // Debug 5
+    // Debug
     IDs.depthDebug = Load(
         "Assets/shaders/debug.vert",
         "Assets/shaders/debug.frag");
 
-    // DebugCube 6
+    // DebugCube
     IDs.depthDebugCube = Load(
         "Assets/shaders/debug.vert",
         "Assets/shaders/debugCube.frag");
 
-    // Light 7
+    // Light
     IDs.lightSphere = Load(
         "Assets/shaders/lightSphere.vert",
         "Assets/shaders/lightSphere.frag");
-    
-    // postProcess 2
+
+    // postProcess
     IDs.blur = Load(
         "Assets/shaders/blur.vert",
         "Assets/shaders/blur.frag");
-
-    // Default 8
-    IDs.def = Load(
-        "Assets/shaders/default.vert",
-        "Assets/shaders/default.frag");
 }
 };  // namespace ShaderManager

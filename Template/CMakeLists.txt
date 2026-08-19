@@ -45,7 +45,12 @@ set(MODEL_SOURCES
     src/Graphics/Models/Skybox.h src/Graphics/Models/Skybox.cpp)
 
 set(MATERIAL_SOURCES
-    src/Graphics/Materials/Material.h src/Graphics/Materials/Material.cpp
+    src/Graphics/Materials/Material.h
+    src/Graphics/Materials/Material.cpp
+    src/Graphics/Materials/SpecularMaterial.h
+    src/Graphics/Materials/SpecularMaterial.cpp
+    src/Graphics/Materials/PBRMaterial.h
+    src/Graphics/Materials/PBRMaterial.cpp
     src/Graphics/Materials/MaterialManager.h
     src/Graphics/Materials/MaterialManager.cpp)
 
@@ -94,20 +99,21 @@ target_include_directories(${PROJECT_NAME}
 set(TEMPLATE_OUTPUT_DIR "${CMAKE_BINARY_DIR}/${PROJECT_NAME}")
 
 # Copy Assets folder into .exe directory
-add_custom_target(copy_assets ALL
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/Assets"
+add_custom_target(
+  copy_assets ALL
+  COMMAND
+    ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/src/Assets"
     "${TEMPLATE_OUTPUT_DIR}/Assets"
-  COMMENT "Copying assets"
-)
+  COMMENT "Copying assets")
 
 # Copy binary file into .exe directory
-add_custom_target(copy_assimp_dll ALL
-  COMMAND ${CMAKE_COMMAND} -E copy
+add_custom_target(
+  copy_assimp_dll ALL
+  COMMAND
+    ${CMAKE_COMMAND} -E copy
     "${CMAKE_CURRENT_SOURCE_DIR}/include/binaries/assimp-vc143-mt.dll"
     "${TEMPLATE_OUTPUT_DIR}"
-  COMMENT "Copying assimp DLL"
-)
+  COMMENT "Copying assimp DLL")
 add_dependencies(${PROJECT_NAME} copy_assets copy_assimp_dll)
 
 # GLFW
