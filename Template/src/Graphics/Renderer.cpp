@@ -24,13 +24,13 @@ void Renderer::Render(const Scene& scene)
 
     postProcessSystem.Begin();
 
-    scene.lightSystem.ExportUniforms(IDs.PBR, scene.lights);
+    int useShader = IDs.PBR;
+    scene.lightSystem.ExportUniforms(useShader, scene.lights);
+    scene.skybox.ExportUniformsTo(useShader);
 
-    scene.cameras[scene.activeCam]->updateUniforms(IDs.PBR);
+    scene.cameras[scene.activeCam]->updateUniforms(useShader);
     for (const auto& model : scene.models)
-        model.Draw(IDs.PBR, glm::vec3(0.0f, 0.0f, 0.0f),
-                   glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
-                   glm::vec3(1.0f, 1.0f, 1.0f));
+        model.Draw(useShader);
 
     scene.cameras[scene.activeCam]->updateUniforms(IDs.lightSphere);
     scene.lightSystem.DrawLightSpheres(IDs.lightSphere, scene.lights);

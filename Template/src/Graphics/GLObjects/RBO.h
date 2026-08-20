@@ -11,7 +11,7 @@ public:
     GLuint ID;
     bool useMultisample;
 
-    RBO(bool useMultisample);
+    RBO(bool useMultisample, GLenum internalformat = GL_DEPTH24_STENCIL8);
     
     RBO(const RBO&)            = delete;
     RBO& operator=(const RBO&) = delete;

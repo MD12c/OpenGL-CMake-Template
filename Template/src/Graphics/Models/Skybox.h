@@ -20,16 +20,7 @@
 class Skybox
 {
 public:
-    const std::string facesCubemap[6] = {
-        "Assets/Textures/Skybox/right.jpg",
-        "Assets/Textures/Skybox/left.jpg",
-        "Assets/Textures/Skybox/top.jpg",
-        "Assets/Textures/Skybox/bottom.jpg",
-        "Assets/Textures/Skybox/front.jpg",
-        "Assets/Textures/Skybox/back.jpg"
-    };
-
-    const GLfloat skyboxVertices[24] = {
+    static constexpr GLfloat skyboxVertices[24] = {
         -1.0f, -1.0f, 1.0f,   //        7--------6
         1.0f, -1.0f, 1.0f,    //       /|       /|
         1.0f, -1.0f, -1.0f,   //      4--------5 |
@@ -40,7 +31,7 @@ public:
         -1.0f, 1.0f, -1.0f
     };
 
-    const GLuint skyboxIndices[36] = {
+    static constexpr GLuint skyboxIndices[36] = {
         // Right
         6, 2, 1,
         1, 5, 6,
@@ -61,15 +52,34 @@ public:
         3, 2, 6
     };
 
-    VAO    skyboxVAO;
-    VBO    skyboxVBO;
-    EBO    skyboxEBO;
-    GLuint cubemapTexture;
+    VAO     skyboxVAO;
+    VBO     skyboxVBO;
+    EBO     skyboxEBO;
+    GLuint* cubemapTexture       = nullptr;
+    GLuint* irradiancemapTexture = nullptr;
+
+    void genCube(GLuint* cube);
+    void HDRtoCube(float* data, int widthImg, int heightImg, int resolution, GLuint cubeTexture);
+    void DrawCaptureCube(int shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const;
+    void bind() const
+    {
+        skyboxVAO.Bind();
+        skyboxVBO.Bind();
+        skyboxEBO.Bind();
+    }
+    void unbind() const
+    {
+        skyboxVAO.Unbind();
+        skyboxEBO.Unbind();
+        skyboxVBO.Unbind();
+    }
 
 public:
-    Skybox();
+    Skybox(std::string facesCubemap[6]);
+    Skybox(std::string HDRimage);
     ~Skybox();
     void Draw(int shaderID, glm::mat4 cameraMatrix) const;
+    void ExportUniformsTo(int shaderID) const;
 };
 
 #endif

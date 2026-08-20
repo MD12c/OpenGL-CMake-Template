@@ -33,6 +33,7 @@ struct ShaderIDs
     int depthDebugCube;
     int lightSphere;
     int blur;
+    int HDRconverter;
 };
 extern ShaderIDs IDs;
 

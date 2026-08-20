@@ -1,7 +1,7 @@
 #include "RBO.h"
 #include "Globals.h"
 
-RBO::RBO(bool useMultisample) : useMultisample(useMultisample)
+RBO::RBO(bool useMultisample, GLenum internalformat) : useMultisample(useMultisample)
 {
     glGenRenderbuffers(1, &ID);
     glBindRenderbuffer(GL_RENDERBUFFER, ID);

@@ -77,5 +77,10 @@ void LoadAllShaders()
     IDs.blur = Load(
         "Assets/shaders/blur.vert",
         "Assets/shaders/blur.frag");
+
+    // HDR texture converter
+    IDs.HDRconverter = Load(
+        "Assets/shaders/HDRtexConverter.vert",
+        "Assets/shaders/HDRtexConverter.frag");
 }
 };  // namespace ShaderManager

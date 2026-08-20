@@ -8,11 +8,12 @@ in vec3 Normal;
 in vec3 crntPos;  // fragment position
 in vec3 Tangent;
 
-uniform sampler2D albedo0;
-uniform sampler2D ao0;
-uniform sampler2D metalicRoughness0;
-uniform sampler2D normal0;
-uniform sampler2D displacement0;
+uniform sampler2D   albedo0;
+uniform sampler2D   ao0;
+uniform sampler2D   metalicRoughness0;
+uniform sampler2D   normal0;
+uniform sampler2D   displacement0;
+uniform samplerCube irradiance0;
 
 uniform vec3  albedoColor;  // if no useTexture
 uniform float roughness;    // if no useRoughness
@@ -24,6 +25,7 @@ uniform bool useRoughness;
 uniform bool useMetalic;
 uniform bool useNormal;
 uniform bool useDisplacement;
+uniform bool useIrradiance;
 
 uniform vec3 camPos;
 
@@ -246,14 +248,8 @@ vec3 pointLight(int i, vec3 surfaceToLightPos, vec3 N)
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
-vec3 Fr(vec3 P, vec3 Wi, vec3 Wo, vec3 N, vec2 UVs, vec3 HalfWay)
+vec3 Fr(vec3 crntAlbedoColor, float crntRoughness, float crntMetalic, vec3 F0, vec3 Wo, vec3 Wi, vec3 N, vec3 HalfWay)
 {
-    float crntMetalic     = useMetalic ? texture(metalicRoughness0, UVs).b : metalic;
-    float crntRoughness   = useRoughness ? texture(metalicRoughness0, UVs).g : roughness;
-    vec3  crntAlbedoColor = useTexture ? texture(albedo0, UVs).rgb : albedoColor;
-
-    vec3 F0        = vec3(0.04);
-    F0             = mix(F0, crntAlbedoColor, crntMetalic);
     vec3  Flambert = crntAlbedoColor / PI;
     float cosTheta = max(dot(HalfWay, Wo), 0.0);
     vec3  Fresnel  = fresnelSchlick(cosTheta, F0);
@@ -272,21 +268,32 @@ void main()
 {
     const vec2 UVs = getUVs();
 
-    const float ao      = useAO ? texture(ao0, UVs).r : 1.0;
-    const float ambient = 0.1f;
-    vec4        result  = (useTexture ? texture(albedo0, UVs) : vec4(albedoColor, 1.0)) * ambient * ao;
-
     vec3       sum = vec3(0.0f);                   // PBR sum
     const vec3 P   = crntPos;                      // fragment pos
     const vec3 Wo  = normalize(camPos - crntPos);  // view dir
     const vec3 N   = getNormal(UVs);               // normal
+
+    float crntMetalic     = useMetalic ? texture(metalicRoughness0, UVs).b : metalic;
+    float crntRoughness   = useRoughness ? texture(metalicRoughness0, UVs).g : roughness;
+    vec3  crntAlbedoColor = useTexture ? texture(albedo0, UVs).rgb : albedoColor;
+
+    vec3 F0 = vec3(0.04);
+    F0      = mix(F0, crntAlbedoColor, crntMetalic);
+
+    // IBL
+    vec3 kd             = 1.0 - fresnelSchlick(max(dot(N, Wo), 0.0), F0);
+    vec3 crntIrradiance = useIrradiance ? texture(irradiance0, N).rgb : vec3(0.1f);
+    vec3 diffuse        = crntIrradiance * crntAlbedoColor;
+
+    const float ao      = useAO ? texture(ao0, UVs).r : 1.0;
+    vec3        ambient = (kd * diffuse) * ao;
 
     for (int i = 0; i < numPointLights; i++)
     {
         const vec3 toLight = pointLightPos[i] - crntPos;  // light vec
         const vec3 Wi      = normalize(toLight);          // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(P, Wi, Wo, N, UVs, HalfWay) * pointLight(i, toLight, N) * max(dot(N, Wi), 0.0);
+        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * pointLight(i, toLight, N) * max(dot(N, Wi), 0.0);
     }
 
     for (int i = 0; i < numSpotLights; i++)
@@ -294,17 +301,17 @@ void main()
         const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
         const vec3 Wi      = normalize(toLight);         // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(P, Wi, Wo, N, UVs, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
+        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
     }
 
     for (int i = 0; i < numDirLights; i++)
     {
         const vec3 Wi      = normalize(-dirLightDirection[i]);  // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(P, Wi, Wo, N, UVs, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
+        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
     }
 
-    FragColor = result + vec4(sum, 1.0f);
+    FragColor = vec4(ambient, 1.0f) + vec4(sum, 1.0f);
 
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > 1.0f)
