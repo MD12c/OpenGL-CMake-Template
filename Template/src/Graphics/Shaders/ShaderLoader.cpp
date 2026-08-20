@@ -27,60 +27,60 @@ void LoadAllShaders()
 {
     // Model
     IDs.model = Load(
-        "Assets/shaders/model.vert",
-        "Assets/shaders/model.frag",
-        "Assets/shaders/model.geom");
+        "Assets/shaders/geometry/model.vert",
+        "Assets/shaders/geometry/model.frag",
+        "Assets/shaders/geometry/model.geom");
 
     // PBR
     IDs.PBR = Load(
-        "Assets/shaders/PBR.vert",
-        "Assets/shaders/PBR.frag",
-        "Assets/shaders/PBR.geom");
+        "Assets/shaders/geometry/PBR.vert",
+        "Assets/shaders/geometry/PBR.frag",
+        "Assets/shaders/geometry/PBR.geom");
 
     // SkyBox
     IDs.skybox = Load(
-        "Assets/shaders/skybox.vert",
-        "Assets/shaders/skybox.frag");
+        "Assets/shaders/skybox/skybox.vert",
+        "Assets/shaders/skybox/skybox.frag");
 
     // postProcess
     IDs.postProcess = Load(
-        "Assets/shaders/postProcess.vert",
-        "Assets/shaders/postProcess.frag");
+        "Assets/shaders/post-process/postProcess.vert",
+        "Assets/shaders/post-process/postProcess.frag");
 
     // shadowMap2D
     IDs.shadowMap2D = Load(
-        "Assets/shaders/shadowMap2D.vert",
-        "Assets/shaders/shadowMap2D.frag");
+        "Assets/shaders/lights/shadowMap2D.vert",
+        "Assets/shaders/lights/shadowMap2D.frag");
 
     // shadowMapCube
     IDs.shadowMapCube = Load(
-        "Assets/shaders/shadowMapCube.vert",
-        "Assets/shaders/shadowMapCube.frag",
-        "Assets/shaders/shadowMapCube.geom");
+        "Assets/shaders/lights/shadowMapCube.vert",
+        "Assets/shaders/lights/shadowMapCube.frag",
+        "Assets/shaders/lights/shadowMapCube.geom");
 
     // Debug
     IDs.depthDebug = Load(
-        "Assets/shaders/debug.vert",
-        "Assets/shaders/debug.frag");
+        "Assets/shaders/utility/debug.vert",
+        "Assets/shaders/utility/debug.frag");
 
     // DebugCube
     IDs.depthDebugCube = Load(
-        "Assets/shaders/debug.vert",
-        "Assets/shaders/debugCube.frag");
+        "Assets/shaders/utility/debug.vert",
+        "Assets/shaders/utility/debugCube.frag");
 
     // Light
     IDs.lightSphere = Load(
-        "Assets/shaders/lightSphere.vert",
-        "Assets/shaders/lightSphere.frag");
+        "Assets/shaders/lights/lightSphere.vert",
+        "Assets/shaders/lights/lightSphere.frag");
 
     // postProcess
     IDs.blur = Load(
-        "Assets/shaders/blur.vert",
-        "Assets/shaders/blur.frag");
+        "Assets/shaders/post-process/blur.vert",
+        "Assets/shaders/post-process/blur.frag");
 
     // HDR texture converter
     IDs.HDRconverter = Load(
-        "Assets/shaders/HDRtexConverter.vert",
-        "Assets/shaders/HDRtexConverter.frag");
+        "Assets/shaders/skybox/HDRtexConverter.vert",
+        "Assets/shaders/skybox/HDRtexConverter.frag");
 }
 };  // namespace ShaderManager
