@@ -32,6 +32,7 @@ void Model::loadModel(const std::string& path)
     std::cout << "Loading model from: " << path << std::endl;
 
     directory = path.substr(0, path.find_last_of('/'));
+    fileType  = path.substr(path.find_last_of('.') + 1);
 
     processNode(scene->mRootNode, scene);
 }
@@ -138,11 +139,16 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             return (relPath.length && success) ? directory + "/" + relPath.C_Str() : "";
         };
 
-        std::cout << "DIFFUSE:      " << findPath(aiTextureType_DIFFUSE) << "\n";
-        std::cout << "SPECULAR:     " << findPath(aiTextureType_SPECULAR) << "\n";
-        std::cout << "HEIGHT:       " << findPath(aiTextureType_HEIGHT) << "\n";
-        std::cout << "DISPLACEMENT: " << findPath(aiTextureType_DISPLACEMENT) << "\n";
-        std::cout << "NORMALS:      " << findPath(aiTextureType_NORMALS) << "\n";
+        for (int i = aiTextureType_DIFFUSE; i <= aiTextureType_GLTF_METALLIC_ROUGHNESS; i++)
+        {
+            aiTextureType type = static_cast<aiTextureType>(i);
+            std::string   path = findPath(type);
+            if (path == "")
+                continue;
+
+            const char* name = aiTextureTypeToString(type);
+            std::cout << name << ": " << path << std::endl;
+        }
 
         // materialID = MaterialManager::LoadMaterialSpecular(
         //     std::string(material->GetName().C_Str()),
@@ -150,13 +156,26 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         //     findPath(aiTextureType_SPECULAR),
         //     findPath(aiTextureType_NORMALS),
         //     findPath(aiTextureType_DISPLACEMENT));
-        materialID = MaterialManager::LoadMaterialPBR(
-            std::string(material->GetName().C_Str()),
-            0.85f, 0.0f,
-            findPath(aiTextureType_DIFFUSE),
-            "",
-            findPath(aiTextureType_NORMALS),
-            findPath(aiTextureType_DISPLACEMENT));
+
+        if (fileType == "gltf" || fileType == "glb")
+            materialID = MaterialManager::LoadMaterialPBRgltf(
+                std::string(material->GetName().C_Str()),
+                0.85f, 0.0f,
+                findPath(aiTextureType_DIFFUSE),
+                "",
+                findPath(aiTextureType_GLTF_METALLIC_ROUGHNESS),
+                findPath(aiTextureType_NORMALS),
+                findPath(aiTextureType_DISPLACEMENT));
+        else
+            materialID = MaterialManager::LoadMaterialPBRobj(
+                std::string(material->GetName().C_Str()),
+                0.85f, 0.0f,
+                findPath(aiTextureType_DIFFUSE),
+                "",
+                findPath(aiTextureType_DIFFUSE_ROUGHNESS),
+                findPath(aiTextureType_METALNESS),
+                findPath(aiTextureType_NORMALS),
+                findPath(aiTextureType_DISPLACEMENT));
     }
 
     std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;

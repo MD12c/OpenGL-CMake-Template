@@ -20,6 +20,7 @@ private:
 
 public:
     std::string directory;
+    std::string fileType;
 
     Model(const std::string& path);
 

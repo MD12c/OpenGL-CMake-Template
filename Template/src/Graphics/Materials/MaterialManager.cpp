@@ -4,13 +4,8 @@ using enum Texture::TextureType;
 
 namespace MaterialManager
 {
-std::deque<std::unique_ptr<Material>>                     materials                  = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDiffuseTextures      = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedAlbedoTextures       = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedSpecularTextures     = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedAOTextures           = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedNormalTextures       = {};
-std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDisplacementTextures = {};
+std::deque<std::unique_ptr<Material>>                                                               materials      = {};
+std::unordered_map<Texture::TextureType, std::unordered_map<std::string, std::shared_ptr<Texture>>> loadedTextures = {};
 
 int LoadMaterialSpecular(const std::string& name,
                          const std::string& diffuseMapPath,
@@ -54,13 +49,15 @@ int LoadMaterialSpecular(const std::string& name,
     return materials.back()->ID;
 }
 
-int LoadMaterialPBR(const std::string& name,
-                    float              roughness,
-                    float              metalic,
-                    const std::string& albedoMapPath,
-                    const std::string& aoMapPath,
-                    const std::string& normalMapPath,
-                    const std::string& displacementMapPath)
+int LoadMaterialPBRobj(const std::string& name,
+                       float              roughness,
+                       float              metalic,
+                       const std::string& albedoMapPath,
+                       const std::string& aoMapPath,
+                       const std::string& roughnessMapPath,
+                       const std::string& metalicMapPath,
+                       const std::string& normalMapPath,
+                       const std::string& displacementMapPath)
 {
     materials.emplace_back(
         std::make_unique<PBRMaterial>(
@@ -70,10 +67,58 @@ int LoadMaterialPBR(const std::string& name,
             metalic,
             makeTexture(albedoMapPath, ALBEDO),
             makeTexture(aoMapPath, AO),
+            makeTexture(roughnessMapPath, metalicMapPath, METALIC_ROUGHNESS),
             makeTexture(normalMapPath, NORMAL),
             makeTexture(displacementMapPath, DISPLACEMENT)));
 
     return materials.back()->ID;
+}
+
+int LoadMaterialPBRgltf(const std::string& name,
+                        float              roughness,
+                        float              metalic,
+                        const std::string& albedoMapPath,
+                        const std::string& aoMapPath,
+                        const std::string& metalicRoughnessMapPath,
+                        const std::string& normalMapPath,
+                        const std::string& displacementMapPath)
+{
+    materials.emplace_back(
+        std::make_unique<PBRMaterial>(
+            (int)materials.size(),
+            name,
+            roughness,
+            metalic,
+            makeTexture(albedoMapPath, ALBEDO),
+            makeTexture(aoMapPath, AO),
+            makeTexture(metalicRoughnessMapPath, METALIC_ROUGHNESS),
+            makeTexture(normalMapPath, NORMAL),
+            makeTexture(displacementMapPath, DISPLACEMENT)));
+
+    return materials.back()->ID;
+}
+
+int assignUnit(Texture::TextureType type)
+{
+    switch (type)
+    {
+        case DIFFUSE:
+            return 0;
+        case ALBEDO:
+            return 0;
+        case SPECULAR:
+            return 1;
+        case AO:
+            return 1;
+        case METALIC_ROUGHNESS:
+            return 2;
+        case NORMAL:
+            return 4;
+        case DISPLACEMENT:
+            return 5;
+        default:
+            throw std::runtime_error("[ERROR] invalid texture type");
+    }
 }
 
 std::shared_ptr<Texture> makeTexture(const std::string& texturePath, Texture::TextureType type)
@@ -81,45 +126,36 @@ std::shared_ptr<Texture> makeTexture(const std::string& texturePath, Texture::Te
     if (texturePath.empty())
         return nullptr;
 
-    std::unordered_map<std::string, std::shared_ptr<Texture>>* cache;
-    int                                                        unit;
+    auto& cache = loadedTextures[type];
 
-    switch (type)
-    {
-        case DIFFUSE:
-            unit  = 0;
-            cache = &loadedDiffuseTextures;
-            break;
-        case ALBEDO:
-            unit  = 0;
-            cache = &loadedAlbedoTextures;
-            break;
-        case SPECULAR:
-            unit  = 1;
-            cache = &loadedSpecularTextures;
-            break;
-        case AO:
-            unit  = 1;
-            cache = &loadedAOTextures;
-            break;
-        case NORMAL:
-            unit  = 2;
-            cache = &loadedNormalTextures;
-            break;
-        case DISPLACEMENT:
-            unit  = 3;
-            cache = &loadedDisplacementTextures;
-            break;
-        default:
-            throw std::runtime_error("[ERROR] invalid texture type");
-    }
-
-    auto it = cache->find(texturePath);
-    if (it != cache->end())
+    auto it = cache.find(texturePath);
+    if (it != cache.end())
         return it->second;
 
-    auto newTexture       = std::make_shared<Texture>(texturePath, type, unit);
-    (*cache)[texturePath] = newTexture;
+    auto newTexture    = std::make_shared<Texture>(texturePath, type, assignUnit(type));
+    cache[texturePath] = newTexture;
+    return newTexture;
+}
+
+std::shared_ptr<Texture> makeTexture(const std::string& texturePath1, const std::string& texturePath2, Texture::TextureType type)
+{
+    if (texturePath1.empty() && texturePath2.empty())
+        return nullptr;
+    else if (texturePath1.empty())
+        return makeTexture(texturePath2, METALIC_ROUGHNESS);
+    else if (texturePath2.empty())
+        return makeTexture(texturePath1, METALIC_ROUGHNESS);
+
+    std::string createdTexture = texturePath1 + texturePath2;
+
+    auto& cache = loadedTextures[type];
+
+    auto it = cache.find(createdTexture);
+    if (it != cache.end())
+        return it->second;
+
+    auto newTexture       = std::make_shared<Texture>(texturePath1, texturePath2, type, assignUnit(type), Texture::TextureCombineMode::Pack);
+    cache[createdTexture] = newTexture;
     return newTexture;
 }
 

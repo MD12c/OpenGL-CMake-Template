@@ -10,22 +10,26 @@ in vec3 Tangent;
 
 uniform sampler2D albedo0;
 uniform sampler2D ao0;
+uniform sampler2D metalicRoughness0;
 uniform sampler2D normal0;
 uniform sampler2D displacement0;
 
-uniform float roughness;     // float for now
-uniform float metalic;       // float for now
-uniform vec3  diffuseColor;  // if no albedoMap
+uniform vec3  albedoColor;  // if no useTexture
+uniform float roughness;    // if no useRoughness
+uniform float metalic;      // if no useMetalic
 
 uniform bool useTexture;
+uniform bool useAO;
+uniform bool useRoughness;
+uniform bool useMetalic;
 uniform bool useNormal;
 uniform bool useDisplacement;
 
 uniform vec3 camPos;
 
-#define MAX_DIR_LIGHTS 2
-#define MAX_SPOT_LIGHTS 4
-#define MAX_POINT_LIGHTS 4
+#define MAX_DIR_LIGHTS 8
+#define MAX_SPOT_LIGHTS 8
+#define MAX_POINT_LIGHTS 8
 
 uniform int            numDirLights;
 uniform vec3           dirLightDirection[MAX_DIR_LIGHTS];
@@ -149,9 +153,9 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 vec3 direcLight(int i, vec3 lightDir, vec3 N)
 {
-    vec4 fragPosLight = dirShadowMatrix[i] * vec4(crntPos, 1.0);
-    float shadow      = 0.0f;
-    vec3  lightCoords = fragPosLight.xyz / fragPosLight.w;
+    vec4  fragPosLight = dirShadowMatrix[i] * vec4(crntPos, 1.0);
+    float shadow       = 0.0f;
+    vec3  lightCoords  = fragPosLight.xyz / fragPosLight.w;
     if (lightCoords.z <= 1.0f)
     {
         lightCoords        = (lightCoords + 1.0f) / 2.0f;  // [-1, 1] range to [0, 1]
@@ -178,9 +182,9 @@ vec3 direcLight(int i, vec3 lightDir, vec3 N)
 
 vec3 spotLight(int i, vec3 surfaceToLightPos, vec3 N)
 {
-    vec4 fragPosLight = spotShadowMatrix[i] * vec4(crntPos, 1.0);
-    float angle = dot(normalize(-spotLightDirection[i]), -surfaceToLightPos);
-    float inten = clamp((angle - spotLightOuterCone[i]) / (spotLightInnerCone[i] - spotLightOuterCone[i]), 0.0f, 1.0f);
+    vec4  fragPosLight = spotShadowMatrix[i] * vec4(crntPos, 1.0);
+    float angle        = dot(normalize(-spotLightDirection[i]), normalize(-surfaceToLightPos));
+    float inten        = clamp((angle - spotLightOuterCone[i]) / (spotLightInnerCone[i] - spotLightOuterCone[i]), 0.0f, 1.0f);
 
     float shadow      = 0.0f;
     vec3  lightCoords = fragPosLight.xyz / fragPosLight.w;
@@ -244,15 +248,19 @@ vec3 pointLight(int i, vec3 surfaceToLightPos, vec3 N)
 
 vec3 Fr(vec3 P, vec3 Wi, vec3 Wo, vec3 N, vec2 UVs, vec3 HalfWay)
 {
+    float crntMetalic     = useMetalic ? texture(metalicRoughness0, UVs).b : metalic;
+    float crntRoughness   = useRoughness ? texture(metalicRoughness0, UVs).g : roughness;
+    vec3  crntAlbedoColor = useTexture ? texture(albedo0, UVs).rgb : albedoColor;
+
     vec3 F0        = vec3(0.04);
-    F0             = mix(F0, texture(albedo0, UVs).rgb, metalic);
-    vec3  Flambert = texture(albedo0, UVs).rgb / PI;
+    F0             = mix(F0, crntAlbedoColor, crntMetalic);
+    vec3  Flambert = crntAlbedoColor / PI;
     float cosTheta = max(dot(HalfWay, Wo), 0.0);
     vec3  Fresnel  = fresnelSchlick(cosTheta, F0);
-    vec3  kd       = (vec3(1.0f) - Fresnel) * (1.0 - metalic);
+    vec3  kd       = (vec3(1.0f) - Fresnel) * (1.0 - crntMetalic);
 
-    float alpha             = max(roughness * roughness, 0.02);
-    float k                 = (roughness + 1.0) * (roughness + 1.0) / 8.0;
+    float alpha             = max(crntRoughness * crntRoughness, 0.02);
+    float k                 = (crntRoughness + 1.0) * (crntRoughness + 1.0) / 8.0;
     vec3  cookTorranceNum   = DistributionGGX(N, HalfWay, alpha) * GeometrySmith(N, Wo, Wi, k) * Fresnel;
     float cookTorranceDenum = 4 * max(dot(Wo, N), 0.02) * max(dot(Wi, N), 0.02);
     vec3  cookTorrance      = cookTorranceNum / cookTorranceDenum;
@@ -264,19 +272,18 @@ void main()
 {
     const vec2 UVs = getUVs();
 
+    float       ao      = useAO ? texture(ao0, UVs).r : 1.0;
     const float ambient = 0.20f;
-    vec4        result  = useTexture ? texture(albedo0, UVs) * ambient : vec4(diffuseColor, 1.0f) * ambient;
+    vec4        result  = (useTexture ? texture(albedo0, UVs) : vec4(albedoColor, 1.0)) * ambient * ao;
 
-    const int   steps = 100;
-    const float dW    = 1.0f / steps;                 // step size
-    vec3        sum   = vec3(0.0f);                   // PBR sum
-    const vec3  P     = crntPos;                      // fragment pos
-    const vec3  Wo    = normalize(camPos - crntPos);  // view dir
-    const vec3  N     = getNormal(UVs);               // normal
+    vec3       sum = vec3(0.0f);                   // PBR sum
+    const vec3 P   = crntPos;                      // fragment pos
+    const vec3 Wo  = normalize(camPos - crntPos);  // view dir
+    const vec3 N   = getNormal(UVs);               // normal
 
     for (int i = 0; i < numPointLights; i++)
     {
-        vec3       toLight = pointLightPos[i] - crntPos;  // light vec
+        const vec3 toLight = pointLightPos[i] - crntPos;  // light vec
         const vec3 Wi      = normalize(toLight);          // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
         sum += Fr(P, Wi, Wo, N, UVs, HalfWay) * pointLight(i, toLight, N) * max(dot(N, Wi), 0.0);
@@ -284,8 +291,8 @@ void main()
 
     for (int i = 0; i < numSpotLights; i++)
     {
-        vec3       toLight = spotLightPos[i] - crntPos;  // light vec
-        const vec3 Wi      = normalize(toLight);          // light dir
+        const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
+        const vec3 Wi      = normalize(toLight);         // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
         sum += Fr(P, Wi, Wo, N, UVs, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
     }

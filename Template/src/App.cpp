@@ -32,7 +32,7 @@ void App::Update()
             scene.cameras[scene.activeCam]->Inputs(scene.glfwWindowPtr);
         if (glfwGetKey(window.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
         {
-            scene.lights.at(0).setPosition(scene.cameras[scene.activeCam]->position);
+            scene.lights.at(0).setPosition(scene.cameras[scene.activeCam]->position + glm::vec3(0.0f, 0.0f, 0.5f));
             scene.lights.at(0).setDirection(scene.cameras[scene.activeCam]->Orientation);
         }
     }

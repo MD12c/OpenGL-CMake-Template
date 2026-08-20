@@ -10,13 +10,8 @@
 
 namespace MaterialManager
 {
-extern std::deque<std::unique_ptr<Material>>                     materials;
-extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDiffuseTextures;
-extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedAlbedoTextures;
-extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedAOTextures;
-extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedSpecularTextures;
-extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedNormalTextures;
-extern std::unordered_map<std::string, std::shared_ptr<Texture>> loadedDisplacementTextures;
+extern std::deque<std::unique_ptr<Material>>                                                               materials;
+extern std::unordered_map<Texture::TextureType, std::unordered_map<std::string, std::shared_ptr<Texture>>> loadedTextures;
 
 int LoadMaterialSpecular(const std::string& name,
                          const std::string& diffuseMapPath,
@@ -33,16 +28,27 @@ int LoadMaterialSpecular(const std::string& name,
                          const std::string& normalMapPath,
                          const std::string& displacementMapPath);
 
-int LoadMaterialPBR(const std::string& name,
-                    float              roughness,
-                    float              metalic,
-                    const std::string& albedoMapPath,
-                    const std::string& aoMapPath,
-                    const std::string& normalMapPath,
-                    const std::string& displacementMapPath);
+int LoadMaterialPBRobj(const std::string& name,
+                       float              roughness,
+                       float              metalic,
+                       const std::string& albedoMapPath,
+                       const std::string& aoMapPath,
+                       const std::string& roughnessMapPath,
+                       const std::string& metalicMapPath,
+                       const std::string& normalMapPath,
+                       const std::string& displacementMapPath);
 
+int LoadMaterialPBRgltf(const std::string& name,
+                        float              roughness,
+                        float              metalic,
+                        const std::string& albedoMapPath,
+                        const std::string& aoMapPath,
+                        const std::string& metalicRoughnessMapPath,
+                        const std::string& normalMapPath,
+                        const std::string& displacementMapPath);
 
 std::shared_ptr<Texture> makeTexture(const std::string& texturePath, Texture::TextureType type);
+std::shared_ptr<Texture> makeTexture(const std::string& texturePath1, const std::string& texturePath2, Texture::TextureType type);
 
 Material& getMatAt(int ID);
 void      Unbind();

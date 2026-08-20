@@ -18,15 +18,23 @@ public:
         SPECULAR,
         ALBEDO,
         AO,
+        METALIC_ROUGHNESS,
         NORMAL,
         DISPLACEMENT
     } type;
+
+    enum class TextureCombineMode
+    {
+        Add,
+        Pack
+    };
 
     GLuint      ID;
     std::string path;
     GLuint      unit;
 
     Texture(const std::string& image, TextureType texType, GLuint slot);
+    Texture(const std::string& image1, const std::string& image2, TextureType texType, GLuint slot, TextureCombineMode mode);  // combines the two
 
     Texture(const Texture&)            = delete;
     Texture& operator=(const Texture&) = delete;
@@ -43,5 +51,8 @@ public:
 
 private:
     std::pair<GLenum, GLenum> getImageType(int numColCh, TextureType texType);
+    void                      loadGLtexture(unsigned char* bytes, int numColCh, TextureType texType, int widthImg, int heightImg);
+    static void               CombineAdd(unsigned char* dst, unsigned char* src, int w, int h, int ch);
+    static void               CombinePack(unsigned char* dst, unsigned char* src, int w, int h, int ch);
 };
 #endif
