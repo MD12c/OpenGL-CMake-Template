@@ -7,6 +7,7 @@
 #include "..\GLObjects\VAO.h"
 #include "..\GLObjects\VBO.h"
 #include "..\GLObjects\EBO.h"
+#include "..\GLObjects/CubeTexture.h"
 
 #include "..\Shaders\ShaderManager.h"
 
@@ -19,7 +20,7 @@
 
 class Skybox
 {
-public:
+private:
     static constexpr GLfloat skyboxVertices[24] = {
         -1.0f, -1.0f, 1.0f,   //        7--------6
         1.0f, -1.0f, 1.0f,    //       /|       /|
@@ -52,15 +53,15 @@ public:
         3, 2, 6
     };
 
-    VAO     skyboxVAO;
-    VBO     skyboxVBO;
-    EBO     skyboxEBO;
-    GLuint* cubemapTexture       = nullptr;
-    GLuint* irradiancemapTexture = nullptr;
+    VAO skyboxVAO;
+    VBO skyboxVBO;
+    EBO skyboxEBO;
 
-    void genCube(GLuint* cube);
-    void HDRtoCube(float* data, int widthImg, int heightImg, int resolution, GLuint cubeTexture);
-    void CubeToIrradiance(GLuint srcCubemap, int resolution, GLuint dstCubemap);
+    std::unique_ptr<CubeTexture> cubemapTexture       = nullptr;
+    std::unique_ptr<CubeTexture> irradiancemapTexture = nullptr;
+
+    void HDRtoCube(float* data, int widthImg, int heightImg, int resolution);
+    void CubeToIrradiance(int resolution);
     void DrawCaptureCube(int shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const;
     void bind() const
     {

@@ -5,6 +5,12 @@
 #include <stb/stb_image.h>
 #include "Globals.h"
 
+Texture::Texture(GLuint slot, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType, const void* data)
+    : path("Custom texture"), type(CUSTOM), unit(slot)
+{
+    createGLtexture(data, formatL, formatR, w, h, dataType);
+}
+
 Texture::Texture(const std::string& image, TextureType texType, GLuint slot)
     : path(image), type(texType), unit(slot)
 {
@@ -15,7 +21,8 @@ Texture::Texture(const std::string& image, TextureType texType, GLuint slot)
     if (bytes == nullptr)
         throw std::runtime_error("[ERROR] Couldn't Load Texture");
 
-    loadGLtexture(bytes, numColCh, texType, widthImg, heightImg);
+    std::pair<GLenum, GLenum> imageParameters = getImageType(numColCh, texType);
+    createGLtexture(bytes, imageParameters.first, imageParameters.second, widthImg, heightImg);
     stbi_image_free(bytes);
 }
 
@@ -55,7 +62,8 @@ Texture::Texture(const std::string& image1, const std::string& image2, TextureTy
     }
 
     stbi_image_free(bytes2);
-    loadGLtexture(bytes1, numColCh1, texType, widthImg1, heightImg1);
+    std::pair<GLenum, GLenum> imageParameters = getImageType(numColCh1, texType);
+    createGLtexture(bytes1, imageParameters.first, imageParameters.second, widthImg1, heightImg1);
     stbi_image_free(bytes1);
 }
 
@@ -92,10 +100,8 @@ Texture::~Texture()
     glDeleteTextures(1, &ID);
 }
 
-void Texture::loadGLtexture(unsigned char* bytes, int numColCh, TextureType texType, int widthImg, int heightImg)
+void Texture::createGLtexture(const void* data, GLenum formatL, GLenum formatR, int widthImg, int heightImg, GLenum dataType)
 {
-    std::pair<GLenum, GLenum> imageParameters = getImageType(numColCh, texType);
-
     glGenTextures(1, &ID);
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
@@ -117,9 +123,23 @@ void Texture::loadGLtexture(unsigned char* bytes, int numColCh, TextureType texT
     // float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
     // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, imageParameters.first, widthImg, heightImg, 0, imageParameters.second, GL_UNSIGNED_BYTE, bytes);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexImage2D(GL_TEXTURE_2D, 0, formatL, widthImg, heightImg, 0, formatR, dataType, data);
+
+    if (data)
+    {
+        glGenerateMipmap(GL_TEXTURE_2D);
+        mipMapGenerated = true;
+    }
+
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Texture::LoadTexture(const void* data, GLuint slot, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType) const
+{
+    Bind();
+    glTexImage2D(GL_TEXTURE_2D, 0, formatL, w, h, 0, formatR, dataType, data);
+    if (!mipMapGenerated && data)
+        glGenerateMipmap(GL_TEXTURE_2D);
 }
 
 std::pair<GLenum, GLenum> Texture::getImageType(int numColCh, TextureType texType)

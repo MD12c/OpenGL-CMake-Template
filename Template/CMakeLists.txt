@@ -22,7 +22,9 @@ set(VERTEX_BUFFERS_SOURCES
     src/Graphics/GLObjects/RBO.cpp
     src/Graphics/GLObjects/RBO.h
     src/Graphics/GLObjects/Texture.cpp
-    src/Graphics/GLObjects/Texture.h)
+    src/Graphics/GLObjects/Texture.h
+    src/Graphics/GLObjects/CubeTexture.cpp
+    src/Graphics/GLObjects/CubeTexture.h)
 
 set(SHADERS_SOURCES
     src/Graphics/Shaders/Shader.h src/Graphics/Shaders/Shader.cpp

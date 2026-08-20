@@ -20,7 +20,8 @@ public:
         AO,
         METALIC_ROUGHNESS,
         NORMAL,
-        DISPLACEMENT
+        DISPLACEMENT,
+        CUSTOM
     } type;
 
     enum class TextureCombineMode
@@ -33,6 +34,7 @@ public:
     std::string path;
     GLuint      unit;
 
+    Texture(GLuint slot, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType = GL_UNSIGNED_BYTE, const void* data = nullptr);
     Texture(const std::string& image, TextureType texType, GLuint slot);
     Texture(const std::string& image1, const std::string& image2, TextureType texType, GLuint slot, TextureCombineMode mode);  // combines the two
 
@@ -44,14 +46,17 @@ public:
 
     ~Texture();
 
+    void LoadTexture(const void* data, GLuint slot, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType = GL_UNSIGNED_BYTE) const;
     void texUnit(const int shaderID, const std::string& uniform) const;
     void texUnit(const Shader& shader, const std::string& uniform, const GLuint unit) const;  // Old
     void Bind() const;
     void Unbind() const;
 
 private:
+    bool mipMapGenerated = false;
+
     std::pair<GLenum, GLenum> getImageType(int numColCh, TextureType texType);
-    void                      loadGLtexture(unsigned char* bytes, int numColCh, TextureType texType, int widthImg, int heightImg);
+    void                      createGLtexture(const void* data, GLenum formatL, GLenum formatR, int widthImg, int heightImg, GLenum dataType = GL_UNSIGNED_BYTE);
     static void               CombineAdd(unsigned char* dst, unsigned char* src, int w, int h, int ch);
     static void               CombinePack(unsigned char* dst, unsigned char* src, int w, int h, int ch);
 };
