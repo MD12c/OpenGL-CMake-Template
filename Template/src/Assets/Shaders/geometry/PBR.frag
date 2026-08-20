@@ -224,7 +224,7 @@ vec3 pointLight(int i, vec3 surfaceToLightPos, vec3 N)
     float inten     = 1.0f / (quadratic * dist * dist + linear * dist + constant);
 
     float shadow = 0.0f;
-    float bias   = max(0.025f * (1.0f - dot(N, normalize(surfaceToLightPos))), 0.0005f);
+    float bias   = max(0.0025f * (1.0f - dot(N, normalize(surfaceToLightPos))), 0.0005f);
 
     int   sampleRadius = 1;  // half the width of a square Smoothens out the shadows
     float offset       = 0.02f;

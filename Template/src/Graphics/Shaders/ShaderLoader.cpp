@@ -82,5 +82,10 @@ void LoadAllShaders()
     IDs.HDRconverter = Load(
         "Assets/shaders/skybox/HDRtexConverter.vert",
         "Assets/shaders/skybox/HDRtexConverter.frag");
+        
+    // HDR texture converter
+    IDs.irradiance = Load(
+        "Assets/shaders/skybox/irradiance.vert",
+        "Assets/shaders/skybox/irradiance.frag");
 }
 };  // namespace ShaderManager

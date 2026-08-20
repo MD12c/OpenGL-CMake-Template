@@ -60,6 +60,7 @@ public:
 
     void genCube(GLuint* cube);
     void HDRtoCube(float* data, int widthImg, int heightImg, int resolution, GLuint cubeTexture);
+    void CubeToIrradiance(GLuint srcCubemap, int resolution, GLuint dstCubemap);
     void DrawCaptureCube(int shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const;
     void bind() const
     {
