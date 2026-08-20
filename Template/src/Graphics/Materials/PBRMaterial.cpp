@@ -34,7 +34,9 @@ void PBRMaterial::Apply(int shaderID) const
     glUniform1i(ShaderManager::getLoc(shaderID, "useTexture"), (albedoMap != nullptr));
     glUniform1i(ShaderManager::getLoc(shaderID, "useAO"), (aoMap != nullptr));
     glUniform1i(ShaderManager::getLoc(shaderID, "useRoughness"), (metalicRoughnessMap != nullptr));
+    // glUniform1i(ShaderManager::getLoc(shaderID, "useRoughness"), 0);
     glUniform1i(ShaderManager::getLoc(shaderID, "useMetalic"), (metalicRoughnessMap != nullptr));
+    // glUniform1i(ShaderManager::getLoc(shaderID, "useMetalic"), 0);
     glUniform1i(ShaderManager::getLoc(shaderID, "useNormal"), (normalMap != nullptr));
     glUniform1i(ShaderManager::getLoc(shaderID, "useDisplacement"), (displacementMap != nullptr));
 

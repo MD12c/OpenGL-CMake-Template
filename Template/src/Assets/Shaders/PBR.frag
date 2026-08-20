@@ -272,8 +272,8 @@ void main()
 {
     const vec2 UVs = getUVs();
 
-    float       ao      = useAO ? texture(ao0, UVs).r : 1.0;
-    const float ambient = 0.20f;
+    const float ao      = useAO ? texture(ao0, UVs).r : 1.0;
+    const float ambient = 0.1f;
     vec4        result  = (useTexture ? texture(albedo0, UVs) : vec4(albedoColor, 1.0)) * ambient * ao;
 
     vec3       sum = vec3(0.0f);                   // PBR sum

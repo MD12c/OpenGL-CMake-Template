@@ -118,10 +118,16 @@ void My_ImGui::Shutdown()
     ImGui::DestroyContext();
 }
 
+float roughness = 0.5f;
+float metalic = 0.0f;
+
 void My_ImGui::RenderInterfaceInput()
 {
     ImGui::Begin("Input", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::Text("Template");
+    ImGui::Text("roughness");
+    ImGui::SliderFloat("##1", &roughness, 0.001f, 1.0f);
+    ImGui::Text("metalic");
+    ImGui::SliderFloat("##2", &metalic, 0.001f, 1.0f);
     ImGui::End();
     // ImGui::ShowDemoWindow();
 }

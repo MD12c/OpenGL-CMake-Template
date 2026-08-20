@@ -181,3 +181,10 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
     return Mesh(vertices, indices, materialID);
 }
+
+void Model::setMeshMetalicRoughness(int meshIndex, float metalic, float roughness)
+{
+    PBRMaterial* pbr = dynamic_cast<PBRMaterial*>(&MaterialManager::getMatAt(meshes.at(meshIndex).materialID));
+    pbr->metalic = metalic;
+    pbr->roughness = roughness;
+}

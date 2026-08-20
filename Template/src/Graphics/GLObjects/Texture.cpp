@@ -100,7 +100,7 @@ void Texture::loadGLtexture(unsigned char* bytes, int numColCh, TextureType texT
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
 
-    if (type == DISPLACEMENT)
+    if (1)  // no usecase for now
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -140,11 +140,11 @@ std::pair<GLenum, GLenum> Texture::getImageType(int numColCh, TextureType texTyp
         return std::pair<GLenum, GLenum>(colorChannels, colorChannels);
 
     if (colorChannels == GL_RED)
-        colorType = GL_SRGB;
-    if (colorChannels == GL_RGB)
-        colorType = GL_SRGB;
-    if (colorChannels == GL_RGBA)
-        colorType = GL_SRGB;
+        colorType = GL_RED;
+    else if (colorChannels == GL_RGB)
+        colorType = GL_SRGB8;
+    else if (colorChannels == GL_RGBA)
+        colorType = GL_SRGB8_ALPHA8;
 
     return std::pair<GLenum, GLenum>(colorType, colorChannels);
 }
