@@ -5,10 +5,18 @@ App::App()
 {
     My_ImGui::Init(window.getWindow());
     setResizePointers();
+#ifdef BENCHMARK
+    Instrumentor::Get().BeginSession("App CPU");
+    GPUInstrumentor::Get().BeginSession("App GPU");
+#endif
 }
 
 App::~App()
 {
+#ifdef BENCHMARK
+    Instrumentor::Get().EndSession();
+    GPUInstrumentor::Get().EndSession();
+#endif
 }
 
 void App::setResizePointers()
@@ -48,4 +56,8 @@ void App::RunFrame()
 
     My_ImGui::RenderDockSpace();
     window.EndFrame();
+
+#ifdef BENCHMARK
+    GPUInstrumentor::Get().ResolvePending();
+#endif
 }
