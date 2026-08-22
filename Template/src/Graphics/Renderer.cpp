@@ -7,9 +7,10 @@
 using namespace ShaderManager;
 
 Renderer::Renderer()
-
+    : postProcessSystem()
 {
     LoadAllShaders();
+    postProcessSystem.lut.Draw(IDs.brdfLUT);
 }
 
 Renderer::~Renderer()
@@ -27,6 +28,7 @@ void Renderer::Render(const Scene& scene)
     int useShader = IDs.PBR;
     scene.lightSystem.ExportUniforms(useShader, scene.lights);
     scene.skybox.ExportUniformsTo(useShader);
+    postProcessSystem.lut.ExportUniformsTo(useShader);
 
     scene.cameras[scene.activeCam]->updateUniforms(useShader);
     for (const auto& model : scene.models)

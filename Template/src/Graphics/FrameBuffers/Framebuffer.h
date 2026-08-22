@@ -10,7 +10,6 @@ class Framebuffer
 {
 public:
     GLuint               ID;
-    int                  shaderID;
     std::unique_ptr<RBO> framebufferRBO = nullptr;
     std::vector<GLuint>  textureIDs;
 

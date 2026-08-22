@@ -2,16 +2,20 @@
 
 #include "Globals.h"
 #include "Square.h"
+#include "../Shaders/ShaderManager.h"
 
 PostProcessSystem::PostProcessSystem()
     : antiAlias(),
       finalFrameBuffer(2, true),
-      bloom()
+      bloom(),
+      lut()
 {
+    quad = new Square();
 }
 
 PostProcessSystem::~PostProcessSystem()
 {
+    delete quad;
 }
 
 void PostProcessSystem::Begin()

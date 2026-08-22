@@ -5,12 +5,10 @@ App::App()
 {
     My_ImGui::Init(window.getWindow());
     setResizePointers();
-    quad = new Square();
 }
 
 App::~App()
 {
-    delete quad;
 }
 
 void App::setResizePointers()

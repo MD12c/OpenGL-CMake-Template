@@ -35,6 +35,8 @@ struct ShaderIDs
     int blur;
     int HDRconverter;
     int irradiance;
+    int prefilter;
+    int brdfLUT;
 };
 extern ShaderIDs IDs;
 

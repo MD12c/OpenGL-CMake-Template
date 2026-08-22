@@ -29,7 +29,7 @@ Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil)
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, framebufferRBO->ID);
     }
 
-    std::vector<GLenum> attachments;
+    std::vector<GLenum> attachments(numRenderTargets);
     for (int i = 0; i < numRenderTargets; i++)
         attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
     glDrawBuffers(numRenderTargets, attachments.data());

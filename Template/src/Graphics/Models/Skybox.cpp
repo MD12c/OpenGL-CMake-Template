@@ -27,7 +27,7 @@ Skybox::Skybox(std::string facesCubemap[6])
 
     bool success = true;
     stbi_set_flip_vertically_on_load(false);
-    for (unsigned int i = 0; i < 6; i++)
+    for (GLuint i = 0; i < 6; i++)
     {
         int            widthImg, heightImg, numColCh;
         unsigned char* bytes = stbi_load(facesCubemap[i].c_str(), &widthImg, &heightImg, &numColCh, 0);
@@ -47,6 +47,7 @@ Skybox::Skybox(std::string facesCubemap[6])
     {
         irradiancemapTexture = std::make_unique<CubeTexture>(6);
         CubeToIrradiance(32);
+        CubeToPrefiltered(2048);
     }
 }
 
@@ -70,6 +71,7 @@ Skybox::Skybox(std::string HDRimage)
 
         irradiancemapTexture = std::make_unique<CubeTexture>(6);
         CubeToIrradiance(32);
+        CubeToPrefiltered(2048);
     }
     else
         std::cout << "Failed to load HDR image." << std::endl;
@@ -77,15 +79,11 @@ Skybox::Skybox(std::string HDRimage)
     stbi_image_free(data);
 }
 
-Skybox::~Skybox()
-{
-}
-
 void Skybox::HDRtoCube(float* data, int widthImg, int heightImg, int resolution)
 {
     Texture hdrTexture(0, GL_RGB16F, GL_RGB, widthImg, heightImg, GL_FLOAT, data);
 
-    unsigned int captureFBO, captureRBO;
+    GLuint captureFBO, captureRBO;
     glGenFramebuffers(1, &captureFBO);
     glGenRenderbuffers(1, &captureRBO);
 
@@ -94,14 +92,14 @@ void Skybox::HDRtoCube(float* data, int widthImg, int heightImg, int resolution)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution, resolution);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
-    for (unsigned int i = 0; i < 6; ++i)
+    for (GLuint i = 0; i < 6; ++i)
         cubemapTexture->LoadTexture(i, data, GL_FLOAT, GL_RGB16F, GL_RGB, resolution, resolution);
 
     hdrTexture.Bind();
     GLint prevViewport[4];
     glGetIntegerv(GL_VIEWPORT, prevViewport);
     glViewport(0, 0, resolution, resolution);
-    for (unsigned int i = 0; i < 6; ++i)
+    for (GLuint i = 0; i < 6; ++i)
     {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubemapTexture->ID, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -119,7 +117,7 @@ void Skybox::HDRtoCube(float* data, int widthImg, int heightImg, int resolution)
 
 void Skybox::CubeToIrradiance(int resolution)
 {
-    unsigned int captureFBO, captureRBO;
+    GLuint captureFBO, captureRBO;
     glGenFramebuffers(1, &captureFBO);
     glGenRenderbuffers(1, &captureRBO);
 
@@ -128,20 +126,17 @@ void Skybox::CubeToIrradiance(int resolution)
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution, resolution);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
-    for (unsigned int i = 0; i < 6; ++i)
+    for (GLuint i = 0; i < 6; ++i)
         irradiancemapTexture->AllocTexture(i, GL_FLOAT, GL_RGB16F, GL_RGB, resolution, resolution);
-
-    GLint prevViewport[4];
-    glGetIntegerv(GL_VIEWPORT, prevViewport);
-    glViewport(0, 0, resolution, resolution);
 
     ShaderManager::Activate(ShaderManager::IDs.irradiance);
     glUniform1i(ShaderManager::getLoc(ShaderManager::IDs.irradiance, "environmentMap"), 0);
     cubemapTexture->Bind();
 
     glDisable(GL_CULL_FACE);
+    glViewport(0, 0, resolution, resolution);
     bind();
-    for (unsigned int i = 0; i < 6; ++i)
+    for (GLuint i = 0; i < 6; ++i)
     {
         glm::mat4 mvp = captureProjection * captureViews[i];
         glUniformMatrix4fv(ShaderManager::getLoc(ShaderManager::IDs.irradiance, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(mvp));
@@ -154,8 +149,6 @@ void Skybox::CubeToIrradiance(int resolution)
     glEnable(GL_CULL_FACE);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
-
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
 }
@@ -173,6 +166,56 @@ void Skybox::DrawCaptureCube(int shaderID, glm::mat4 cameraMatrix, GLuint inputT
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     unbind();
     glEnable(GL_CULL_FACE);
+}
+
+void Skybox::CubeToPrefiltered(int baseResolution)
+{
+    GLuint captureFBO, captureRBO;
+    glGenFramebuffers(1, &captureFBO);
+    glGenRenderbuffers(1, &captureRBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+
+    prefilteredmapTexture = std::make_unique<CubeTexture>(7);
+    for (GLuint i = 0; i < 6; ++i)
+        prefilteredmapTexture->AllocTexture(i, GL_FLOAT, GL_RGB16F, GL_RGB, baseResolution, baseResolution);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilteredmapTexture->ID);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+    ShaderManager::Activate(ShaderManager::IDs.prefilter);
+    glUniform1i(ShaderManager::getLoc(ShaderManager::IDs.prefilter, "environmentMap"), 0);
+    cubemapTexture->Bind();
+
+    glDisable(GL_CULL_FACE);
+    bind();
+
+    GLuint maxMipLevels = 5;
+    for (GLuint mip = 0; mip < maxMipLevels; ++mip)
+    {
+        GLuint mipRes = static_cast<GLuint>(baseResolution * std::pow(0.5, mip));
+        glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipRes, mipRes);
+        glViewport(0, 0, mipRes, mipRes);
+
+        float roughness = (float)mip / (float)(maxMipLevels - 1);
+        glUniform1f(ShaderManager::getLoc(ShaderManager::IDs.prefilter, "roughness"), roughness);
+
+        for (GLuint face = 0; face < 6; ++face)
+        {
+            glm::mat4 mvp = captureProjection * captureViews[face];
+            glUniformMatrix4fv(ShaderManager::getLoc(ShaderManager::IDs.prefilter, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(mvp));
+
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, prefilteredmapTexture->ID, mip);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+        }
+    }
+
+    unbind();
+    glEnable(GL_CULL_FACE);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &captureFBO);
+    glDeleteRenderbuffers(1, &captureRBO);
 }
 
 void Skybox::Draw(int shaderID, glm::mat4 cameraMatrix) const
@@ -195,6 +238,8 @@ void Skybox::ExportUniformsTo(int shaderID) const
 {
     ShaderManager::Activate(shaderID);
     irradiancemapTexture->Bind();
+    prefilteredmapTexture->Bind();
     glUniform1i(ShaderManager::getLoc(shaderID, "irradiance0"), 6);
-    glUniform1i(ShaderManager::getLoc(shaderID, "useIrradiance"), (irradiancemapTexture != nullptr));
+    glUniform1i(ShaderManager::getLoc(shaderID, "prefilteredmap0"), 7);
+    glUniform1i(ShaderManager::getLoc(shaderID, "useIBL"), (irradiancemapTexture != nullptr && prefilteredmapTexture != nullptr));
 }

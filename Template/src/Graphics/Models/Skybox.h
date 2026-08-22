@@ -57,11 +57,13 @@ private:
     VBO skyboxVBO;
     EBO skyboxEBO;
 
-    std::unique_ptr<CubeTexture> cubemapTexture       = nullptr;
-    std::unique_ptr<CubeTexture> irradiancemapTexture = nullptr;
+    std::unique_ptr<CubeTexture> cubemapTexture        = nullptr;
+    std::unique_ptr<CubeTexture> irradiancemapTexture  = nullptr;
+    std::unique_ptr<CubeTexture> prefilteredmapTexture = nullptr;
 
     void HDRtoCube(float* data, int widthImg, int heightImg, int resolution);
     void CubeToIrradiance(int resolution);
+    void CubeToPrefiltered(int baseResolution);
     void DrawCaptureCube(int shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const;
     void bind() const
     {
@@ -79,7 +81,6 @@ private:
 public:
     Skybox(std::string facesCubemap[6]);
     Skybox(std::string HDRimage);
-    ~Skybox();
     void Draw(int shaderID, glm::mat4 cameraMatrix) const;
     void ExportUniformsTo(int shaderID) const;
 };

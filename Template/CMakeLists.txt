@@ -76,6 +76,8 @@ set(FRAMEBUFFER_SOURCES
     src/Graphics/FrameBuffers/MSAABuffer.cpp
     src/Graphics/FrameBuffers/Square.h
     src/Graphics/FrameBuffers/Square.cpp
+    src/Graphics/FrameBuffers/LUT.h
+    src/Graphics/FrameBuffers/LUT.cpp
     src/Graphics/FrameBuffers/PostProcessSystem.h
     src/Graphics/FrameBuffers/PostProcessSystem.cpp)
 

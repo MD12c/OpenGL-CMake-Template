@@ -8,12 +8,17 @@ in vec3 Normal;
 in vec3 crntPos;  // fragment position
 in vec3 Tangent;
 
+uniform vec3 camPos;
+
 uniform sampler2D   albedo0;
 uniform sampler2D   ao0;
 uniform sampler2D   metalicRoughness0;
 uniform sampler2D   normal0;
 uniform sampler2D   displacement0;
 uniform samplerCube irradiance0;
+uniform samplerCube prefilteredmap0;
+
+uniform sampler2D brdfLUT;
 
 uniform vec3  albedoColor;  // if no useTexture
 uniform float roughness;    // if no useRoughness
@@ -25,9 +30,7 @@ uniform bool useRoughness;
 uniform bool useMetalic;
 uniform bool useNormal;
 uniform bool useDisplacement;
-uniform bool useIrradiance;
-
-uniform vec3 camPos;
+uniform bool useIBL;
 
 #define MAX_DIR_LIGHTS 8
 #define MAX_SPOT_LIGHTS 8
@@ -281,12 +284,22 @@ void main()
     F0      = mix(F0, crntAlbedoColor, crntMetalic);
 
     // IBL
-    vec3 kd             = 1.0 - fresnelSchlick(max(dot(N, Wo), 0.0), F0);
-    vec3 crntIrradiance = useIrradiance ? texture(irradiance0, N).rgb : vec3(0.1f);
-    vec3 diffuse        = crntIrradiance * crntAlbedoColor;
+    vec3 diffuse  = vec3(0.1f) * crntAlbedoColor;
+    vec3 specular = vec3(0.0f);
+    vec3 kd       = 1.0 - fresnelSchlick(max(dot(N, Wo), 0.0), F0);
+    if (useIBL)
+    {
+        diffuse = texture(irradiance0, N).rgb * crntAlbedoColor;
+
+        const float MAX_REFLECTION_LOD = 4.0;
+        vec3        R                  = reflect(-Wo, N);
+        vec3        prefilteredColor   = textureLod(prefilteredmap0, R, crntRoughness * MAX_REFLECTION_LOD).rgb;
+        vec2        envBRDF            = texture(brdfLUT, vec2(max(dot(N, Wo), 0.0), crntRoughness)).rg;
+        specular                       = prefilteredColor * (F0 * envBRDF.x + envBRDF.y);
+    }
 
     const float ao      = useAO ? texture(ao0, UVs).r : 1.0;
-    vec3        ambient = (kd * diffuse) * ao;
+    vec3        ambient = (kd * diffuse + specular) * ao;
 
     for (int i = 0; i < numPointLights; i++)
     {
