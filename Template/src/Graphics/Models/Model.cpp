@@ -1,5 +1,9 @@
 #include "Model.h"
 
+#include <thread>
+
+#include "Globals.h"
+
 Model::Model(const std::string& path)
 {
     loadModel(path);
@@ -51,80 +55,96 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    std::vector<Vertex> vertices(mesh->mNumVertices);
-    std::vector<GLuint> indices(mesh->mNumFaces * 3);
-    int                 materialID;
+    InstrumentationTimer timer("processMesh");
+    std::vector<Vertex>  vertices(mesh->mNumVertices);
+    std::vector<GLuint>  indices(mesh->mNumFaces * 3);
+    int                  materialID;
 
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    // Vertices
     {
-        // positions
-        vertices[i].position = glm::vec3(
-            mesh->mVertices[i].x,
-            mesh->mVertices[i].y,
-            mesh->mVertices[i].z);
-
-        // normals
-        if (mesh->HasNormals())
+        InstrumentationTimer timer("vert");
+        for (unsigned int i = 0; i < mesh->mNumVertices; i++)
         {
-            vertices[i].normal = glm::vec3(
-                mesh->mNormals[i].x,
-                mesh->mNormals[i].y,
-                mesh->mNormals[i].z);
-        }
-        else
-            vertices[i].normal = glm::vec3(0.0f, 0.0f, 0.0f);
+            // positions
+            vertices[i].position = glm::vec3(
+                mesh->mVertices[i].x,
+                mesh->mVertices[i].y,
+                mesh->mVertices[i].z);
 
-        // texture coords
-        if (mesh->mTextureCoords[0])
-        {
-            vertices[i].texUV = glm::vec2(
-                mesh->mTextureCoords[0][i].x,
-                mesh->mTextureCoords[0][i].y);
+            // normals
+            if (mesh->HasNormals())
+            {
+                vertices[i].normal = glm::vec3(
+                    mesh->mNormals[i].x,
+                    mesh->mNormals[i].y,
+                    mesh->mNormals[i].z);
+            }
+            else
+                vertices[i].normal = glm::vec3(0.0f, 0.0f, 0.0f);
+
+            // texture coords
+            if (mesh->mTextureCoords[0])
+            {
+                vertices[i].texUV = glm::vec2(
+                    mesh->mTextureCoords[0][i].x,
+                    mesh->mTextureCoords[0][i].y);
+            }
+            else
+                vertices[i].texUV = glm::vec2(0.0f, 0.0f);
         }
-        else
-            vertices[i].texUV = glm::vec2(0.0f, 0.0f);
     }
 
     // indices
-    unsigned int index = 0;
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
-        const aiFace& face = mesh->mFaces[i];
-        for (unsigned int j = 0; j < 3; j++)
-            indices[index++] = face.mIndices[j];
+        InstrumentationTimer timer("ind");
+        unsigned int         index = 0;
+        for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+        {
+            const aiFace& face = mesh->mFaces[i];
+            for (unsigned int j = 0; j < 3; j++)
+                indices[index++] = face.mIndices[j];
+        }
     }
 
     // Tangents
-    for (size_t i = 0; i < indices.size(); i += 3)
     {
-        Vertex& v0 = vertices[indices[i]];
-        Vertex& v1 = vertices[indices[i + 1]];
-        Vertex& v2 = vertices[indices[i + 2]];
-
-        glm::vec3 edge1    = v1.position - v0.position;
-        glm::vec3 edge2    = v2.position - v0.position;
-        glm::vec2 deltaUV1 = v1.texUV - v0.texUV;
-        glm::vec2 deltaUV2 = v2.texUV - v0.texUV;
-
-        float denom = (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-        if (std::abs(denom) < 1e-8f)
-            continue;
-
-        float     invDet  = 1.0f / denom;
-        glm::vec3 tangent = invDet * (deltaUV2.y * edge1 - deltaUV1.y * edge2);
-
-        v0.tangent += tangent;
-        v1.tangent += tangent;
-        v2.tangent += tangent;
-    }
-    for (auto& v : vertices)
-    {
-        if (glm::length(v.tangent) > 1e-8f)
-            v.tangent = glm::normalize(v.tangent);
-        else
+        InstrumentationTimer timer("tan");
+        for (size_t i = 0; i < indices.size(); i += 3)
         {
-            glm::vec3 up = (abs(v.normal.y) < 0.99f) ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0);
-            v.tangent    = glm::normalize(glm::cross(up, v.normal));
+            Vertex& v0 = vertices[indices[i]];
+            Vertex& v1 = vertices[indices[i + 1]];
+            Vertex& v2 = vertices[indices[i + 2]];
+
+            glm::vec3 edge1    = v1.position - v0.position;
+            glm::vec3 edge2    = v2.position - v0.position;
+            glm::vec2 deltaUV1 = v1.texUV - v0.texUV;
+            glm::vec2 deltaUV2 = v2.texUV - v0.texUV;
+
+            float denom = (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+            if (std::abs(denom) < 1e-8f)
+                continue;
+
+            float     invDet  = 1.0f / denom;
+            glm::vec3 tangent = invDet * (deltaUV2.y * edge1 - deltaUV1.y * edge2);
+
+            v0.tangent += tangent;
+            v1.tangent += tangent;
+            v2.tangent += tangent;
+        }
+    }
+
+    // Normalize tangents
+    {
+        InstrumentationTimer timer("norm");
+        for (auto& v : vertices)
+        {
+            if (glm::length(v.tangent) > 1e-8f)
+                v.tangent = glm::normalize(v.tangent);
+            else
+            {
+                glm::vec3 up = (abs(v.normal.y) < 0.99f) ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0);
+                v.tangent    = glm::normalize(glm::cross(up, v.normal));
+            }
         }
     }
 
@@ -185,6 +205,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 void Model::setMeshMetalicRoughness(int meshIndex, float metalic, float roughness)
 {
     PBRMaterial* pbr = dynamic_cast<PBRMaterial*>(&MaterialManager::getMatAt(meshes.at(meshIndex).materialID));
-    pbr->metalic = metalic;
-    pbr->roughness = roughness;
+    pbr->metalic     = metalic;
+    pbr->roughness   = roughness;
 }

@@ -1,5 +1,7 @@
 #include "MaterialManager.h"
 
+#include "Globals.h"
+
 using enum Texture::TextureType;
 
 namespace MaterialManager

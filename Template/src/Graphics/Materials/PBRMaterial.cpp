@@ -2,6 +2,8 @@
 
 #include "glm/gtc/type_ptr.hpp"
 
+#include "Globals.h"
+
 PBRMaterial::PBRMaterial(int                      ID,
                          std::string              name,
                          float                    roughness,

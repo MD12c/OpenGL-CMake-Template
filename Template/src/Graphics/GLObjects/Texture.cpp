@@ -102,6 +102,7 @@ Texture::~Texture()
 
 void Texture::createGLtexture(const void* data, GLenum formatL, GLenum formatR, int widthImg, int heightImg, GLenum dataType)
 {
+    GPUInstrumentationTimer gtimer(path.c_str());
     glGenTextures(1, &ID);
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
@@ -144,8 +145,8 @@ void Texture::LoadTexture(const void* data, GLuint slot, GLenum formatL, GLenum 
 
 std::pair<GLenum, GLenum> Texture::getImageType(int numColCh, TextureType texType)
 {
-    GLenum colorType;
-    GLenum colorChannels;
+    GLenum colorChannels;  // external/data layout format — stays unsized (GL_RGB, GL_RGBA, GL_RED)
+    GLenum internalFmt;    // must be sized
 
     if (numColCh == 1)
         colorChannels = GL_RED;
@@ -154,19 +155,28 @@ std::pair<GLenum, GLenum> Texture::getImageType(int numColCh, TextureType texTyp
     else if (numColCh == 4)
         colorChannels = GL_RGBA;
     else
-        throw std::runtime_error("[ERROR] Couldn't Load Texture, Invalid number of color channels");
+        throw std::runtime_error("[ERROR] Invalid number of color channels");
 
-    if (texType != DIFFUSE && texType != ALBEDO)
-        return std::pair<GLenum, GLenum>(colorChannels, colorChannels);
+    if (texType == DIFFUSE || texType == ALBEDO)
+    {
+        if (colorChannels == GL_RED)
+            internalFmt = GL_RED;
+        else if (colorChannels == GL_RGB)
+            internalFmt = GL_SRGB8;
+        else
+            internalFmt = GL_SRGB8_ALPHA8;
+    }
+    else
+    {
+        if (colorChannels == GL_RED)
+            internalFmt = GL_R8;
+        else if (colorChannels == GL_RGB)
+            internalFmt = GL_RGB8;
+        else
+            internalFmt = GL_RGBA8;
+    }
 
-    if (colorChannels == GL_RED)
-        colorType = GL_RED;
-    else if (colorChannels == GL_RGB)
-        colorType = GL_SRGB8;
-    else if (colorChannels == GL_RGBA)
-        colorType = GL_SRGB8_ALPHA8;
-
-    return std::pair<GLenum, GLenum>(colorType, colorChannels);
+    return { internalFmt, colorChannels };
 }
 
 void Texture::CombineAdd(unsigned char* dst, unsigned char* src, int w, int h, int ch)
