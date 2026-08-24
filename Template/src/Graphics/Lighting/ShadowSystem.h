@@ -3,6 +3,7 @@
 
 #include "glad/glad.h"
 
+#include "../Shaders/ShaderManager.h"
 #include "Globals.h"
 
 class ShadowSystem
@@ -20,16 +21,12 @@ public:
     GLuint frameBuf2D;
     GLuint frameBufCube;
 
-    static constexpr unsigned int MAX_DIR_LIGHTS   = 2;
-    static constexpr unsigned int MAX_SPOT_LIGHTS  = 4;
-    static constexpr unsigned int MAX_POINT_LIGHTS = 4;
-
     ShadowSystem();
     ~ShadowSystem();
 
     GLint RegisterCaster(LightType type);
     void  BindDepthTarget(LightType type, GLuint layerIndex);
-    void  BindShadowTextures(int shaderID, GLuint startSlot);
+    void  BindShadowTextures(ShaderIDs shaderID);
     void  ClearAllTargets();
 
     void genTexture(GLenum type, GLsizei maxDepth, GLuint* shadowMapTexture);

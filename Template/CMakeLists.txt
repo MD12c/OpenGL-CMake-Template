@@ -48,7 +48,6 @@ set(MODEL_SOURCES
 
 set(MATERIAL_SOURCES
     src/Graphics/Materials/Material.h
-    src/Graphics/Materials/Material.cpp
     src/Graphics/Materials/SpecularMaterial.h
     src/Graphics/Materials/SpecularMaterial.cpp
     src/Graphics/Materials/PBRMaterial.h

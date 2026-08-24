@@ -11,8 +11,9 @@ LightSystem::LightSystem(float zNear, float zFar)
     : shadowSystem(std::make_unique<ShadowSystem>()), zNear(zNear), zFar(zFar), icoSphere("Assets/Models/icoSphere.obj")
 {
 }
-void LightSystem::DrawLightSpheres(int shaderID, const std::vector<Light>& lights) const
+void LightSystem::DrawLightSpheres(ShaderIDs shaderID, const std::vector<Light>& lights) const
 {
+    ShaderManager::Activate(shaderID);
     glEnable(GL_CULL_FACE);
     for (const auto& light : lights)
     {
@@ -23,9 +24,9 @@ void LightSystem::DrawLightSpheres(int shaderID, const std::vector<Light>& light
     glDisable(GL_CULL_FACE);
 }
 
-void LightSystem::ExportUniforms(int shaderID, const std::vector<Light>& lights) const
+void LightSystem::ExportUniforms(ShaderIDs shaderID, const std::vector<Light>& lights) const
 {
-    shadowSystem->BindShadowTextures(shaderID, 12 /*start slot*/);
+    shadowSystem->BindShadowTextures(shaderID);
 
     int dirIdx = 0, spotIdx = 0, pointIdx = 0;
     for (auto& light : lights)
@@ -51,25 +52,13 @@ void LightSystem::ExportUniforms(int shaderID, const std::vector<Light>& lights)
     glUniform1i(ShaderManager::getLoc(shaderID, "numPointLights"), pointIdx);
 }
 
-unsigned int LightSystem::getShaderIDfromType(LightType type) const
-{
-    if (type == LightType::DIRECTION)
-        return ShaderManager::IDs.shadowMap2D;
-    else if (type == LightType::SPOT)
-        return ShaderManager::IDs.shadowMap2D;
-    else if (type == LightType::POINT)
-        return ShaderManager::IDs.shadowMapCube;
-    else
-        throw std::runtime_error("[ERROR] Invalid light type");
-};
-
 void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector<Light>& lights) const
 {
     shadowSystem->ClearAllTargets();
 
     for (const auto& light : lights)
     {
-        const int shaderID = getShaderIDfromType(light.getType());
+        const auto shaderID = ShaderManager::getShaderIDfromType(light.getType());
         light.caster->BeginDepthPass(shaderID, *shadowSystem, light.getPosition());
         for (const auto& model : models)
             model.Draw(shaderID);

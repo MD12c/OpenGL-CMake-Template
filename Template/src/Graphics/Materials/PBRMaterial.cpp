@@ -13,7 +13,6 @@ PBRMaterial::PBRMaterial(int                      ID,
                          std::shared_ptr<Texture> metalicRoughnessMap,
                          std::shared_ptr<Texture> normalMap,
                          std::shared_ptr<Texture> displacementMap)
-
     : Material(ID),
       name(name),
       roughness(roughness),
@@ -26,9 +25,8 @@ PBRMaterial::PBRMaterial(int                      ID,
 {
 }
 
-void PBRMaterial::Apply(int shaderID) const
+void PBRMaterial::Apply() const
 {
-    ShaderManager::Activate(shaderID);
     glUniform3fv(ShaderManager::getLoc(shaderID, "albedoColor"), 1, glm::value_ptr(albedoColor));
     glUniform1f(ShaderManager::getLoc(shaderID, "roughness"), roughness);
     glUniform1f(ShaderManager::getLoc(shaderID, "metalic"), metalic);
@@ -44,12 +42,10 @@ void PBRMaterial::Apply(int shaderID) const
 
     auto checkAndLoad = [&](std::shared_ptr<Texture> texPtr, const std::string& name)
     {
-        if (texPtr)
-        {
-            texPtr->Bind();
-            texPtr->texUnit(shaderID, name);
-        }
+        if (!texPtr) return;
+        texPtr->texUnit(shaderID, name);
     };
+
     checkAndLoad(albedoMap, "albedo0");
     checkAndLoad(aoMap, "ao0");
     checkAndLoad(metalicRoughnessMap, "metalicRoughness0");

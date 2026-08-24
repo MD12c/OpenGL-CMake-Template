@@ -64,7 +64,7 @@ private:
     void HDRtoCube(float* data, int widthImg, int heightImg, int resolution);
     void CubeToIrradiance(int resolution);
     void CubeToPrefiltered(int baseResolution);
-    void DrawCaptureCube(int shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const;
+    void DrawCaptureCube(ShaderIDs shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const;
     void bind() const
     {
         skyboxVAO.Bind();
@@ -81,8 +81,8 @@ private:
 public:
     Skybox(std::string facesCubemap[6]);
     Skybox(std::string HDRimage);
-    void Draw(int shaderID, glm::mat4 cameraMatrix) const;
-    void ExportUniformsTo(int shaderID) const;
+    void Draw(ShaderIDs shaderID, glm::mat4 cameraMatrix) const;
+    void ExportUniformsTo(ShaderIDs shaderID) const;
 };
 
 #endif

@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-CubeTexture::CubeTexture(GLuint unit)
-    : unit(unit)
+#include "../Shaders/ShaderManager.h"
+
+CubeTexture::CubeTexture()
 {
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
@@ -20,20 +21,17 @@ CubeTexture& CubeTexture::operator=(CubeTexture&& other) noexcept
     {
         glDeleteTextures(1, &ID);
 
-        ID         = other.ID;
-        unit       = other.unit;
-        other.ID   = 0;
-        other.unit = 0;
+        ID       = other.ID;
+        other.ID = 0;
     }
 
     return *this;
 }
 
 CubeTexture::CubeTexture(CubeTexture&& other) noexcept
-    : ID(other.ID), unit(other.unit)
+    : ID(other.ID)
 {
-    other.ID   = 0;
-    other.unit = 0;
+    other.ID = 0;
 }
 
 CubeTexture::~CubeTexture()
@@ -41,36 +39,42 @@ CubeTexture::~CubeTexture()
     glDeleteTextures(1, &ID);
 }
 
-void CubeTexture::Draw() const
+void CubeTexture::Draw(GLuint unit) const
 {
-    Bind();
+    Bind(unit);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    Unbind();
+    Unbind(unit);
 }
 
-void CubeTexture::LoadTexture(unsigned int index, const void* data, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const
+void CubeTexture::LoadTexture(int index, const void* data, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const
 {
-    Bind();
     if (data)
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, 0, formatL, w, h, 0, formatR, type, data);
     else
         std::cout << "Failed to load texture at: " << index << std::endl;
 }
 
-void CubeTexture::AllocTexture(unsigned int index, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const
+void CubeTexture::AllocTexture(int index, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const
 {
-    Bind();
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, 0, formatL, w, h, 0, formatR, type, nullptr);
 }
 
-void CubeTexture::Bind() const
+void CubeTexture::Bind(GLuint unit) const
 {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
 }
 
-void CubeTexture::Unbind() const
+void CubeTexture::Unbind(GLuint unit) const
 {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+}
+
+void CubeTexture::texUnit(ShaderIDs shaderID, const std::string& uniform) const
+{
+    ShaderManager::Activate(shaderID);
+    GLint unit = ShaderManager::getUnit(shaderID, uniform);
+    Bind(unit);
+    glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
 }

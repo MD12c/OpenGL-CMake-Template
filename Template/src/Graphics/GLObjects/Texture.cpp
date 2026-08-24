@@ -4,15 +4,16 @@
 
 #include <stb/stb_image.h>
 #include "Globals.h"
+#include "../Shaders/ShaderManager.h"
 
-Texture::Texture(GLuint slot, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType, const void* data)
-    : path("Custom texture"), type(CUSTOM), unit(slot)
+Texture::Texture(GLenum formatL, GLenum formatR, int w, int h, GLenum dataType, const void* data)
+    : path("Custom texture"), type(CUSTOM)
 {
     createGLtexture(data, formatL, formatR, w, h, dataType);
 }
 
-Texture::Texture(const std::string& image, TextureType texType, GLuint slot)
-    : path(image), type(texType), unit(slot)
+Texture::Texture(const std::string& image, TextureType texType)
+    : path(image), type(texType)
 {
     int widthImg, heightImg, numColCh;
     stbi_set_flip_vertically_on_load(false);
@@ -26,8 +27,8 @@ Texture::Texture(const std::string& image, TextureType texType, GLuint slot)
     stbi_image_free(bytes);
 }
 
-Texture::Texture(const std::string& image1, const std::string& image2, TextureType texType, GLuint slot, TextureCombineMode mode)
-    : path(image1 + image2), type(texType), unit(slot)
+Texture::Texture(const std::string& image1, const std::string& image2, TextureType texType, TextureCombineMode mode)
+    : path(image1 + image2), type(texType)
 {
     stbi_set_flip_vertically_on_load(false);
 
@@ -75,11 +76,9 @@ Texture& Texture::operator=(Texture&& other) noexcept
 
         ID         = other.ID;
         type       = other.type;
-        unit       = other.unit;
         path       = other.path;
         other.ID   = 0;
         other.type = NONE;
-        other.unit = 0;
         other.path = "";
     }
 
@@ -87,11 +86,10 @@ Texture& Texture::operator=(Texture&& other) noexcept
 }
 
 Texture::Texture(Texture&& other) noexcept
-    : ID(other.ID), type(other.type), unit(other.unit), path(other.path)
+    : ID(other.ID), type(other.type), path(other.path)
 {
     other.ID   = 0;
     other.type = NONE;
-    other.unit = 0;
     other.path = "";
 }
 
@@ -104,7 +102,6 @@ void Texture::createGLtexture(const void* data, GLenum formatL, GLenum formatR, 
 {
     GPUInstrumentationTimer gtimer(path.c_str());
     glGenTextures(1, &ID);
-    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
 
     if (1)  // no usecase for now
@@ -135,9 +132,8 @@ void Texture::createGLtexture(const void* data, GLenum formatL, GLenum formatR, 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::LoadTexture(const void* data, GLuint slot, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType) const
+void Texture::LoadTexture(const void* data, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType) const
 {
-    Bind();
     glTexImage2D(GL_TEXTURE_2D, 0, formatL, w, h, 0, formatR, dataType, data);
     if (!mipMapGenerated && data)
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -206,27 +202,29 @@ void Texture::CombinePack(unsigned char* dst, unsigned char* src, int w, int h, 
         }
 }
 
-void Texture::texUnit(const int shaderID, const std::string& uniform) const
+void Texture::texUnit(const ShaderIDs shaderID, const std::string& uniform) const
 {
     ShaderManager::Activate(shaderID);
+    GLint unit = ShaderManager::getUnit(shaderID, uniform);
+    Bind(unit);
     glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
 }
 
 // Old! Dont use if using shader manager
-void Texture::texUnit(const Shader& shader, const std::string& uniform, const GLuint unit) const
+void Texture::texUnit(const Shader& shader, const std::string& uniform, const GLint unit) const
 {
-    GLuint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
+    GLint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
     shader.Activate();
     glUniform1i(texUni, unit);
 }
 
-void Texture::Bind() const
+void Texture::Bind(GLint unit) const
 {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
 }
 
-void Texture::Unbind() const
+void Texture::Unbind(GLint unit) const
 {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, 0);

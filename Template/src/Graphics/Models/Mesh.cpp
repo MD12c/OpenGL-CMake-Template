@@ -19,16 +19,16 @@ Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int mat
     EBO.Unbind();
 }
 
-void Mesh::Draw(int shaderID, const glm::mat4& model, const glm::mat3& normal) const
+void Mesh::Draw(ShaderIDs shaderID, const glm::mat4& model, const glm::mat3& normal) const
 {
     ShaderManager::Activate(shaderID);
 
     VAO.Bind();
 
     if (materialID >= 0)
-        MaterialManager::getMatAt(materialID).Apply(shaderID);
+        MaterialManager::getMatAt(materialID).Apply();
     else
-        MaterialManager::Unbind();
+        MaterialManager::Unbind(materialID);
 
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix3fv(ShaderManager::getLoc(shaderID, "normal"), 1, GL_FALSE, glm::value_ptr(normal));

@@ -3,6 +3,7 @@
 
 #include "glm/glm.hpp"
 
+#include "../Shaders/ShaderManager.h"
 #include "ShadowCaster.h"
 
 class ShadowMapCube : public ShadowCaster
@@ -34,9 +35,9 @@ public:
     ShadowMapCube(GLuint layerIndex, glm::vec3 lightPos, float zNear, float zFar);
 
     void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
-    void BeginDepthPass(int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
-    void ExportUniformsTo(int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
-    void DrawDepthDebug(int shaderID, int faceIndex);
+    void BeginDepthPass(ShaderIDs shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
+    void ExportUniformsTo(ShaderIDs shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
+    void DrawDepthDebug(ShaderIDs shaderID, int faceIndex);
 };
 
 #endif

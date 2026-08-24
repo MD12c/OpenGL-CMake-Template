@@ -4,10 +4,13 @@
 #include "glm/glm.hpp"
 #include "..\GLObjects\Texture.h"
 #include "Material.h"
+#include "../Shaders/ShaderManager.h"
 
 class PBRMaterial : public Material
 {
 public:
+    static constexpr ShaderIDs shaderID = ShaderIDs::PBR;
+
     std::string name;  // optional
     glm::vec3   albedoColor = glm::vec3(0.7f);
     float       roughness   = 0.04f;
@@ -16,7 +19,6 @@ public:
     std::shared_ptr<Texture> albedoMap           = nullptr;
     std::shared_ptr<Texture> aoMap               = nullptr;
     std::shared_ptr<Texture> metalicRoughnessMap = nullptr;
-    std::shared_ptr<Texture> Map                 = nullptr;
     std::shared_ptr<Texture> normalMap           = nullptr;
     std::shared_ptr<Texture> displacementMap     = nullptr;
 
@@ -30,7 +32,8 @@ public:
                 std::shared_ptr<Texture> normalMap,
                 std::shared_ptr<Texture> displacementMap);
 
-    void Apply(int shaderID) const override;
+    void      Apply() const override;
+    ShaderIDs getShaderID() const override { return shaderID; };
 };
 
 #endif

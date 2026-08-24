@@ -10,6 +10,7 @@ in vec3 Tangent;
 
 uniform vec3 camPos;
 
+uniform sampler2D   brdfLUT;
 uniform sampler2D   albedo0;
 uniform sampler2D   ao0;
 uniform sampler2D   metalicRoughness0;
@@ -17,8 +18,6 @@ uniform sampler2D   normal0;
 uniform sampler2D   displacement0;
 uniform samplerCube irradiance0;
 uniform samplerCube prefilteredmap0;
-
-uniform sampler2D brdfLUT;
 
 uniform vec3  albedoColor;  // if no useTexture
 uniform float roughness;    // if no useRoughness
@@ -309,20 +308,20 @@ void main()
         sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * pointLight(i, toLight, N) * max(dot(N, Wi), 0.0);
     }
 
-    for (int i = 0; i < numSpotLights; i++)
-    {
-        const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
-        const vec3 Wi      = normalize(toLight);         // light dir
-        const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
-    }
+    // for (int i = 0; i < numSpotLights; i++)
+    // {
+    //     const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
+    //     const vec3 Wi      = normalize(toLight);         // light dir
+    //     const vec3 HalfWay = normalize(Wi + Wo);
+    //     sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
+    // }
 
-    for (int i = 0; i < numDirLights; i++)
-    {
-        const vec3 Wi      = normalize(-dirLightDirection[i]);  // light dir
-        const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
-    }
+    // for (int i = 0; i < numDirLights; i++)
+    // {
+    //     const vec3 Wi      = normalize(-dirLightDirection[i]);  // light dir
+    //     const vec3 HalfWay = normalize(Wi + Wo);
+    //     sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
+    // }
 
     FragColor = vec4(ambient, 1.0f) + vec4(sum, 1.0f);
 

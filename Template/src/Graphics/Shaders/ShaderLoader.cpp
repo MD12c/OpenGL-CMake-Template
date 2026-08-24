@@ -6,94 +6,106 @@
 
 namespace ShaderManager
 {
-ShaderIDs IDs;
-
-int Load(const std::string& vertPath,
-         const std::string& fragPath,
-         const std::string& geomPath)
+void Load(const std::string& vertPath,
+          const std::string& fragPath,
+          const std::string& geomPath)
 {
-    shaderResources.emplace_back(ShaderResources(Shader(vertPath, fragPath, geomPath), {}));
-    return (int)shaderResources.size() - 1;
+    shaderResources.emplace_back(ShaderResources(Shader(vertPath, fragPath, geomPath)));
 }
 
-int Load(const std::string& vertPath,
-         const std::string& fragPath)
+void Load(const std::string& vertPath,
+          const std::string& fragPath)
 {
-    shaderResources.emplace_back(ShaderResources(Shader(vertPath, fragPath), {}));
-    return (int)shaderResources.size() - 1;
+    shaderResources.emplace_back(ShaderResources(Shader(vertPath, fragPath)));
 }
 
-void LoadAllShaders()
+void Load(const std::string& compPath)
 {
-    // Model
-    IDs.model = Load(
-        "Assets/shaders/geometry/model.vert",
-        "Assets/shaders/geometry/model.frag",
-        "Assets/shaders/geometry/model.geom");
+    shaderResources.emplace_back(ShaderResources(Shader(compPath)));
+}
+
+void LoadAllShaders()  //! load order matters see Globals.h ShaderIDs struct
+{
+    // Specular
+    Load("Assets/shaders/geometry/model.vert",
+         "Assets/shaders/geometry/model.frag",
+         "Assets/shaders/geometry/model.geom");
+    AddUnits(ShaderIDs::SPECULAR,
+             { { "diffuse0", 0 },
+               { "specular0", 1 },
+               { "normal0", 2 },
+               { "metalicRoughness0", 3 },
+               { "displacement0", 4 },
+               { "dirShadowMaps", 5 },
+               { "spotShadowMaps", 6 },
+               { "pointShadowMaps", 7 } });
 
     // PBR
-    IDs.PBR = Load(
-        "Assets/shaders/geometry/PBR.vert",
-        "Assets/shaders/geometry/PBR.frag",
-        "Assets/shaders/geometry/PBR.geom");
+    Load("Assets/shaders/geometry/PBR.vert",
+         "Assets/shaders/geometry/PBR.frag",
+         "Assets/shaders/geometry/PBR.geom");
+    AddUnits(ShaderIDs::PBR,
+             { { "brdfLUT", 0 },
+               { "albedo0", 1 },
+               { "ao0", 2 },
+               { "metalicRoughness0", 3 },
+               { "normal0", 4 },
+               { "displacement0", 5 },
+               { "irradiance0", 6 },
+               { "prefilteredmap0", 7 },
+               { "dirShadowMaps", 8 },
+               { "spotShadowMaps", 9 },
+               { "pointShadowMaps", 10 } });
 
     // SkyBox
-    IDs.skybox = Load(
-        "Assets/shaders/skybox/skybox.vert",
-        "Assets/shaders/skybox/skybox.frag");
+    Load("Assets/shaders/skybox/skybox.vert",
+         "Assets/shaders/skybox/skybox.frag");
 
     // postProcess
-    IDs.postProcess = Load(
-        "Assets/shaders/post-process/postProcess.vert",
-        "Assets/shaders/post-process/postProcess.frag");
+    Load("Assets/shaders/post-process/postProcess.vert",
+         "Assets/shaders/post-process/postProcess.frag");
 
     // shadowMap2D
-    IDs.shadowMap2D = Load(
-        "Assets/shaders/lights/shadowMap2D.vert",
-        "Assets/shaders/lights/shadowMap2D.frag");
+    Load("Assets/shaders/lights/shadowMap2D.vert",
+         "Assets/shaders/lights/shadowMap2D.frag");
 
     // shadowMapCube
-    IDs.shadowMapCube = Load(
-        "Assets/shaders/lights/shadowMapCube.vert",
-        "Assets/shaders/lights/shadowMapCube.frag",
-        "Assets/shaders/lights/shadowMapCube.geom");
+    Load("Assets/shaders/lights/shadowMapCube.vert",
+         "Assets/shaders/lights/shadowMapCube.frag",
+         "Assets/shaders/lights/shadowMapCube.geom");
 
     // Debug
-    IDs.depthDebug = Load(
-        "Assets/shaders/utility/debug.vert",
-        "Assets/shaders/utility/debug.frag");
+    Load("Assets/shaders/utility/debug.vert",
+         "Assets/shaders/utility/debug.frag");
 
     // DebugCube
-    IDs.depthDebugCube = Load(
-        "Assets/shaders/utility/debug.vert",
-        "Assets/shaders/utility/debugCube.frag");
+    Load("Assets/shaders/utility/debug.vert",
+         "Assets/shaders/utility/debugCube.frag");
 
     // Light
-    IDs.lightSphere = Load(
-        "Assets/shaders/lights/lightSphere.vert",
-        "Assets/shaders/lights/lightSphere.frag");
+    Load("Assets/shaders/lights/lightSphere.vert",
+         "Assets/shaders/lights/lightSphere.frag");
 
     // postProcess
-    IDs.blur = Load(
-        "Assets/shaders/post-process/blur.vert",
-        "Assets/shaders/post-process/blur.frag");
+    Load("Assets/shaders/post-process/blur.vert",
+         "Assets/shaders/post-process/blur.frag");
 
     // HDR texture converter
-    IDs.HDRconverter = Load(
-        "Assets/shaders/skybox/HDRtexConverter.vert",
-        "Assets/shaders/skybox/HDRtexConverter.frag");
+    Load("Assets/shaders/skybox/HDRtexConverter.vert",
+         "Assets/shaders/skybox/HDRtexConverter.frag");
+    AddUnits(ShaderIDs::HDR_CONVERTER, { { "equirectangularMap", 0 } });
 
-    // HDR texture converter
-    IDs.irradiance = Load(
-        "Assets/shaders/skybox/irradiance.vert",
-        "Assets/shaders/skybox/irradiance.frag");
+    // Irradiance
+    Load("Assets/shaders/skybox/irradiance.vert",
+         "Assets/shaders/skybox/irradiance.frag");
+    AddUnits(ShaderIDs::IRRADIANCE, { { "environmentMap", 0 } });
 
-    IDs.prefilter = Load(
-        "Assets/shaders/skybox/prefilter.vert",
-        "Assets/shaders/skybox/prefilter.frag");
+    // Prefilter
+    Load("Assets/shaders/skybox/prefilter.vert",
+         "Assets/shaders/skybox/prefilter.frag");
 
-    IDs.brdfLUT = Load(
-        "Assets/shaders/skybox/LUT.vert",
-        "Assets/shaders/skybox/LUT.frag");
+    // BRDF LUT
+    Load("Assets/shaders/skybox/LUT.vert",
+         "Assets/shaders/skybox/LUT.frag");
 }
 };  // namespace ShaderManager

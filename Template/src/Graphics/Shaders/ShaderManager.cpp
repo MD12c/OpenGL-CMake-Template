@@ -5,14 +5,14 @@
 
 namespace ShaderManager
 {
-std::vector<ShaderResources> shaderResources;
+std::deque<ShaderResources> shaderResources;
 
-Shader& Get(int ID)
+Shader& Get(ShaderIDs ID)
 {
     return shaderResources.at(ID).shader;
 }
 
-std::string getName(int ID)
+std::string getName(ShaderIDs ID)
 {
     std::string& filename = Get(ID).filename;
     std::size_t  start    = filename.find_last_of("/\\") + 1;
@@ -23,7 +23,7 @@ std::string getName(int ID)
         return "N/A";
 }
 
-GLint getLoc(int ID, const std::string& uniformName)
+GLint getLoc(ShaderIDs ID, const std::string& uniformName)
 {
     auto& resource = shaderResources.at(ID);
 
@@ -46,19 +46,30 @@ GLint getLoc(int ID, const std::string& uniformName)
     return loc;
 }
 
-std::unordered_map<std::string, GLint>& getUniforms(int ID)
+std::unordered_map<std::string, GLint>& getUniforms(ShaderIDs ID)
 {
     return shaderResources.at(ID).uniforms;
 }
 
+void AddUnits(ShaderIDs ID, std::unordered_map<std::string, GLint>&& units)
+{
+    auto& resource = shaderResources.at(ID);
+    resource.units = std::move(units);
+}
+
+GLint getUnit(ShaderIDs ID, const std::string& name)
+{
+    auto& resource = shaderResources.at(ID);
+    return resource.units.at(name);
+}
+
 void PrintLoadedUniforms()
 {
-    int i = 0;
-    for (ShaderIDs* it = &IDs; it < &IDs + sizeof(ShaderIDs); it += sizeof(decltype(IDs.model)))
+    for (int i = 0; i < ShaderIDs::LAST; i++)
     {
-        auto&       map        = getUniforms(i);
-        std::string shaderName = getName(i);
-        GLint       shaderID   = Get(i).ID;
+        auto&       map        = getUniforms(static_cast<ShaderIDs>(i));
+        std::string shaderName = getName(static_cast<ShaderIDs>(i));
+        GLint       shaderID   = Get(static_cast<ShaderIDs>(i)).ID;
         std::cout << shaderName << ":\n";
 
         size_t biggestString = 0;
@@ -67,7 +78,7 @@ void PrintLoadedUniforms()
 
         for (const auto& pair : map)
         {
-            size_t spacing =  biggestString - pair.first.size();
+            size_t spacing = biggestString - pair.first.size();
             std::cout << "   " << pair.first;
             for (int j = 0; j < spacing + 1; j++)
                 std::cout << " ";
@@ -154,11 +165,22 @@ void PrintLoadedUniforms()
             std::cout << str << "\n";
         }
         std::cout << std::endl;
-        i++;
     }
 }
 
-void Activate(int ID)
+ShaderIDs getShaderIDfromType(LightType type)
+{
+    if (type == LightType::DIRECTION)
+        return ShaderIDs::SHADOW_MAP2D;
+    else if (type == LightType::SPOT)
+        return ShaderIDs::SHADOW_MAP2D;
+    else if (type == LightType::POINT)
+        return ShaderIDs::SHADOW_MAPCUBE;
+    else
+        throw std::runtime_error("[ERROR] Invalid light type");
+};
+
+void Activate(ShaderIDs ID)
 {
     shaderResources.at(ID).shader.Activate();
 }

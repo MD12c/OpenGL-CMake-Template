@@ -8,6 +8,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "../Shaders/ShaderManager.h"
 #include "ShadowCaster.h"
 
 class ShadowMap2D : public ShadowCaster
@@ -27,10 +28,10 @@ public:
     ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float fovDeg, float innerCone, float outerCone, float zNear, float zFar);
 
     void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
-    void BeginDepthPass(int shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
-    void ExportUniformsTo(int shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
+    void BeginDepthPass(ShaderIDs shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
+    void ExportUniformsTo(ShaderIDs shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
 
-    void DrawDepthDebug(int shaderID, ShadowSystem& shadowSystem);
+    void DrawDepthDebug(ShaderIDs shaderID, ShadowSystem& shadowSystem);
 };
 
 #endif

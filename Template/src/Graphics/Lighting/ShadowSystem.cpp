@@ -3,7 +3,6 @@
 #include <iostream>
 
 #include "Globals.h"
-#include "../Shaders/ShaderManager.h"
 
 #include "ShadowCaster.h"
 
@@ -84,21 +83,24 @@ void ShadowSystem::ClearAllTargets()
     glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-void ShadowSystem::BindShadowTextures(int shaderID, GLuint startSlot)
+void ShadowSystem::BindShadowTextures(ShaderIDs shaderID)
 {
     ShaderManager::Activate(shaderID);
 
-    glActiveTexture(GL_TEXTURE0 + startSlot);
+    GLint texDir = ShaderManager::getUnit(shaderID, "dirShadowMaps");
+    glActiveTexture(GL_TEXTURE0 + texDir);
     glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMapDirArray);
-    glUniform1i(ShaderManager::getLoc(shaderID, "dirShadowMaps"), startSlot);
+    glUniform1i(ShaderManager::getLoc(shaderID, "dirShadowMaps"), texDir);
 
-    glActiveTexture(GL_TEXTURE0 + startSlot + 1);
+    GLint texSpot = ShaderManager::getUnit(shaderID, "spotShadowMaps");
+    glActiveTexture(GL_TEXTURE0 + texSpot);
     glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMapSpotArray);
-    glUniform1i(ShaderManager::getLoc(shaderID, "spotShadowMaps"), startSlot + 1);
+    glUniform1i(ShaderManager::getLoc(shaderID, "spotShadowMaps"), texSpot);
 
-    glActiveTexture(GL_TEXTURE0 + startSlot + 2);
+    GLint texPoint = ShaderManager::getUnit(shaderID, "pointShadowMaps");
+    glActiveTexture(GL_TEXTURE0 + texPoint);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, shadowMapPointArray);
-    glUniform1i(ShaderManager::getLoc(shaderID, "pointShadowMaps"), startSlot + 2);
+    glUniform1i(ShaderManager::getLoc(shaderID, "pointShadowMaps"), texPoint);
 }
 
 GLint ShadowSystem::RegisterCaster(LightType type)

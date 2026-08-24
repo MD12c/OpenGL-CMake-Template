@@ -18,7 +18,7 @@ public:
     ~PostProcessSystem();
 
     void Begin();
-    void End(int postShaderID, int blurShaderID);
+    void End();
 };
 
 #endif

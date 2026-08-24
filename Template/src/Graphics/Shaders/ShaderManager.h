@@ -2,8 +2,9 @@
 #define SHADER_MANAGER_CLASS_H
 
 #include <unordered_map>
-#include <vector>
+#include <deque>
 
+#include "Globals.h"
 #include "Shader.h"
 
 namespace ShaderManager
@@ -11,46 +12,32 @@ namespace ShaderManager
 struct ShaderResources
 {
     Shader                                 shader;
-    std::unordered_map<std::string, GLint> uniforms;
-    ShaderResources(Shader shader, std::unordered_map<std::string, GLint> uniforms) : shader(std::move(shader)), uniforms(std::move(uniforms)) {}
+    std::unordered_map<std::string, GLint> uniforms = {};
+    std::unordered_map<std::string, GLint> units    = {};
+
+    ShaderResources(Shader shader) : shader(std::move(shader)) {}
     ~ShaderResources() { shader.Delete(); }
     ShaderResources(ShaderResources&&) noexcept            = default;
     ShaderResources& operator=(ShaderResources&&) noexcept = default;
     ShaderResources(const ShaderResources&)                = delete;
     ShaderResources& operator=(const ShaderResources&)     = delete;
 };
-extern std::vector<ShaderResources> shaderResources;
-
-struct ShaderIDs
-{
-    int model;
-    int PBR;
-    int skybox;
-    int postProcess;
-    int shadowMap2D;
-    int shadowMapCube;
-    int depthDebug;
-    int depthDebugCube;
-    int lightSphere;
-    int blur;
-    int HDRconverter;
-    int irradiance;
-    int prefilter;
-    int brdfLUT;
-};
-extern ShaderIDs IDs;
+extern std::deque<ShaderResources> shaderResources;
 
 void    LoadAllShaders();
-int     Load(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
-int     Load(const std::string& vertPath, const std::string& fragPath);
-Shader& Get(int ID);
+void    Load(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
+void    Load(const std::string& vertPath, const std::string& fragPath);
+Shader& Get(ShaderIDs ID);
+void    AddUnits(ShaderIDs ID, std::unordered_map<std::string, GLint>&& units);
 void    PrintLoadedUniforms();
 
-std::unordered_map<std::string, GLint>& getUniforms(int ID);
-GLint                                   getLoc(int ID, const std::string& uniformName);
-std::string                             getName(int ID);
+std::unordered_map<std::string, GLint>& getUniforms(ShaderIDs ID);
+GLint                                   getLoc(ShaderIDs ID, const std::string& uniformName);
+GLint                                   getUnit(ShaderIDs ID, const std::string& name);
+std::string                             getName(ShaderIDs ID);
+ShaderIDs                               getShaderIDfromType(LightType type);
 
-void Activate(int ID);
+void Activate(ShaderIDs ID);
 void Cleanup();
 };  // namespace ShaderManager
 

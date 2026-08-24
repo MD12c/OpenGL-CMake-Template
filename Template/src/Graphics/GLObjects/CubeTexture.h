@@ -3,24 +3,26 @@
 
 #include "glad/glad.h"
 
+#include "Globals.h"
+
 class CubeTexture
 {
 public:
     GLuint ID;
-    GLuint unit;
 
-    CubeTexture(GLuint unit);
+    CubeTexture();
     CubeTexture(const CubeTexture&)            = delete;
     CubeTexture& operator=(const CubeTexture&) = delete;
     CubeTexture& operator=(CubeTexture&& other) noexcept;
     CubeTexture(CubeTexture&& other) noexcept;
     ~CubeTexture();
 
-    void LoadTexture(unsigned int index, const void* data, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const;
-    void AllocTexture(unsigned int index, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const;
-    void Draw() const;
-    void Bind() const;
-    void Unbind() const;
+    void LoadTexture(int index, const void* data, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const;
+    void AllocTexture(int index, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const;
+    void Draw(GLuint unit) const;
+    void Bind(GLuint unit) const;
+    void Unbind(GLuint unit) const;
+    void texUnit(ShaderIDs shaderID, const std::string& uniform) const;
 };
 
 #endif

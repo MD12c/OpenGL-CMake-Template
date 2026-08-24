@@ -10,8 +10,8 @@ private:
 
 public:
     LUT();
-    void ExportUniformsTo(int shaderID);
-    void Draw(int shaderID);
+    void ExportUniformsTo(ShaderIDs shaderID);
+    void Draw(ShaderIDs shaderID);
 };
 
 #endif

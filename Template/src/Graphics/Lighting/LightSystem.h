@@ -47,11 +47,9 @@ public:
 
     LightSystem(float zNear, float zFar);
 
-    void ExportUniforms(int shaderID, const std::vector<Light>& lights) const;
+    void ExportUniforms(ShaderIDs shaderID, const std::vector<Light>& lights) const;
     void ShadowPass(const std::vector<Model>& models, const std::vector<Light>& lights) const;
-    void DrawLightSpheres(int shaderID, const std::vector<Light>& lights) const;
-
-    unsigned int getShaderIDfromType(LightType type) const;
+    void DrawLightSpheres(ShaderIDs shaderID, const std::vector<Light>& lights) const;
 
     void addDirectionLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top);
     void addSpotLight(std::vector<Light>& lights, glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone);

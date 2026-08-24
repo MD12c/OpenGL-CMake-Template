@@ -9,7 +9,7 @@ Model::Model(const std::string& path)
     loadModel(path);
 }
 
-void Model::Draw(int shaderID, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) const
+void Model::Draw(ShaderIDs shaderID, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) const
 {
     glm::mat4 transMat4 = glm::translate(glm::mat4(1.0f), translation);
     glm::mat4 rotMat4   = glm::mat4_cast(rotation);

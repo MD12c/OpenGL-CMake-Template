@@ -4,10 +4,13 @@
 #include "glm/glm.hpp"
 #include "..\GLObjects\Texture.h"
 #include "Material.h"
+#include "../Shaders/ShaderManager.h"
 
 class SpecularMaterial : public Material
 {
 public:
+    static constexpr ShaderIDs shaderID = ShaderIDs::SPECULAR;
+
     std::string name;  // optional
     glm::vec3   diffuseColor  = glm::vec3(1.0f);
     glm::vec3   specularColor = glm::vec3(1.0f);
@@ -28,14 +31,8 @@ public:
                      std::shared_ptr<Texture> normalMap,
                      std::shared_ptr<Texture> displacementMap);
 
-    SpecularMaterial(int                      ID,
-                     std::string              name,
-                     std::shared_ptr<Texture> diffuseMap,
-                     std::shared_ptr<Texture> specularMap,
-                     std::shared_ptr<Texture> normalMap,
-                     std::shared_ptr<Texture> displacementMap);
-
-    void Apply(int shaderID) const override;
+    void Apply() const override;
+    ShaderIDs getShaderID() const override { return shaderID; };
 };
 
 #endif

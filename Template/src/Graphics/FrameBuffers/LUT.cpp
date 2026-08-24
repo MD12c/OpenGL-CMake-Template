@@ -5,16 +5,16 @@
 #include "Square.h"
 
 LUT::LUT()
-    : tex(8, GL_RG16F, GL_RG, width, height)
+    : tex(GL_RG16F, GL_RG, width, height)
 {
-    tex.Bind();
+    tex.Bind(0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void LUT::Draw(int shaderID)
+void LUT::Draw(ShaderIDs shaderID)
 {
     GLuint framebuffer;
     glGenFramebuffers(1, &framebuffer);
@@ -24,11 +24,11 @@ void LUT::Draw(int shaderID)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "LUT framebuffer incomplete!" << std::endl;
 
-    ShaderManager::Activate(ShaderManager::IDs.brdfLUT);
+    ShaderManager::Activate(ShaderIDs::BRDF_LUT);
     GLint prevViewport[4];
     glGetIntegerv(GL_VIEWPORT, prevViewport);
     
-    tex.Bind();
+    tex.Bind(0);
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
     quad->DrawSquare();
@@ -39,8 +39,8 @@ void LUT::Draw(int shaderID)
 }
 
 
-void LUT::ExportUniformsTo(int shaderID)
+void LUT::ExportUniformsTo(ShaderIDs shaderID)
 {
     ShaderManager::Activate(shaderID);
-    glUniform1i(ShaderManager::getLoc(shaderID, "brdfLUT"), tex.unit);
+    tex.texUnit(shaderID, "brdfLUT");
 }

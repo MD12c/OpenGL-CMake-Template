@@ -43,11 +43,34 @@ constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[6], square[7]);
 
 constexpr GLuint numSamples = 8;
 
+constexpr unsigned int MAX_DIR_LIGHTS   = 8;
+constexpr unsigned int MAX_SPOT_LIGHTS  = 8;
+constexpr unsigned int MAX_POINT_LIGHTS = 8;
+
 enum LightType
 {
     DIRECTION,
     SPOT,
     POINT
+};
+
+enum ShaderIDs
+{
+    SPECULAR,
+    PBR,
+    SKYBOX,
+    POSTPROCESS,
+    SHADOW_MAP2D,
+    SHADOW_MAPCUBE,
+    DEPTH_DEBUG2D,
+    DEPTH_DEBUGCUBE,
+    LIGHT_SPHERE,
+    BLUR,
+    HDR_CONVERTER,
+    IRRADIANCE,
+    PREFILTER,
+    BRDF_LUT,
+    LAST
 };
 
 class Square;

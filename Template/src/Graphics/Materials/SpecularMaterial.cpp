@@ -11,7 +11,6 @@ SpecularMaterial::SpecularMaterial(int                      ID,
                                    std::shared_ptr<Texture> specularMap,
                                    std::shared_ptr<Texture> normalMap,
                                    std::shared_ptr<Texture> displacementMap)
-
     : Material(ID),
       name(name),
       diffuseColor(diffuseColor),
@@ -24,23 +23,7 @@ SpecularMaterial::SpecularMaterial(int                      ID,
 {
 }
 
-SpecularMaterial::SpecularMaterial(int                      ID,
-                                   std::string              name,
-                                   std::shared_ptr<Texture> diffuseMap,
-                                   std::shared_ptr<Texture> specularMap,
-                                   std::shared_ptr<Texture> normalMap,
-                                   std::shared_ptr<Texture> displacementMap)
-
-    : Material(ID),
-      name(name),
-      diffuseMap(diffuseMap),
-      specularMap(specularMap),
-      normalMap(normalMap),
-      displacementMap(displacementMap)
-{
-}
-
-void SpecularMaterial::Apply(int shaderID) const
+void SpecularMaterial::Apply() const
 {
     ShaderManager::Activate(shaderID);
     glUniform3fv(ShaderManager::getLoc(shaderID, "diffuseColor"), 1, glm::value_ptr(diffuseColor));
@@ -50,24 +33,14 @@ void SpecularMaterial::Apply(int shaderID) const
     glUniform1i(ShaderManager::getLoc(shaderID, "useNormal"), (normalMap != nullptr));
     glUniform1i(ShaderManager::getLoc(shaderID, "useDisplacement"), (displacementMap != nullptr));
 
-    if (diffuseMap)
+    auto checkAndLoad = [&](std::shared_ptr<Texture> texPtr, const std::string& name)
     {
-        diffuseMap->Bind();
-        diffuseMap->texUnit(shaderID, "diffuse0");
-    }
-    if (specularMap)
-    {
-        specularMap->Bind();
-        specularMap->texUnit(shaderID, "specular0");
-    }
-    if (normalMap)
-    {
-        normalMap->Bind();
-        normalMap->texUnit(shaderID, "normal0");
-    }
-    if (displacementMap)
-    {
-        displacementMap->Bind();
-        displacementMap->texUnit(shaderID, "displacement0");
-    }
+        if (!texPtr) return;
+        texPtr->texUnit(shaderID, name);
+    };
+
+    checkAndLoad(diffuseMap, "diffuse0");
+    checkAndLoad(specularMap, "specular0");
+    checkAndLoad(normalMap, "normal0");
+    checkAndLoad(displacementMap, "displacement0");
 }
