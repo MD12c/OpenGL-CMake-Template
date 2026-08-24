@@ -33,7 +33,12 @@ public:
     GLuint      ID;
     std::string path;
 
-    Texture(GLenum formatL, GLenum formatR, int w, int h, GLenum dataType = GL_UNSIGNED_BYTE, const void* data = nullptr);
+    Texture(GLenum formatL, GLenum formatR, int w, int h,
+            GLenum      dataType = GL_UNSIGNED_BYTE,
+            const void* data     = nullptr,
+            GLenum      paramMin = GL_LINEAR_MIPMAP_LINEAR,
+            GLenum      paramMax = GL_LINEAR,
+            GLenum      wrapType = GL_REPEAT);
     Texture(const std::string& image, TextureType texType);
     Texture(const std::string& image1, const std::string& image2, TextureType texType, TextureCombineMode mode);  // combines the two
 
@@ -54,9 +59,36 @@ public:
 private:
     bool mipMapGenerated = false;
 
+    void createGLtexture(const void* data,
+                         GLenum      formatL,
+                         GLenum      formatR,
+                         int         widthImg,
+                         int         heightImg,
+                         GLenum      dataType = GL_UNSIGNED_BYTE,
+                         GLenum      paramMin = GL_LINEAR_MIPMAP_LINEAR,
+                         GLenum      paramMax = GL_LINEAR,
+                         GLenum      wrapType = GL_REPEAT);
+
     std::pair<GLenum, GLenum> getImageType(int numColCh, TextureType texType);
-    void                      createGLtexture(const void* data, GLenum formatL, GLenum formatR, int widthImg, int heightImg, GLenum dataType = GL_UNSIGNED_BYTE);
     static void               CombineAdd(unsigned char* dst, unsigned char* src, int w, int h, int ch);
     static void               CombinePack(unsigned char* dst, unsigned char* src, int w, int h, int ch);
 };
+
+inline void PrintTextureParams(GLenum target)  // for debug only
+{
+    GLint minFilter, magFilter, wrapS, wrapT, baseLevel, maxLevel;
+    glGetTexParameteriv(target, GL_TEXTURE_MIN_FILTER, &minFilter);
+    glGetTexParameteriv(target, GL_TEXTURE_MAG_FILTER, &magFilter);
+    glGetTexParameteriv(target, GL_TEXTURE_WRAP_S, &wrapS);
+    glGetTexParameteriv(target, GL_TEXTURE_WRAP_T, &wrapT);
+    glGetTexParameteriv(target, GL_TEXTURE_BASE_LEVEL, &baseLevel);
+    glGetTexParameteriv(target, GL_TEXTURE_MAX_LEVEL, &maxLevel);
+
+    std::cout << "MIN_FILTER: " << std::hex << minFilter << "\n"
+              << "MAG_FILTER: " << std::hex << magFilter << "\n"
+              << "WRAP_S: " << std::hex << wrapS << "\n"
+              << "WRAP_T: " << std::hex << wrapT << "\n"
+              << "BASE_LEVEL: " << std::dec << baseLevel << "\n"
+              << "MAX_LEVEL: " << std::dec << maxLevel << std::endl;
+}
 #endif

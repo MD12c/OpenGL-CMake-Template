@@ -25,20 +25,15 @@ void PostProcessSystem::Begin()
 
 void PostProcessSystem::End()
 {
-    antiAlias.CopyResultsTo(finalFrameBuffer.ID);
-    GLuint blurredTexture = bloom.BlurPass(finalFrameBuffer.textureIDs[1], ShaderIDs::BLUR, 5);
-
+    antiAlias.CopyResultsTo(finalFrameBuffer);
+    Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1].ID, ShaderIDs::BLUR, 5);
+    
     ShaderManager::Activate(ShaderIDs::POSTPROCESS);
     glUniform1f(ShaderManager::getLoc(ShaderIDs::POSTPROCESS, "gamma"), gamma);
-
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, finalFrameBuffer.textureIDs[0]);
-    glUniform1i(ShaderManager::getLoc(ShaderIDs::POSTPROCESS, "tex0"), 0);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, blurredTexture);
-    glUniform1i(ShaderManager::getLoc(ShaderIDs::POSTPROCESS, "tex1"), 1);
-
+    finalFrameBuffer.textures[0].texUnit(ShaderIDs::POSTPROCESS, "tex0");
+    blurredTexture.texUnit(ShaderIDs::POSTPROCESS, "tex1");
+    
+    
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, width, height);
     glDisable(GL_DEPTH_TEST);

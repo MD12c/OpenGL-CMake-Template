@@ -89,6 +89,7 @@ void LoadAllShaders()  //! load order matters see Globals.h ShaderIDs struct
     // postProcess
     Load("Assets/shaders/post-process/blur.vert",
          "Assets/shaders/post-process/blur.frag");
+    AddUnits(ShaderIDs::POSTPROCESS, { { "tex0", 0 }, { "tex1", 1 } });
 
     // HDR texture converter
     Load("Assets/shaders/skybox/HDRtexConverter.vert",

@@ -6,10 +6,10 @@
 #include "Globals.h"
 #include "../Shaders/ShaderManager.h"
 
-Texture::Texture(GLenum formatL, GLenum formatR, int w, int h, GLenum dataType, const void* data)
+Texture::Texture(GLenum formatL, GLenum formatR, int w, int h, GLenum dataType, const void* data, GLenum paramMin, GLenum paramMax, GLenum wrapType)
     : path("Custom texture"), type(CUSTOM)
 {
-    createGLtexture(data, formatL, formatR, w, h, dataType);
+    createGLtexture(data, formatL, formatR, w, h, dataType, paramMin, paramMax, wrapType);
 }
 
 Texture::Texture(const std::string& image, TextureType texType)
@@ -98,25 +98,17 @@ Texture::~Texture()
     glDeleteTextures(1, &ID);
 }
 
-void Texture::createGLtexture(const void* data, GLenum formatL, GLenum formatR, int widthImg, int heightImg, GLenum dataType)
+void Texture::createGLtexture(const void* data, GLenum formatL, GLenum formatR, int widthImg, int heightImg, GLenum dataType, GLenum paramMin, GLenum paramMax, GLenum wrapType)
 {
     GPUInstrumentationTimer gtimer(path.c_str());
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
 
-    if (1)  // no usecase for now
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
-    else
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, paramMin);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, paramMax);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapType);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapType);
 
     // float flatColor[] = {1.0f, 1.0f, 1.0f, 1.0f};
     // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);

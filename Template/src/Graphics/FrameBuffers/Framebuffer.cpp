@@ -5,22 +5,15 @@
 #include "Square.h"
 
 Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil)
-    : framebufferRBO(hasDepthStencil ? std::make_unique<RBO>(false) : nullptr),
-      textureIDs(numRenderTargets)
+    : framebufferRBO(hasDepthStencil ? std::make_unique<RBO>(false) : nullptr)
 {
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
 
     for (int i = 0; i < numRenderTargets; i++)
     {
-        glGenTextures(1, &textureIDs[i]);
-        glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textureIDs[i], 0);
+        textures.emplace_back(GL_RGB16F, GL_RGB, width, height, GL_UNSIGNED_BYTE, nullptr, GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, textures[i].ID, 0);
     }
 
     if (framebufferRBO)
@@ -29,7 +22,8 @@ Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil)
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, framebufferRBO->ID);
     }
 
-    std::vector<GLenum> attachments(numRenderTargets);
+    std::vector<GLenum> attachments;
+    attachments.reserve(numRenderTargets);
     for (int i = 0; i < numRenderTargets; i++)
         attachments.push_back(GL_COLOR_ATTACHMENT0 + i);
     glDrawBuffers(numRenderTargets, attachments.data());
@@ -66,9 +60,9 @@ void Framebuffer::ClearBuffer()
 
 void Framebuffer::Resize(int w, int h)
 {
-    for (const auto& tex : textureIDs)
+    for (const auto& tex : textures)
     {
-        glBindTexture(GL_TEXTURE_2D, tex);
+        glBindTexture(GL_TEXTURE_2D, tex.ID);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     }
 

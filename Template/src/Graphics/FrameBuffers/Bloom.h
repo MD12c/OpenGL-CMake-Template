@@ -8,12 +8,12 @@ class Bloom
 private:
     Framebuffer buffer1;
     Framebuffer buffer2;
-    
+
 public:
     Bloom();
-    
-    GLuint BlurPass(GLuint brightTexture, ShaderIDs shaderID, int numPasses);
-    void Resize(int w, int h);
+
+    Texture& BlurPass(GLuint brightTexture, ShaderIDs shaderID, int numPasses);
+    void     Resize(int w, int h);
 };
 
 #endif

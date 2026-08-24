@@ -10,7 +10,7 @@ Bloom::Bloom()
 {
 }
 
-GLuint Bloom::BlurPass(GLuint brightTexture, ShaderIDs shaderID, int numPasses)
+Texture& Bloom::BlurPass(GLuint brightTexture, ShaderIDs shaderID, int numPasses)
 {
     ShaderManager::Activate(shaderID);
     glActiveTexture(GL_TEXTURE0);
@@ -28,7 +28,7 @@ GLuint Bloom::BlurPass(GLuint brightTexture, ShaderIDs shaderID, int numPasses)
         if (first_iteration)
             glBindTexture(GL_TEXTURE_2D, brightTexture);
         else
-            glBindTexture(GL_TEXTURE_2D, horizontal ? buffer2.textureIDs[0] : buffer1.textureIDs[0]);
+            glBindTexture(GL_TEXTURE_2D, horizontal ? buffer2.textures[0].ID : buffer1.textures[0].ID);
 
         quad->DrawSquare();
         horizontal      = !horizontal;
@@ -36,7 +36,7 @@ GLuint Bloom::BlurPass(GLuint brightTexture, ShaderIDs shaderID, int numPasses)
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    return horizontal ? buffer2.textureIDs[0] : buffer1.textureIDs[0];
+    return horizontal ? buffer2.textures[0] : buffer1.textures[0];
 }
 
 void Bloom::Resize(int w, int h)

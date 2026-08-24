@@ -11,7 +11,7 @@ class Framebuffer
 public:
     GLuint               ID;
     std::unique_ptr<RBO> framebufferRBO = nullptr;
-    std::vector<GLuint>  textureIDs;
+    std::deque<Texture>  textures;
 
     Framebuffer(int numRenderTargets, bool hasDepthStencil);
 

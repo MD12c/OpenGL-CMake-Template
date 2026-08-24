@@ -55,10 +55,10 @@ void MSAAbuffer::Activate()
     glFrontFace(GL_CCW);
 }
 
-void MSAAbuffer::CopyResultsTo(GLuint postProcessing)
+void MSAAbuffer::CopyResultsTo(const Framebuffer& postProcessing)
 {
     glBindFramebuffer(GL_READ_FRAMEBUFFER, ID);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postProcessing);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postProcessing.ID);
 
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);

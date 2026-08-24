@@ -9,6 +9,8 @@
 #include "..\GLObjects\Texture.h"
 #include "..\GLObjects\RBO.h"
 
+#include "Framebuffer.h"
+
 class MSAAbuffer
 {
 public:
@@ -20,7 +22,7 @@ public:
     MSAAbuffer();
     void Resize(int w, int h);
     void Activate();
-    void CopyResultsTo(GLuint postProcessing);
+    void CopyResultsTo(const Framebuffer& postProcessing);
 };
 
 #endif
