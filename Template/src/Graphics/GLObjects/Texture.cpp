@@ -194,7 +194,7 @@ void Texture::CombinePack(unsigned char* dst, unsigned char* src, int w, int h, 
         }
 }
 
-void Texture::texUnit(const ShaderIDs shaderID, const std::string& uniform) const
+void Texture::texUnit(const ShaderID shaderID, const std::string& uniform) const
 {
     ShaderManager::Activate(shaderID);
     GLint unit = ShaderManager::getUnit(shaderID, uniform);

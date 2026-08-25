@@ -51,7 +51,7 @@ public:
     ~Texture();
 
     void LoadTexture(const void* data, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType = GL_UNSIGNED_BYTE) const;
-    void texUnit(const ShaderIDs shaderID, const std::string& uniform) const;
+    void texUnit(const ShaderID shaderID, const std::string& uniform) const;
     void texUnit(const Shader& shader, const std::string& uniform, const GLint unit) const;  // Old
     void Bind(GLint unit) const;
     void Unbind(GLint unit) const;

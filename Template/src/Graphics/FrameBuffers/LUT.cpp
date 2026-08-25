@@ -14,7 +14,7 @@ LUT::LUT()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void LUT::Draw(ShaderIDs shaderID)
+void LUT::Draw(ShaderID shaderID)
 {
     GLuint framebuffer;
     glGenFramebuffers(1, &framebuffer);
@@ -24,7 +24,7 @@ void LUT::Draw(ShaderIDs shaderID)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "LUT framebuffer incomplete!" << std::endl;
 
-    ShaderManager::Activate(ShaderIDs::BRDF_LUT);
+    ShaderManager::Activate(ShaderID::BRDF_LUT);
     GLint prevViewport[4];
     glGetIntegerv(GL_VIEWPORT, prevViewport);
     
@@ -39,7 +39,7 @@ void LUT::Draw(ShaderIDs shaderID)
 }
 
 
-void LUT::ExportUniformsTo(ShaderIDs shaderID)
+void LUT::ExportUniformsTo(ShaderID shaderID)
 {
     ShaderManager::Activate(shaderID);
     tex.texUnit(shaderID, "brdfLUT");

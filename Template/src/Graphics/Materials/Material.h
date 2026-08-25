@@ -5,14 +5,23 @@
 
 class Material
 {
-public:
-    int ID;
+protected:
+    static void checkAndLoad(std::shared_ptr<Texture> texPtr,
+                             const std::string&       name,
+                             ShaderID                 shaderID)
+    {
+        if (!texPtr) return;
+        texPtr->texUnit(shaderID, name);
+    }
 
-    Material(int ID) : ID(ID) {}
+public:
+    MaterialID ID;
+    ShaderID   shaderID;
+
+    Material(int ID, ShaderID shaderID) : ID(ID), shaderID(shaderID) {}
     ~Material() = default;
 
-    virtual void                     Apply() const       = 0;
-    virtual ShaderIDs getShaderID() const = 0;
+    virtual void Apply() const { ShaderManager::Activate(shaderID); };
 };
 
 #endif

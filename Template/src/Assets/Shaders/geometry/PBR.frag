@@ -247,7 +247,7 @@ vec3 pointLight(int i, vec3 surfaceToLightPos, vec3 N)
     shadow /= pow((sampleRadius * 2 + 1), 3);
 
     return ((1.0f - shadow) * inten) * pointLightColor[i];
-    // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
+    // return vec3(shadow);  // for debugging shadows (shows shadow regions in white)
 }
 
 vec3 Fr(vec3 crntAlbedoColor, float crntRoughness, float crntMetalic, vec3 F0, vec3 Wo, vec3 Wi, vec3 N, vec3 HalfWay)
@@ -308,20 +308,20 @@ void main()
         sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * pointLight(i, toLight, N) * max(dot(N, Wi), 0.0);
     }
 
-    // for (int i = 0; i < numSpotLights; i++)
-    // {
-    //     const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
-    //     const vec3 Wi      = normalize(toLight);         // light dir
-    //     const vec3 HalfWay = normalize(Wi + Wo);
-    //     sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
-    // }
+    for (int i = 0; i < numSpotLights; i++)
+    {
+        const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
+        const vec3 Wi      = normalize(toLight);         // light dir
+        const vec3 HalfWay = normalize(Wi + Wo);
+        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
+    }
 
-    // for (int i = 0; i < numDirLights; i++)
-    // {
-    //     const vec3 Wi      = normalize(-dirLightDirection[i]);  // light dir
-    //     const vec3 HalfWay = normalize(Wi + Wo);
-    //     sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
-    // }
+    for (int i = 0; i < numDirLights; i++)
+    {
+        const vec3 Wi      = normalize(-dirLightDirection[i]);  // light dir
+        const vec3 HalfWay = normalize(Wi + Wo);
+        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
+    }
 
     FragColor = vec4(ambient, 1.0f) + vec4(sum, 1.0f);
 

@@ -19,7 +19,7 @@ void ShadowMapCube::setView(glm::vec3 newPosition, glm::vec3 newDirection)
         shadowMatrices[i] = proj * glm::lookAt(newPosition, newPosition + cubeFaces[i].dir, cubeFaces[i].up);
 }
 
-void ShadowMapCube::BeginDepthPass(ShaderIDs shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos)
+void ShadowMapCube::BeginDepthPass(ShaderID shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos)
 {
     ShaderManager::Activate(shaderID);
 
@@ -35,7 +35,7 @@ void ShadowMapCube::BeginDepthPass(ShaderIDs shaderID, ShadowSystem& shadowSyste
     glViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
 }
 
-void ShadowMapCube::ExportUniformsTo(ShaderIDs shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor)
+void ShadowMapCube::ExportUniformsTo(ShaderID shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor)
 {
     ShaderManager::Activate(shaderID);
     glUniform1i(ShaderManager::getLoc(shaderID, "pointLayerIndex[" + std::to_string(lightIndex) + "]"), layerIndex);
@@ -44,7 +44,7 @@ void ShadowMapCube::ExportUniformsTo(ShaderIDs shaderID, int lightIndex, glm::ve
     glUniform3fv(ShaderManager::getLoc(shaderID, "pointLightColor[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightColor));
 }
 
-void ShadowMapCube::DrawDepthDebug(ShaderIDs shaderID, int faceIndex)
+void ShadowMapCube::DrawDepthDebug(ShaderID shaderID, int faceIndex)
 {
     // ShaderManager::Activate(shaderID);
 

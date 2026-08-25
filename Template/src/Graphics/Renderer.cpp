@@ -10,7 +10,7 @@ Renderer::Renderer()
     : postProcessSystem()
 {
     LoadAllShaders();
-    postProcessSystem.lut.Draw(ShaderIDs::BRDF_LUT);
+    postProcessSystem.lut.Draw(ShaderID::BRDF_LUT);
 }
 
 Renderer::~Renderer()
@@ -25,7 +25,7 @@ void Renderer::Render(const Scene& scene)
 
     postProcessSystem.Begin();
 
-    auto useShader = ShaderIDs::PBR;
+    auto useShader = ShaderID::PBR;
     scene.lightSystem.ExportUniforms(useShader, scene.lights);
     scene.skybox.ExportUniformsTo(useShader);
     postProcessSystem.lut.ExportUniformsTo(useShader);
@@ -34,10 +34,10 @@ void Renderer::Render(const Scene& scene)
     for (const auto& model : scene.models)
         model.Draw(useShader);
 
-    scene.cameras[scene.activeCam]->updateUniforms(ShaderIDs::LIGHT_SPHERE);
-    scene.lightSystem.DrawLightSpheres(ShaderIDs::LIGHT_SPHERE, scene.lights);
+    scene.cameras[scene.activeCam]->updateUniforms(ShaderID::LIGHT_SPHERE);
+    scene.lightSystem.DrawLightSpheres(ShaderID::LIGHT_SPHERE, scene.lights);
 
-    scene.skybox.Draw(ShaderIDs::SKYBOX, scene.cameras[scene.activeCam]->getRotationMat());
+    scene.skybox.Draw(ShaderID::SKYBOX, scene.cameras[scene.activeCam]->getRotationMat());
 
     postProcessSystem.End();
 

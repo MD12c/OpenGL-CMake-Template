@@ -2,6 +2,7 @@
 #define SPECULAR_MATERIAL_CLASS_H
 
 #include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include "..\GLObjects\Texture.h"
 #include "Material.h"
 #include "../Shaders/ShaderManager.h"
@@ -9,7 +10,7 @@
 class SpecularMaterial : public Material
 {
 public:
-    static constexpr ShaderIDs shaderID = ShaderIDs::SPECULAR;
+    static constexpr ShaderID shaderID = ShaderID::SPECULAR;
 
     std::string name;  // optional
     glm::vec3   diffuseColor  = glm::vec3(1.0f);
@@ -29,10 +30,34 @@ public:
                      std::shared_ptr<Texture> diffuseMap,
                      std::shared_ptr<Texture> specularMap,
                      std::shared_ptr<Texture> normalMap,
-                     std::shared_ptr<Texture> displacementMap);
+                     std::shared_ptr<Texture> displacementMap)
+        : Material(ID, ShaderID::SPECULAR),
+          name(name),
+          diffuseColor(diffuseColor),
+          specularColor(specularColor),
+          shininess(shininess),
+          diffuseMap(diffuseMap),
+          specularMap(specularMap),
+          normalMap(normalMap),
+          displacementMap(displacementMap)
+    {
+    }
 
-    void Apply() const override;
-    ShaderIDs getShaderID() const override { return shaderID; };
+    void Apply() const override
+    {
+        ShaderManager::Activate(shaderID);
+        glUniform3fv(ShaderManager::getLoc(shaderID, "diffuseColor"), 1, glm::value_ptr(diffuseColor));
+        glUniform1f(ShaderManager::getLoc(shaderID, "shininess"), shininess);
+
+        glUniform1i(ShaderManager::getLoc(shaderID, "useTexture"), (diffuseMap != nullptr));
+        glUniform1i(ShaderManager::getLoc(shaderID, "useNormal"), (normalMap != nullptr));
+        glUniform1i(ShaderManager::getLoc(shaderID, "useDisplacement"), (displacementMap != nullptr));
+
+        checkAndLoad(diffuseMap, "diffuse0", shaderID);
+        checkAndLoad(specularMap, "specular0", shaderID);
+        checkAndLoad(normalMap, "normal0", shaderID);
+        checkAndLoad(displacementMap, "displacement0", shaderID);
+    }
 };
 
 #endif

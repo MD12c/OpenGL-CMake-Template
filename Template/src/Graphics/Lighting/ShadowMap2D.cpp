@@ -24,7 +24,7 @@ void ShadowMap2D::setView(glm::vec3 newPosition, glm::vec3 newDirection)
     view = glm::lookAt(newPosition, newPosition + newDirection, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
-void ShadowMap2D::BeginDepthPass(ShaderIDs shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos)
+void ShadowMap2D::BeginDepthPass(ShaderID shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos)
 {
     ShaderManager::Activate(shaderID);
 
@@ -36,7 +36,7 @@ void ShadowMap2D::BeginDepthPass(ShaderIDs shaderID, ShadowSystem& shadowSystem,
     glViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
 }
 
-void ShadowMap2D::ExportUniformsTo(ShaderIDs shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor)
+void ShadowMap2D::ExportUniformsTo(ShaderID shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor)
 {
     ShaderManager::Activate(shaderID);
 
@@ -61,7 +61,7 @@ void ShadowMap2D::ExportUniformsTo(ShaderIDs shaderID, int lightIndex, glm::vec3
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, type + "ShadowMatrix[" + std::to_string(lightIndex) + "]"), 1, GL_FALSE, glm::value_ptr(projView));
 }
 
-void ShadowMap2D::DrawDepthDebug(ShaderIDs shaderID, ShadowSystem& shadowSystem)
+void ShadowMap2D::DrawDepthDebug(ShaderID shaderID, ShadowSystem& shadowSystem)
 {
     // ShaderManager::Activate(shaderID);
     // glUniform1i(ShaderManager::getLoc(shaderID, "depthMap"), 0);

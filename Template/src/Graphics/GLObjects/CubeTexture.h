@@ -22,7 +22,7 @@ public:
     void Draw(GLuint unit) const;
     void Bind(GLuint unit) const;
     void Unbind(GLuint unit) const;
-    void texUnit(ShaderIDs shaderID, const std::string& uniform) const;
+    void texUnit(ShaderID shaderID, const std::string& uniform) const;
 };
 
 #endif

@@ -10,7 +10,7 @@ Bloom::Bloom()
 {
 }
 
-Texture& Bloom::BlurPass(GLuint brightTexture, ShaderIDs shaderID, int numPasses)
+Texture& Bloom::BlurPass(GLuint brightTexture, ShaderID shaderID, int numPasses)
 {
     ShaderManager::Activate(shaderID);
     glActiveTexture(GL_TEXTURE0);

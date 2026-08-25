@@ -24,27 +24,26 @@ void Load(const std::string& compPath)
     shaderResources.emplace_back(ShaderResources(Shader(compPath)));
 }
 
-void LoadAllShaders()  //! load order matters see Globals.h ShaderIDs struct
+void LoadAllShaders()  //! load order matters see Globals.h ShaderID struct
 {
     // Specular
     Load("Assets/shaders/geometry/model.vert",
          "Assets/shaders/geometry/model.frag",
          "Assets/shaders/geometry/model.geom");
-    AddUnits(ShaderIDs::SPECULAR,
+    AddUnits(ShaderID::SPECULAR,
              { { "diffuse0", 0 },
                { "specular0", 1 },
                { "normal0", 2 },
-               { "metalicRoughness0", 3 },
-               { "displacement0", 4 },
-               { "dirShadowMaps", 5 },
-               { "spotShadowMaps", 6 },
-               { "pointShadowMaps", 7 } });
+               { "displacement0", 3 },
+               { "dirShadowMaps", 4 },
+               { "spotShadowMaps", 5 },
+               { "pointShadowMaps", 6 } });
 
     // PBR
     Load("Assets/shaders/geometry/PBR.vert",
          "Assets/shaders/geometry/PBR.frag",
          "Assets/shaders/geometry/PBR.geom");
-    AddUnits(ShaderIDs::PBR,
+    AddUnits(ShaderID::PBR,
              { { "brdfLUT", 0 },
                { "albedo0", 1 },
                { "ao0", 2 },
@@ -89,17 +88,17 @@ void LoadAllShaders()  //! load order matters see Globals.h ShaderIDs struct
     // postProcess
     Load("Assets/shaders/post-process/blur.vert",
          "Assets/shaders/post-process/blur.frag");
-    AddUnits(ShaderIDs::POSTPROCESS, { { "tex0", 0 }, { "tex1", 1 } });
+    AddUnits(ShaderID::POSTPROCESS, { { "tex0", 0 }, { "tex1", 1 } });
 
     // HDR texture converter
     Load("Assets/shaders/skybox/HDRtexConverter.vert",
          "Assets/shaders/skybox/HDRtexConverter.frag");
-    AddUnits(ShaderIDs::HDR_CONVERTER, { { "equirectangularMap", 0 } });
+    AddUnits(ShaderID::HDR_CONVERTER, { { "equirectangularMap", 0 } });
 
     // Irradiance
     Load("Assets/shaders/skybox/irradiance.vert",
          "Assets/shaders/skybox/irradiance.frag");
-    AddUnits(ShaderIDs::IRRADIANCE, { { "environmentMap", 0 } });
+    AddUnits(ShaderID::IRRADIANCE, { { "environmentMap", 0 } });
 
     // Prefilter
     Load("Assets/shaders/skybox/prefilter.vert",

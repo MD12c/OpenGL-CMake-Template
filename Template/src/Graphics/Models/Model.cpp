@@ -9,18 +9,10 @@ Model::Model(const std::string& path)
     loadModel(path);
 }
 
-void Model::Draw(ShaderIDs shaderID, glm::vec3 translation, glm::quat rotation, glm::vec3 scale) const
+void Model::Draw(ShaderID shaderID, Transform transform, MaterialID materialID) const
 {
-    glm::mat4 transMat4 = glm::translate(glm::mat4(1.0f), translation);
-    glm::mat4 rotMat4   = glm::mat4_cast(rotation);
-    glm::mat4 scaMat4   = glm::scale(glm::mat4(1.0f), scale);
-
-    glm::mat4 model = transMat4 * rotMat4 * scaMat4;
-
-    glm::mat3 normal = glm::transpose(glm::inverse(glm::mat3(model)));
-
     for (unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].Draw(shaderID, model, normal);
+        meshes[i].Draw(shaderID, transform.model, transform.normal, materialID);
 }
 
 void Model::loadModel(const std::string& path)
@@ -172,6 +164,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
         // materialID = MaterialManager::LoadMaterialSpecular(
         //     std::string(material->GetName().C_Str()),
+        //     glm::vec3(0.7f), glm::vec3(0.5f), 16,
         //     findPath(aiTextureType_DIFFUSE),
         //     findPath(aiTextureType_SPECULAR),
         //     findPath(aiTextureType_NORMALS),
@@ -200,6 +193,12 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
     std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
     return Mesh(vertices, indices, materialID);
+}
+
+void Model::setCustomMaterial(MaterialID materialID)
+{
+    for (auto& mesh : meshes)
+        mesh.materialID = materialID;
 }
 
 void Model::setMeshMetalicRoughness(int meshIndex, float metalic, float roughness)

@@ -7,18 +7,18 @@ namespace MaterialManager
 std::deque<std::unique_ptr<Material>>                                                               materials      = {};
 std::unordered_map<Texture::TextureType, std::unordered_map<std::string, std::shared_ptr<Texture>>> loadedTextures = {};
 
-int LoadMaterialSpecular(const std::string& name,
-                         glm::vec3          diffuseColor,
-                         glm::vec3          specularColor,
-                         float              shininess,
-                         const std::string& diffuseMapPath,
-                         const std::string& specularMapPath,
-                         const std::string& normalMapPath,
-                         const std::string& displacementMapPath)
+MaterialID LoadMaterialSpecular(const std::string& name,
+                                glm::vec3          diffuseColor,
+                                glm::vec3          specularColor,
+                                float              shininess,
+                                const std::string& diffuseMapPath,
+                                const std::string& specularMapPath,
+                                const std::string& normalMapPath,
+                                const std::string& displacementMapPath)
 {
     materials.emplace_back(
         std::make_unique<SpecularMaterial>(
-            (int)materials.size(),
+            static_cast<MaterialID>(materials.size()),
             name,
             diffuseColor,
             specularColor,
@@ -31,19 +31,19 @@ int LoadMaterialSpecular(const std::string& name,
     return materials.back()->ID;
 }
 
-int LoadMaterialPBRobj(const std::string& name,
-                       float              roughness,
-                       float              metalic,
-                       const std::string& albedoMapPath,
-                       const std::string& aoMapPath,
-                       const std::string& roughnessMapPath,
-                       const std::string& metalicMapPath,
-                       const std::string& normalMapPath,
-                       const std::string& displacementMapPath)
+MaterialID LoadMaterialPBRobj(const std::string& name,
+                              float              roughness,
+                              float              metalic,
+                              const std::string& albedoMapPath,
+                              const std::string& aoMapPath,
+                              const std::string& roughnessMapPath,
+                              const std::string& metalicMapPath,
+                              const std::string& normalMapPath,
+                              const std::string& displacementMapPath)
 {
     materials.emplace_back(
         std::make_unique<PBRMaterial>(
-            (int)materials.size(),
+            static_cast<MaterialID>(materials.size()),
             name,
             roughness,
             metalic,
@@ -56,18 +56,18 @@ int LoadMaterialPBRobj(const std::string& name,
     return materials.back()->ID;
 }
 
-int LoadMaterialPBRgltf(const std::string& name,
-                        float              roughness,
-                        float              metalic,
-                        const std::string& albedoMapPath,
-                        const std::string& aoMapPath,
-                        const std::string& metalicRoughnessMapPath,
-                        const std::string& normalMapPath,
-                        const std::string& displacementMapPath)
+MaterialID LoadMaterialPBRgltf(const std::string& name,
+                               float              roughness,
+                               float              metalic,
+                               const std::string& albedoMapPath,
+                               const std::string& aoMapPath,
+                               const std::string& metalicRoughnessMapPath,
+                               const std::string& normalMapPath,
+                               const std::string& displacementMapPath)
 {
     materials.emplace_back(
         std::make_unique<PBRMaterial>(
-            (int)materials.size(),
+            static_cast<MaterialID>(materials.size()),
             name,
             roughness,
             metalic,
@@ -77,6 +77,12 @@ int LoadMaterialPBRgltf(const std::string& name,
             makeTexture(normalMapPath, Texture::TextureType::NORMAL),
             makeTexture(displacementMapPath, Texture::TextureType::DISPLACEMENT)));
 
+    return materials.back()->ID;
+}
+
+MaterialID LoadMaterialCustom(const std::string& name, ShaderID shaderID)
+{
+    materials.emplace_back(std::make_unique<Material>((int)materials.size(), shaderID));
     return materials.back()->ID;
 }
 
@@ -118,12 +124,12 @@ std::shared_ptr<Texture> makeTexture(const std::string& texturePath1, const std:
     return newTexture;
 }
 
-Material& getMatAt(int ID)
+Material& getMatAt(MaterialID ID)
 {
     return *materials.at(ID);
 }
 
-void Unbind(int ID)
+void Unbind(MaterialID ID)
 {
     auto unbind = [](int texID)
     {

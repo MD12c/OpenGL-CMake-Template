@@ -44,14 +44,14 @@ set(CAMERA_SOURCES
 set(MODEL_SOURCES
     src/Graphics/Models/Mesh.h src/Graphics/Models/Mesh.cpp
     src/Graphics/Models/Model.h src/Graphics/Models/Model.cpp
-    src/Graphics/Models/Skybox.h src/Graphics/Models/Skybox.cpp)
+    src/Graphics/Models/Skybox.h src/Graphics/Models/Skybox.cpp
+    src/Graphics/Models/Transform.h)
 
 set(MATERIAL_SOURCES
     src/Graphics/Materials/Material.h
     src/Graphics/Materials/SpecularMaterial.h
-    src/Graphics/Materials/SpecularMaterial.cpp
     src/Graphics/Materials/PBRMaterial.h
-    src/Graphics/Materials/PBRMaterial.cpp
+    src/Graphics/Materials/ShadowMaterial.h
     src/Graphics/Materials/MaterialManager.h
     src/Graphics/Materials/MaterialManager.cpp)
 

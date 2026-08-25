@@ -8,6 +8,7 @@
 
 #include "../Shaders/ShaderManager.h"
 #include "../Materials/MaterialManager.h"
+#include "Transform.h"
 
 class Model
 {
@@ -24,10 +25,8 @@ public:
 
     Model(const std::string& path);
 
-    void Draw(ShaderIDs shaderID,
-              glm::vec3                translation = glm::vec3(0.0f, 0.0f, 0.0f),
-              glm::quat                rotation    = glm::quat(1.0f, 0.0f, 0.0f, 0.0f),
-              glm::vec3                scale       = glm::vec3(1.0f, 1.0f, 1.0f)) const;
+    void Draw(ShaderID shaderID, Transform transform = {}, MaterialID materialID = USE_FILE_MATERIAL) const;
 
     void setMeshMetalicRoughness(int meshIndex, float metalic, float roughness);
+    void setCustomMaterial(MaterialID materialID);
 };

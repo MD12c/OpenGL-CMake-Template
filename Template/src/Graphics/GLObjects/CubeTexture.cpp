@@ -71,7 +71,7 @@ void CubeTexture::Unbind(GLuint unit) const
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
-void CubeTexture::texUnit(ShaderIDs shaderID, const std::string& uniform) const
+void CubeTexture::texUnit(ShaderID shaderID, const std::string& uniform) const
 {
     ShaderManager::Activate(shaderID);
     GLint unit = ShaderManager::getUnit(shaderID, uniform);

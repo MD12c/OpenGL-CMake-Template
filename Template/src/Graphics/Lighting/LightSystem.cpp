@@ -1,6 +1,7 @@
 #include "LightSystem.h"
 
 #include "../Shaders/ShaderManager.h"
+#include "../Materials/MaterialManager.h"
 
 #include "ShadowCaster.h"
 #include "ShadowSystem.h"
@@ -8,10 +9,17 @@
 #include "ShadowMapCube.h"
 
 LightSystem::LightSystem(float zNear, float zFar)
-    : shadowSystem(std::make_unique<ShadowSystem>()), zNear(zNear), zFar(zFar), icoSphere("Assets/Models/icoSphere.obj")
+    : shadowSystem(std::make_unique<ShadowSystem>()),
+      zNear(zNear),
+      zFar(zFar),
+      icoSphere("Assets/Models/icoSphere.obj"),
+      material2D(MaterialManager::LoadMaterialCustom("Shadow2D", ShaderID::SHADOW_MAP2D)),
+      materialCube(MaterialManager::LoadMaterialCustom("ShadowCube", ShaderID::SHADOW_MAPCUBE)),
+      materialSphere(MaterialManager::LoadMaterialCustom("lightSphere", ShaderID::LIGHT_SPHERE))
 {
 }
-void LightSystem::DrawLightSpheres(ShaderIDs shaderID, const std::vector<Light>& lights) const
+
+void LightSystem::DrawLightSpheres(ShaderID shaderID, const std::vector<Light>& lights) const
 {
     ShaderManager::Activate(shaderID);
     glEnable(GL_CULL_FACE);
@@ -19,12 +27,12 @@ void LightSystem::DrawLightSpheres(ShaderIDs shaderID, const std::vector<Light>&
     {
         glm::vec4 col = glm::vec4(light.getColor(), 1.0f);
         glUniform4fv(ShaderManager::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
-        icoSphere.Draw(shaderID, light.getPosition(), glm::quat(1.0f, 0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        icoSphere.Draw(shaderID, Transform(light.getPosition()), materialSphere);
     }
     glDisable(GL_CULL_FACE);
 }
 
-void LightSystem::ExportUniforms(ShaderIDs shaderID, const std::vector<Light>& lights) const
+void LightSystem::ExportUniforms(ShaderID shaderID, const std::vector<Light>& lights) const
 {
     shadowSystem->BindShadowTextures(shaderID);
 
@@ -58,10 +66,17 @@ void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector
 
     for (const auto& light : lights)
     {
-        const auto shaderID = ShaderManager::getShaderIDfromType(light.getType());
+        LightType  type     = light.getType();
+        ShaderID   shaderID = ShaderManager::getShaderIDfromLightType(type);
+        MaterialID materialID;
+        if (type == POINT)
+            materialID = materialCube;
+        else
+            materialID = material2D;
+
         light.caster->BeginDepthPass(shaderID, *shadowSystem, light.getPosition());
         for (const auto& model : models)
-            model.Draw(shaderID);
+            model.Draw(shaderID, {}, materialID);
         light.caster->EndDepthPass();
     }
 }

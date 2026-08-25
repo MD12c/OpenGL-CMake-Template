@@ -54,7 +54,7 @@ enum LightType
     POINT
 };
 
-enum ShaderIDs
+enum ShaderID
 {
     SPECULAR,
     PBR,
@@ -72,6 +72,10 @@ enum ShaderIDs
     BRDF_LUT,
     LAST
 };
+
+using MaterialID                       = uint32_t;
+constexpr MaterialID NO_MATERIAL       = UINT32_MAX;
+constexpr MaterialID USE_FILE_MATERIAL = UINT32_MAX - 1;
 
 class Square;
 inline Square* quad = nullptr;

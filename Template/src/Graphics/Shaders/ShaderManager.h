@@ -27,17 +27,17 @@ extern std::deque<ShaderResources> shaderResources;
 void    LoadAllShaders();
 void    Load(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
 void    Load(const std::string& vertPath, const std::string& fragPath);
-Shader& Get(ShaderIDs ID);
-void    AddUnits(ShaderIDs ID, std::unordered_map<std::string, GLint>&& units);
+Shader& Get(ShaderID ID);
+void    AddUnits(ShaderID ID, std::unordered_map<std::string, GLint>&& units);
 void    PrintLoadedUniforms();
 
-std::unordered_map<std::string, GLint>& getUniforms(ShaderIDs ID);
-GLint                                   getLoc(ShaderIDs ID, const std::string& uniformName);
-GLint                                   getUnit(ShaderIDs ID, const std::string& name);
-std::string                             getName(ShaderIDs ID);
-ShaderIDs                               getShaderIDfromType(LightType type);
+std::unordered_map<std::string, GLint>& getUniforms(ShaderID ID);
+GLint                                   getLoc(ShaderID ID, const std::string& uniformName);
+GLint                                   getUnit(ShaderID ID, const std::string& name);
+std::string                             getName(ShaderID ID);
+ShaderID                               getShaderIDfromLightType(LightType type);
 
-void Activate(ShaderIDs ID);
+void Activate(ShaderID ID);
 void Cleanup();
 };  // namespace ShaderManager
 

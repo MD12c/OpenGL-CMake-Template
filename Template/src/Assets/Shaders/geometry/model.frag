@@ -1,7 +1,7 @@
 #version 460 core
 
-layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec4 BloomColor;
+layout(location = 0) out vec4 FragColor;
+layout(location = 1) out vec4 BloomColor;
 
 in vec2 texCoord;
 in vec3 Normal;
@@ -282,10 +282,9 @@ void main()
     for (int i = 0; i < numPointLights; i++) result += pointLight(i, UVs);
 
     FragColor = result;
-    // FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-    if(brightness > 1.0f)
+    if (brightness > 1.0f)
         BloomColor = vec4(FragColor.rgb, 1.0f);
     else
         BloomColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);

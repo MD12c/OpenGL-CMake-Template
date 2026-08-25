@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int materialID)
+Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, MaterialID materialID)
     : vertices(verticies), indices(indices), materialID(materialID), VAO(), VBO(vertices), EBO(indices)
 {
     VAO.Bind();
@@ -19,16 +19,18 @@ Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int mat
     EBO.Unbind();
 }
 
-void Mesh::Draw(ShaderIDs shaderID, const glm::mat4& model, const glm::mat3& normal) const
+void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID drawMaterialID) const
 {
     ShaderManager::Activate(shaderID);
 
     VAO.Bind();
 
-    if (materialID >= 0)
+    if (drawMaterialID == USE_FILE_MATERIAL)
         MaterialManager::getMatAt(materialID).Apply();
-    else
+    else if (drawMaterialID == NO_MATERIAL)
         MaterialManager::Unbind(materialID);
+    else
+        MaterialManager::getMatAt(drawMaterialID).Apply();
 
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix3fv(ShaderManager::getLoc(shaderID, "normal"), 1, GL_FALSE, glm::value_ptr(normal));

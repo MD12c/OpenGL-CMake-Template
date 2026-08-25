@@ -4,8 +4,8 @@
 #include <vector>
 #include <unordered_set>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 #include "../GLObjects/VAO.h"
 #include "../GLObjects/EBO.h"
@@ -25,9 +25,7 @@ public:
     VBO VBO;
     EBO EBO;
 
-    Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, int materialID);
+    Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, MaterialID materialID);
 
-    void Draw(ShaderIDs shaderID,
-              const glm::mat4&         model  = glm::mat4(1.0f),
-              const glm::mat3&         normal = glm::mat3(1.0f)) const;
+    void Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID drawMaterialID) const;
 };
