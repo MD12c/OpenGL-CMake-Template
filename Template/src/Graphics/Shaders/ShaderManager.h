@@ -24,6 +24,8 @@ struct ShaderResources
 };
 extern std::deque<ShaderResources> shaderResources;
 
+extern ShaderID boundShader;
+
 void    LoadAllShaders();
 void    Load(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
 void    Load(const std::string& vertPath, const std::string& fragPath);
@@ -35,7 +37,7 @@ std::unordered_map<std::string, GLint>& getUniforms(ShaderID ID);
 GLint                                   getLoc(ShaderID ID, const std::string& uniformName);
 GLint                                   getUnit(ShaderID ID, const std::string& name);
 std::string                             getName(ShaderID ID);
-ShaderID                               getShaderIDfromLightType(LightType type);
+ShaderID                                getShaderIDfromLightType(LightType type);
 
 void Activate(ShaderID ID);
 void Cleanup();

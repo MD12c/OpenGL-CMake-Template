@@ -59,6 +59,8 @@ void LoadAllShaders()  //! load order matters see Globals.h ShaderID struct
     // SkyBox
     Load("Assets/shaders/skybox/skybox.vert",
          "Assets/shaders/skybox/skybox.frag");
+    AddUnits(ShaderID::SKYBOX,
+             { { "skybox", 0 } });
 
     // postProcess
     Load("Assets/shaders/post-process/postProcess.vert",

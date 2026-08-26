@@ -212,8 +212,11 @@ void Texture::texUnit(const Shader& shader, const std::string& uniform, const GL
 
 void Texture::Bind(GLint unit) const
 {
+    if (boundTextures[unit] == ID)
+        return;
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, ID);
+    boundTextures[unit] = ID;
 }
 
 void Texture::Unbind(GLint unit) const

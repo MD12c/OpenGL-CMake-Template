@@ -76,7 +76,7 @@ void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector
 
         light.caster->BeginDepthPass(shaderID, *shadowSystem, light.getPosition());
         for (const auto& model : models)
-            model.Draw(shaderID, {}, materialID);
+            model.Draw(shaderID, {{}, {}, glm::vec3(0.02f)}, materialID);
         light.caster->EndDepthPass();
     }
 }

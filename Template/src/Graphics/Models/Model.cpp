@@ -175,7 +175,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
                 std::string(material->GetName().C_Str()),
                 0.85f, 0.0f,
                 findPath(aiTextureType_DIFFUSE),
-                "",
+                findPath(aiTextureType_AMBIENT_OCCLUSION),
                 findPath(aiTextureType_GLTF_METALLIC_ROUGHNESS),
                 findPath(aiTextureType_NORMALS),
                 findPath(aiTextureType_DISPLACEMENT));
@@ -203,7 +203,19 @@ void Model::setCustomMaterial(MaterialID materialID)
 
 void Model::setMeshMetalicRoughness(int meshIndex, float metalic, float roughness)
 {
-    PBRMaterial* pbr = dynamic_cast<PBRMaterial*>(&MaterialManager::getMatAt(meshes.at(meshIndex).materialID));
-    pbr->metalic     = metalic;
-    pbr->roughness   = roughness;
+    if (meshIndex == -1)
+    {
+        for (size_t i = 0; i < meshes.size(); i++)
+        {
+            PBRMaterial* pbr = dynamic_cast<PBRMaterial*>(&MaterialManager::getMatAt(meshes.at(i).materialID));
+            pbr->metalic     = metalic;
+            pbr->roughness   = roughness;
+        }
+    }
+    else
+    {
+        PBRMaterial* pbr = dynamic_cast<PBRMaterial*>(&MaterialManager::getMatAt(meshes.at(meshIndex).materialID));
+        pbr->metalic     = metalic;
+        pbr->roughness   = roughness;
+    }
 }

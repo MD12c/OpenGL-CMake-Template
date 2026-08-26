@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <array>
 
 #include <glad/glad.h>
 
@@ -59,6 +60,8 @@ public:
 private:
     bool mipMapGenerated = false;
 
+    inline static std::array<GLint, 32> boundTextures;
+    
     void createGLtexture(const void* data,
                          GLenum      formatL,
                          GLenum      formatR,

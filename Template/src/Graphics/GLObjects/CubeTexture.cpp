@@ -61,8 +61,11 @@ void CubeTexture::AllocTexture(int index, GLenum type, GLenum formatL, GLenum fo
 
 void CubeTexture::Bind(GLuint unit) const
 {
+    if (boundTextures[unit] == ID)
+        return;
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_CUBE_MAP, ID);
+    boundTextures[unit] = ID;
 }
 
 void CubeTexture::Unbind(GLuint unit) const

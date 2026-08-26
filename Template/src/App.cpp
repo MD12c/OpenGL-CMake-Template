@@ -33,7 +33,8 @@ void App::Update()
             scene.lights.at(0).setPosition(scene.cameras[scene.activeCam]->position + glm::vec3(0.0f, 0.0f, 0.5f));
             scene.lights.at(0).setDirection(scene.cameras[scene.activeCam]->Orientation);
         }
-        //scene.models.at(0).setMeshMetalicRoughness(0, My_ImGui::metalic, My_ImGui::roughness);
+        // for (auto& model : scene.models)
+        //     model.setMeshMetalicRoughness(-1, My_ImGui::metalic, My_ImGui::roughness);
     }
 }
 

@@ -227,13 +227,13 @@ void Skybox::Draw(ShaderID shaderID, glm::mat4 cameraMatrix) const
 {
     ShaderManager::Activate(shaderID);
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
-    glUniform1i(ShaderManager::getLoc(shaderID, "skybox"), 0);
+    cubemapTexture->texUnit(shaderID, "skybox");
 
     bind();
     glDisable(GL_CULL_FACE);
     glDepthFunc(GL_LEQUAL);
     if (cubemapTexture)
-        cubemapTexture->Draw(0);
+        cubemapTexture->Draw(ShaderManager::getUnit(shaderID, "skybox"));
     unbind();
     glDepthFunc(GL_LESS);
     glEnable(GL_CULL_FACE);

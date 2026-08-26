@@ -297,7 +297,7 @@ void main()
         specular                       = prefilteredColor * (F0 * envBRDF.x + envBRDF.y);
     }
 
-    const float ao      = useAO ? texture(ao0, UVs).r : 1.0;
+    const float ao      = useAO ? texture(ao0, UVs).r : 0.2;
     vec3        ambient = (kd * diffuse + specular) * ao;
 
     for (int i = 0; i < numPointLights; i++)
@@ -324,6 +324,8 @@ void main()
     }
 
     FragColor = vec4(ambient, 1.0f) + vec4(sum, 1.0f);
+
+    // FragColor = vec4(pointLight(0, spotLightPos[0] - crntPos, N), 1.0f);
 
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > 1.0f)

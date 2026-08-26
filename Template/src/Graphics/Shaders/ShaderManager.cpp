@@ -6,6 +6,7 @@
 namespace ShaderManager
 {
 std::deque<ShaderResources> shaderResources;
+ShaderID                    boundShader = LAST;
 
 Shader& Get(ShaderID ID)
 {
@@ -182,11 +183,13 @@ ShaderID getShaderIDfromLightType(LightType type)
 
 void Activate(ShaderID ID)
 {
-    shaderResources.at(ID).shader.Activate();
+    if (boundShader != ID)
+        shaderResources.at(ID).shader.Activate();
 }
 
 void Cleanup()
 {
     shaderResources.clear();
 }
+
 };  // namespace ShaderManager

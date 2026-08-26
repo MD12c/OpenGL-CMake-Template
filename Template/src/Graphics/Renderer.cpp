@@ -21,6 +21,7 @@ Renderer::~Renderer()
 
 void Renderer::Render(const Scene& scene)
 {
+    GPUInstrumentationTimer timer("Frame");
     scene.lightSystem.ShadowPass(scene.models, scene.lights);
 
     postProcessSystem.Begin();
@@ -32,7 +33,7 @@ void Renderer::Render(const Scene& scene)
 
     scene.cameras[scene.activeCam]->updateUniforms(useShader);
     for (const auto& model : scene.models)
-        model.Draw(useShader);
+        model.Draw(useShader, {{}, {}, glm::vec3(0.02f)});
 
     scene.cameras[scene.activeCam]->updateUniforms(ShaderID::LIGHT_SPHERE);
     scene.lightSystem.DrawLightSpheres(ShaderID::LIGHT_SPHERE, scene.lights);

@@ -1,12 +1,17 @@
 #ifndef CUBE_TEXTURE_CLASS_H
 #define CUBE_TEXTURE_CLASS_H
 
+#include <array>
+
 #include "glad/glad.h"
 
 #include "Globals.h"
 
 class CubeTexture
 {
+private:
+    inline static std::array<GLint, 32> boundTextures;
+
 public:
     GLuint ID;
 

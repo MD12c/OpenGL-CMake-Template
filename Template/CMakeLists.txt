@@ -51,7 +51,6 @@ set(MATERIAL_SOURCES
     src/Graphics/Materials/Material.h
     src/Graphics/Materials/SpecularMaterial.h
     src/Graphics/Materials/PBRMaterial.h
-    src/Graphics/Materials/ShadowMaterial.h
     src/Graphics/Materials/MaterialManager.h
     src/Graphics/Materials/MaterialManager.cpp)
 

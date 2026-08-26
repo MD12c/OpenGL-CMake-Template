@@ -21,6 +21,7 @@ Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, Materia
 
 void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID drawMaterialID) const
 {
+    GPUInstrumentationTimer timer("Draw Call");
     ShaderManager::Activate(shaderID);
 
     VAO.Bind();
