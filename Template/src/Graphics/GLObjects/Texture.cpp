@@ -219,13 +219,21 @@ void Texture::Bind(GLint unit) const
     boundTextures[unit] = ID;
 }
 
-void Texture::Unbind(GLint unit) const
+void Texture::UnbindAt(ShaderID shaderID, const std::string& uniform)
 {
-    if (boundTextures[unit] == 0)
+    ShaderManager::Activate(shaderID);
+    GLint unit = ShaderManager::getUnit(shaderID, uniform);
+    Unbind(unit);
+    glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
+}
+
+void Texture::Unbind(GLint unit)
+{
+    if (boundTextures[unit] == noTextureID)
         return;
     glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    boundTextures[unit] = 0;
+    glBindTexture(GL_TEXTURE_2D, noTextureID);
+    boundTextures[unit] = noTextureID;
 }
 
 void Texture::UnbindAll()
@@ -233,7 +241,7 @@ void Texture::UnbindAll()
     for (GLuint i = 0; i < static_cast<GLuint>(boundTextures.size()); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, noTextureID);
     }
     boundTextures.fill(0);
 }

@@ -10,8 +10,10 @@ protected:
                              const std::string&       name,
                              ShaderID                 shaderID)
     {
-        if (!texPtr) return;
-        texPtr->texUnit(shaderID, name);
+        if (texPtr)
+            texPtr->texUnit(shaderID, name);
+        else
+            Texture::UnbindAt(shaderID, name);
     }
 
 public:

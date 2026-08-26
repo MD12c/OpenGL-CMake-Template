@@ -12,6 +12,9 @@
 class Scene
 {
 public:
+    const float zNear = 0.1f;
+    const float zFar  = 400.0f;
+
     LightSystem               lightSystem;
     GLFWwindow*               glfwWindowPtr;
     std::function<void(void)> imguiFunctions = {};
@@ -25,6 +28,8 @@ public:
 
     Scene(GLFWwindow* glfwWindowPtr);
     ~Scene();
+
+    const Camera& getActiveCamera() const;
 };
 
 #endif

@@ -55,15 +55,16 @@ public:
     void texUnit(const ShaderID shaderID, const std::string& uniform) const;
     void texUnit(const Shader& shader, const std::string& uniform, const GLint unit) const;  // Old
     void Bind(GLint unit) const;
-    void Unbind(GLint unit) const;
 
+    static void UnbindAt(ShaderID shaderID, const std::string& uniform);
+    static void Unbind(GLint unit);
     static void UnbindAll();
+
+    static void setNoTextureID(GLuint texID) { noTextureID = texID; }
 
 private:
     bool mipMapGenerated = false;
 
-    inline static std::array<GLint, 32> boundTextures{};
-    
     void createGLtexture(const void* data,
                          GLenum      formatL,
                          GLenum      formatR,
@@ -74,9 +75,12 @@ private:
                          GLenum      paramMax = GL_LINEAR,
                          GLenum      wrapType = GL_REPEAT);
 
-    std::pair<GLenum, GLenum> getImageType(int numColCh, TextureType texType);
-    static void               CombineAdd(unsigned char* dst, unsigned char* src, int w, int h, int ch);
-    static void               CombinePack(unsigned char* dst, unsigned char* src, int w, int h, int ch);
+    inline static GLuint                noTextureID;
+    inline static std::array<GLint, 32> boundTextures{};
+
+    static std::pair<GLenum, GLenum> getImageType(int numColCh, TextureType texType);
+    static void                      CombineAdd(unsigned char* dst, unsigned char* src, int w, int h, int ch);
+    static void                      CombinePack(unsigned char* dst, unsigned char* src, int w, int h, int ch);
 };
 
 inline void PrintTextureParams(GLenum target)  // for debug only
