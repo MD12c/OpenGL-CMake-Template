@@ -129,19 +129,4 @@ Material& getMatAt(MaterialID ID)
     return *materials.at(ID);
 }
 
-void Unbind(MaterialID ID)
-{
-    auto unbind = [](int texID)
-    {
-        glActiveTexture(GL_TEXTURE0 + texID);
-        glBindTexture(GL_TEXTURE_2D, 0);
-    };
-
-    GLint maxTextureUnits;
-    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
-
-    for (int i = 0; i < maxTextureUnits; i++)
-        unbind(i);
-}
-
 };  // namespace MaterialManager

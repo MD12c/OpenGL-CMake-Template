@@ -68,16 +68,29 @@ void CubeTexture::Bind(GLuint unit) const
     boundTextures[unit] = ID;
 }
 
-void CubeTexture::Unbind(GLuint unit) const
-{
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-}
-
 void CubeTexture::texUnit(ShaderID shaderID, const std::string& uniform) const
 {
     ShaderManager::Activate(shaderID);
     GLint unit = ShaderManager::getUnit(shaderID, uniform);
     Bind(unit);
     glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
+}
+
+void CubeTexture::Unbind(GLuint unit) const
+{
+    if (boundTextures[unit] == 0)
+        return;
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    boundTextures[unit] = 0;
+}
+
+void CubeTexture::UnbindAll()
+{
+    for (GLuint i = 0; i < static_cast<GLuint>(boundTextures.size()); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    }
+    boundTextures.fill(0);
 }

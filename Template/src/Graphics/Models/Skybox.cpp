@@ -99,12 +99,11 @@ void Skybox::HDRtoCube(float* data, int widthImg, int heightImg, int resolution)
     glViewport(0, 0, resolution, resolution);
 
     Texture hdrTexture(GL_RGB16F, GL_RGB, widthImg, heightImg, GL_FLOAT, data);
-    hdrTexture.texUnit(ShaderID::HDR_CONVERTER, "equirectangularMap");
     for (GLint i = 0; i < 6; ++i)
     {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubemapTexture->ID, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        DrawCaptureCube(ShaderID::HDR_CONVERTER, captureProjection * captureViews[i], hdrTexture.ID);
+        DrawCaptureCube(ShaderID::HDR_CONVERTER, captureProjection * captureViews[i], hdrTexture);
     }
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "HDRtoCube capture FBO incomplete!" << std::endl;
@@ -156,15 +155,14 @@ void Skybox::CubeToIrradiance(int resolution)
     glDeleteRenderbuffers(1, &captureRBO);
 }
 
-void Skybox::DrawCaptureCube(ShaderID shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const
+void Skybox::DrawCaptureCube(ShaderID shaderID, glm::mat4 cameraMatrix, Texture& inputTexture) const
 {
     ShaderManager::Activate(shaderID);
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 
     glDisable(GL_CULL_FACE);
     bind();
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, inputTexture);
+    inputTexture.texUnit(ShaderID::HDR_CONVERTER, "equirectangularMap");
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     unbind();
     glEnable(GL_CULL_FACE);
@@ -184,9 +182,7 @@ void Skybox::CubeToPrefiltered(int baseResolution)
         prefilteredmapTexture->AllocTexture(i, GL_FLOAT, GL_RGB16F, GL_RGB, baseResolution, baseResolution);
     glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
-    ShaderManager::Activate(ShaderID::PREFILTER);
-    glUniform1i(ShaderManager::getLoc(ShaderID::PREFILTER, "environmentMap"), 0);
-    cubemapTexture->Bind(0);
+    cubemapTexture->texUnit(ShaderID::PREFILTER, "environmentMap");
 
     glDisable(GL_CULL_FACE);
     bind();
@@ -228,6 +224,8 @@ void Skybox::Draw(ShaderID shaderID, glm::mat4 cameraMatrix) const
     ShaderManager::Activate(shaderID);
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
     cubemapTexture->texUnit(shaderID, "skybox");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture->ID);
 
     bind();
     glDisable(GL_CULL_FACE);

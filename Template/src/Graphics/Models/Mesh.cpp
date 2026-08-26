@@ -29,7 +29,7 @@ void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID
     if (drawMaterialID == USE_FILE_MATERIAL)
         MaterialManager::getMatAt(materialID).Apply();
     else if (drawMaterialID == NO_MATERIAL)
-        MaterialManager::Unbind(materialID);
+        Texture::UnbindAll();
     else
         MaterialManager::getMatAt(drawMaterialID).Apply();
 

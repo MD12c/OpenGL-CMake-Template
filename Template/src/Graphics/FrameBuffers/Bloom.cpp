@@ -12,6 +12,7 @@ Bloom::Bloom()
 
 Texture& Bloom::BlurPass(GLuint brightTexture, ShaderID shaderID, int numPasses)
 {
+    GPUInstrumentationTimer timer("Blur Pass");
     ShaderManager::Activate(shaderID);
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(ShaderManager::getLoc(shaderID, "tex0"), 0);

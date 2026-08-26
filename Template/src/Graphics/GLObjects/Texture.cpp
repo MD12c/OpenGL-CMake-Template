@@ -221,6 +221,19 @@ void Texture::Bind(GLint unit) const
 
 void Texture::Unbind(GLint unit) const
 {
+    if (boundTextures[unit] == 0)
+        return;
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, 0);
+    boundTextures[unit] = 0;
+}
+
+void Texture::UnbindAll()
+{
+    for (GLuint i = 0; i < static_cast<GLuint>(boundTextures.size()); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    boundTextures.fill(0);
 }

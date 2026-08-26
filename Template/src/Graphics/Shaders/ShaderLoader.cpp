@@ -105,6 +105,7 @@ void LoadAllShaders()  //! load order matters see Globals.h ShaderID struct
     // Prefilter
     Load("Assets/shaders/skybox/prefilter.vert",
          "Assets/shaders/skybox/prefilter.frag");
+    AddUnits(ShaderID::PREFILTER, { { "environmentMap", 0 } });
 
     // BRDF LUT
     Load("Assets/shaders/skybox/LUT.vert",

@@ -8,6 +8,7 @@
 #include "..\GLObjects\VBO.h"
 #include "..\GLObjects\EBO.h"
 #include "..\GLObjects/CubeTexture.h"
+#include "..\GLObjects/Texture.h"
 
 #include "..\Shaders\ShaderManager.h"
 
@@ -64,7 +65,7 @@ private:
     void HDRtoCube(float* data, int widthImg, int heightImg, int resolution);
     void CubeToIrradiance(int resolution);
     void CubeToPrefiltered(int baseResolution);
-    void DrawCaptureCube(ShaderID shaderID, glm::mat4 cameraMatrix, GLuint inputTexture) const;
+    void DrawCaptureCube(ShaderID shaderID, glm::mat4 cameraMatrix, Texture& inputTexture) const;
     void bind() const
     {
         skyboxVAO.Bind();

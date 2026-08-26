@@ -39,6 +39,7 @@ void PostProcessSystem::End()
     antiAlias.CopyResultsTo(finalFrameBuffer);
     Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1].ID, ShaderID::BLUR, 5);
 
+    GPUInstrumentationTimer timer("Post Process Pass");
     ShaderManager::Activate(ShaderID::POSTPROCESS);
     glUniform1f(ShaderManager::getLoc(ShaderID::POSTPROCESS, "gamma"), gamma);
     finalFrameBuffer.textures[0].texUnit(ShaderID::POSTPROCESS, "tex0");

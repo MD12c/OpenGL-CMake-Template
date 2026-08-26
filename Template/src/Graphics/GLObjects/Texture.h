@@ -57,10 +57,12 @@ public:
     void Bind(GLint unit) const;
     void Unbind(GLint unit) const;
 
+    static void UnbindAll();
+
 private:
     bool mipMapGenerated = false;
 
-    inline static std::array<GLint, 32> boundTextures;
+    inline static std::array<GLint, 32> boundTextures{};
     
     void createGLtexture(const void* data,
                          GLenum      formatL,

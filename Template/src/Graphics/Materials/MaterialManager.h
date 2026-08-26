@@ -48,7 +48,6 @@ std::shared_ptr<Texture> makeTexture(const std::string& texturePath, Texture::Te
 std::shared_ptr<Texture> makeTexture(const std::string& texturePath1, const std::string& texturePath2, Texture::TextureType type);
 
 Material& getMatAt(MaterialID ID);
-void      Unbind(MaterialID ID);
 
 };  // namespace MaterialManager
 #endif

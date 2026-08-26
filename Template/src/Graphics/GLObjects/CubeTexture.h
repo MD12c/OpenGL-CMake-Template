@@ -10,7 +10,7 @@
 class CubeTexture
 {
 private:
-    inline static std::array<GLint, 32> boundTextures;
+    inline static std::array<GLint, 32> boundTextures{};
 
 public:
     GLuint ID;
@@ -24,10 +24,12 @@ public:
 
     void LoadTexture(int index, const void* data, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const;
     void AllocTexture(int index, GLenum type, GLenum formatL, GLenum formatR, int w, int h) const;
+    void texUnit(ShaderID shaderID, const std::string& uniform) const;
     void Draw(GLuint unit) const;
     void Bind(GLuint unit) const;
     void Unbind(GLuint unit) const;
-    void texUnit(ShaderID shaderID, const std::string& uniform) const;
+
+    static void UnbindAll();
 };
 
 #endif

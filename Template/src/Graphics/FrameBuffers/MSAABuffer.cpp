@@ -46,6 +46,7 @@ void MSAAbuffer::Activate()
 
 void MSAAbuffer::CopyResultsTo(const Framebuffer& postProcessing)
 {
+    GPUInstrumentationTimer timer("MSAA copy");
     glBindFramebuffer(GL_READ_FRAMEBUFFER, ID);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postProcessing.ID);
 
