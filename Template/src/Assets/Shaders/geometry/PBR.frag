@@ -152,7 +152,7 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float k)
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0)
 {
-    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+    return F0 + (1.0 - F0) * pow(1.001 - cosTheta, 5.0);
 }
 
 vec3 direcLight(int i, vec3 lightDir, vec3 N)
@@ -187,7 +187,7 @@ vec3 direcLight(int i, vec3 lightDir, vec3 N)
 vec3 spotLight(int i, vec3 surfaceToLightPos, vec3 N)
 {
     vec4  fragPosLight = spotShadowMatrix[i] * vec4(crntPos, 1.0);
-    float angle        = dot(normalize(-spotLightDirection[i]), normalize(-surfaceToLightPos));
+    float angle        = dot(normalize(spotLightDirection[i]), normalize(-surfaceToLightPos));
     float inten        = clamp((angle - spotLightOuterCone[i]) / (spotLightInnerCone[i] - spotLightOuterCone[i]), 0.0f, 1.0f);
 
     float shadow      = 0.0f;
@@ -270,14 +270,16 @@ void main()
 {
     const vec2 UVs = getUVs();
 
-    vec3       sum = vec3(0.0f);                   // PBR sum
-    const vec3 P   = crntPos;                      // fragment pos
-    const vec3 Wo  = normalize(camPos - crntPos);  // view dir
-    const vec3 N   = getNormal(UVs);               // normal
-
     float crntMetalic     = useMetalic ? texture(metalicRoughness0, UVs).b : metalic;
     float crntRoughness   = useRoughness ? texture(metalicRoughness0, UVs).g : roughness;
     vec3  crntAlbedoColor = useTexture ? texture(albedo0, UVs).rgb : albedoColor;
+
+    if (length(camPos - crntPos) < 0.01f)
+        return;
+
+    const vec3 Wo  = normalize(camPos - crntPos);  // view dir
+    vec3       sum = vec3(0.0f);                   // PBR sum
+    const vec3 N   = getNormal(UVs);               // normal
 
     vec3 F0 = vec3(0.04);
     F0      = mix(F0, crntAlbedoColor, crntMetalic);
@@ -310,6 +312,8 @@ void main()
 
     for (int i = 0; i < numSpotLights; i++)
     {
+        if (length(spotLightPos[i] - crntPos) < 0.01f)
+            continue;
         const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
         const vec3 Wi      = normalize(toLight);         // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
@@ -325,7 +329,7 @@ void main()
 
     FragColor = vec4(ambient, 1.0f) + vec4(sum, 1.0f);
 
-    // FragColor = vec4(pointLight(0, spotLightPos[0] - crntPos, N), 1.0f);
+    // FragColor = vec4(spotLight(0, spotLightPos[0] - crntPos, N), 1.0f);
 
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > 1.0f)
