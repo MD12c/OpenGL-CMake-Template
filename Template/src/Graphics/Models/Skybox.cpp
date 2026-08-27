@@ -1,8 +1,15 @@
 #include "Skybox.h"
 
 #include "Globals.h"
-#include "../Shaders/ShaderManager.h"
+#include "..\Shaders\ShaderManager.h"
 #include "../GLObjects/Texture.h"
+
+#include "stb/stb_image.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/vector_angle.hpp>
 
 static const glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 static const glm::mat4 captureViews[]    = {

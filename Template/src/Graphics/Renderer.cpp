@@ -2,27 +2,31 @@
 
 #include "imgui.h"
 #include "Globals.h"
+#include "Cameras/Camera.h"
 #include "Lighting\LightSystem.h"
 
-using namespace ShaderManager;
-
 Renderer::Renderer()
-    : postProcessSystem()
+    : postProcessSystem(),
+      frustum(),
+      noTexture(MaterialManager::makeTexture("Assets/Textures/noTexture.png", Texture::TextureType::ALBEDO))
 {
-    LoadAllShaders();
+    ShaderManager::LoadAllShaders();
+    Texture::setNoTextureID(noTexture->ID);
     postProcessSystem.lut.Draw(ShaderID::BRDF_LUT);
 }
 
 Renderer::~Renderer()
 {
-    PrintLoadedUniforms();
-    Cleanup();
+    ShaderManager::PrintLoadedUniforms();
+    ShaderManager::Cleanup();
 }
 
 void Renderer::Render(const Scene& scene)
 {
     GPUInstrumentationTimer timer("Frame");
-    scene.lightSystem.ShadowPass(scene.models, scene.lights);
+    frustum.setFrustumPlanes(scene.cameras[0]->getCameraMat());
+    
+    scene.lightSystem.ShadowPass(scene.models, scene.lights, scene.worldTransform);
 
     postProcessSystem.Begin();
 
@@ -33,7 +37,7 @@ void Renderer::Render(const Scene& scene)
 
     scene.cameras[scene.activeCam]->updateUniforms(useShader);
     for (const auto& model : scene.models)
-        model.Draw(useShader, {{}, {}, glm::vec3(0.02f)});
+        model.Draw(useShader, scene.worldTransform, &frustum);
 
     scene.cameras[scene.activeCam]->updateUniforms(ShaderID::LIGHT_SPHERE);
     scene.lightSystem.DrawLightSpheres(ShaderID::LIGHT_SPHERE, scene.lights);

@@ -12,9 +12,10 @@ private:
 public:
     Camera2D(GLFWwindow* window);
 
-    void updateScreenSize() override;
-    void Inputs(GLFWwindow* window) override;
-    void onScroll(GLFWwindow* win, double xoffset, double yoffset) override;
+    void  updateScreenSize() override;
+    void  Inputs(GLFWwindow* window) override;
+    void  onScroll(GLFWwindow* win, double xoffset, double yoffset) override;
+    float getFOV() const override { return -1.0f; }
 };
 
 #endif

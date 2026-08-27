@@ -7,7 +7,7 @@ CameraFly::CameraFly(GLFWwindow* window, float FOVdeg, float nearPlane, float fa
       nearPlane(nearPlane),
       farPlane(farPlane)
 {
-    view = glm::lookAt(position, position + Orientation, Up);
+    view = glm::lookAt(Position, Position + Orientation, Up);
     updateScreenSize();
 }
 
@@ -20,17 +20,17 @@ void CameraFly::Inputs(GLFWwindow* window)
 {
     // Keyboard
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        position += speed * Orientation;
+        Position += speed * Orientation;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        position += speed * -glm::normalize(glm::cross(Orientation, Up));
+        Position += speed * -glm::normalize(glm::cross(Orientation, Up));
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        position += speed * -Orientation;
+        Position += speed * -Orientation;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        position += speed * glm::normalize(glm::cross(Orientation, Up));
+        Position += speed * glm::normalize(glm::cross(Orientation, Up));
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        position += speed * Up;
+        Position += speed * Up;
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        position += speed * -Up;
+        Position += speed * -Up;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         speed = 0.4f;
     else
@@ -75,7 +75,7 @@ void CameraFly::Inputs(GLFWwindow* window)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         firstClick = true;
     }
-    view = glm::lookAt(position, position + Orientation, Up);
+    view = glm::lookAt(Position, Position + Orientation, Up);
 }
 
 void CameraFly::onScroll(GLFWwindow* win, double xoffset, double yoffset)

@@ -27,7 +27,7 @@ void LightSystem::DrawLightSpheres(ShaderID shaderID, const std::vector<Light>& 
     {
         glm::vec4 col = glm::vec4(light.getColor(), 1.0f);
         glUniform4fv(ShaderManager::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
-        icoSphere.Draw(shaderID, Transform(light.getPosition()), materialSphere);
+        icoSphere.Draw(shaderID, Transform(light.getPosition()), nullptr, materialSphere);
     }
     glDisable(GL_CULL_FACE);
 }
@@ -60,7 +60,7 @@ void LightSystem::ExportUniforms(ShaderID shaderID, const std::vector<Light>& li
     glUniform1i(ShaderManager::getLoc(shaderID, "numPointLights"), pointIdx);
 }
 
-void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector<Light>& lights) const
+void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector<Light>& lights, Transform transform) const
 {
     shadowSystem->ClearAllTargets();
 
@@ -76,7 +76,7 @@ void LightSystem::ShadowPass(const std::vector<Model>& models, const std::vector
 
         light.caster->BeginDepthPass(shaderID, *shadowSystem, light.getPosition());
         for (const auto& model : models)
-            model.Draw(shaderID, {{}, {}, glm::vec3(0.02f)}, materialID);
+            model.Draw(shaderID, transform, nullptr, materialID);
         light.caster->EndDepthPass();
     }
 }

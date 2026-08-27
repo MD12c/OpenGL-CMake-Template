@@ -1,5 +1,5 @@
-#ifndef TRANSFORM_CLASS_H
-#define TRANSFORM_CLASS_H
+#ifndef MODEL_TRANSFORM_CLASS_H
+#define MODEL_TRANSFORM_CLASS_H
 
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"

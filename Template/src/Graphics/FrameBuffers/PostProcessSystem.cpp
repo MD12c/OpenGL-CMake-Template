@@ -37,7 +37,7 @@ void PostProcessSystem::Begin()
 void PostProcessSystem::End()
 {
     antiAlias.CopyResultsTo(finalFrameBuffer);
-    Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1].ID, ShaderID::BLUR, 5);
+    Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1].ID, ShaderID::BLUR, 3);
 
     GPUInstrumentationTimer timer("Post Process Pass");
     ShaderManager::Activate(ShaderID::POSTPROCESS);

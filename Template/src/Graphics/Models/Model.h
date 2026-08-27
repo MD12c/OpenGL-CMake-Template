@@ -8,6 +8,7 @@
 
 #include "../Shaders/ShaderManager.h"
 #include "../Materials/MaterialManager.h"
+#include "../Frustum/Frustum.h"
 #include "Transform.h"
 
 class Model
@@ -25,7 +26,7 @@ public:
 
     Model(const std::string& path);
 
-    void Draw(ShaderID shaderID, Transform transform = {}, MaterialID materialID = USE_FILE_MATERIAL) const;
+    void Draw(ShaderID shaderID, Transform transform = {}, const Frustum* frustum = nullptr, MaterialID materialID = USE_FILE_MATERIAL) const;
 
     void setMeshMetalicRoughness(int meshIndex, float metalic, float roughness);
     void setCustomMaterial(MaterialID materialID);

@@ -2,14 +2,18 @@
 #define RENDERER_CLASS_H
 
 #include "Scene.h"
-#include "Cameras/Camera.h"
+#include "Frustum/Frustum.h"
 #include "FrameBuffers/PostProcessSystem.h"
+#include "Models/Transform.h"
 
 class Renderer
 {
 public:
     PostProcessSystem postProcessSystem;
-    
+    Frustum           frustum;
+
+    std::shared_ptr<Texture> noTexture;
+
     Renderer();
     ~Renderer();
 

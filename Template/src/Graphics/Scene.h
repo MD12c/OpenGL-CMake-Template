@@ -6,8 +6,11 @@
 
 #include "Lighting\LightSystem.h"
 #include "Models/Model.h"
+#include "Models/Transform.h"
 #include "Models\Skybox.h"
 #include "Cameras/Camera.h"
+
+class Camera;
 
 class Scene
 {
@@ -19,6 +22,7 @@ public:
     GLFWwindow*               glfwWindowPtr;
     std::function<void(void)> imguiFunctions = {};
 
+    Transform                       worldTransform;
     Skybox                          skybox;
     std::vector<Model>              models;
     std::vector<LightSystem::Light> lights;

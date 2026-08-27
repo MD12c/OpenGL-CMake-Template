@@ -8,14 +8,15 @@ class CameraFly : public Camera
 private:
     float FOVdeg, nearPlane, farPlane;
 
-	float speed = 0.1f;
-	float sensitivity = 100.0f;
+    float speed       = 0.1f;
+    float sensitivity = 100.0f;
 
 public:
-	CameraFly(GLFWwindow* window, float FOVdeg, float nearPlane, float farPlane);
-    void updateScreenSize() override;
-	void Inputs(GLFWwindow* window) override;
-    void onScroll(GLFWwindow* win, double xoffset, double yoffset) override;
+    CameraFly(GLFWwindow* window, float FOVdeg, float nearPlane, float farPlane);
+    void  updateScreenSize() override;
+    void  Inputs(GLFWwindow* window) override;
+    void  onScroll(GLFWwindow* win, double xoffset, double yoffset) override;
+    float getFOV() const override { return FOVdeg; }
 };
 
 #endif

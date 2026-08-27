@@ -42,9 +42,12 @@ set(CAMERA_SOURCES
     src/Graphics/Cameras/Orbit.cpp)
 
 set(MODEL_SOURCES
-    src/Graphics/Models/Mesh.h src/Graphics/Models/Mesh.cpp
-    src/Graphics/Models/Model.h src/Graphics/Models/Model.cpp
-    src/Graphics/Models/Skybox.h src/Graphics/Models/Skybox.cpp
+    src/Graphics/Models/Mesh.h
+    src/Graphics/Models/Mesh.cpp
+    src/Graphics/Models/Model.h
+    src/Graphics/Models/Model.cpp
+    src/Graphics/Models/Skybox.h
+    src/Graphics/Models/Skybox.cpp
     src/Graphics/Models/Transform.h)
 
 set(MATERIAL_SOURCES
@@ -79,6 +82,10 @@ set(FRAMEBUFFER_SOURCES
     src/Graphics/FrameBuffers/PostProcessSystem.h
     src/Graphics/FrameBuffers/PostProcessSystem.cpp)
 
+set(FRUSTUM_SOURCES
+    src/Graphics/Frustum/Frustum.h src/Graphics/Frustum/Frustum.cpp
+    src/Graphics/Frustum/Plane.h src/Graphics/Frustum/BoundingSphere.h)
+
 set(UTILITY_SOURCES include/libraries/Benchmarks/Instrumentatior.h
                     include/libraries/Benchmarks/GPUtimer.h)
 
@@ -93,6 +100,7 @@ add_executable(
   ${MODEL_SOURCES}
   ${MATERIAL_SOURCES}
   ${FRAMEBUFFER_SOURCES}
+  ${FRUSTUM_SOURCES}
   ${UTILITY_SOURCES})
 
 target_include_directories(${PROJECT_NAME}

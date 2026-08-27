@@ -73,9 +73,10 @@ enum ShaderID
     LAST
 };
 
-using MaterialID                       = uint32_t;
-constexpr MaterialID NO_MATERIAL       = UINT32_MAX;
-constexpr MaterialID USE_FILE_MATERIAL = UINT32_MAX - 1;
+using MaterialID                        = uint32_t;
+constexpr MaterialID NO_MATERIAL        = UINT32_MAX;
+constexpr MaterialID USE_FILE_MATERIAL  = UINT32_MAX - 1;
+constexpr MaterialID WIREFRAME_MATERIAL = UINT32_MAX - 2;
 
 class Square;
 inline Square* quad = nullptr;

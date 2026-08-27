@@ -17,15 +17,16 @@ private:
     float speedYaw   = 100.0f;
     float speedPitch = 100.0f;
     float speedZoom  = 1.0f;
-    float speedMove = 10.0f;
+    float speedMove  = 10.0f;
 
     glm::vec3 calculatePos();
 
 public:
     CameraOrbit(GLFWwindow* window);
-    void Inputs(GLFWwindow* window) override;
-    void updateScreenSize() override;
-    void onScroll(GLFWwindow* win, double xoffset, double yoffset) override;
+    void  Inputs(GLFWwindow* window) override;
+    void  updateScreenSize() override;
+    void  onScroll(GLFWwindow* win, double xoffset, double yoffset) override;
+    float getFOV() const override { return FOVdeg; }
 
     void setSpeeds(float speedYaw, float speedPitch, float speedZoom);
     void setProjection(float FOVdeg, float nearPlane, float farPlane);

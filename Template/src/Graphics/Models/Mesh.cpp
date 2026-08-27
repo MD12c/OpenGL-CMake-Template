@@ -2,29 +2,32 @@
 
 #include <cstddef>
 
-Mesh::Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, MaterialID materialID)
-    : vertices(verticies), indices(indices), materialID(materialID), VAO(), VBO(vertices), EBO(indices)
+#include "../Frustum/Frustum.h"
+
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, MaterialID materialID)
+    : vertices(vertices), indices(indices), materialID(materialID), vao(), vbo(vertices), ebo(indices), sphere(computeBoundingSphere(vertices))
 {
-    VAO.Bind();
-    VBO.Bind();
-    EBO.Bind();
+    vao.Bind();
+    vbo.Bind();
+    ebo.Bind();
 
-    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
-    VAO.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-    VAO.LinkAttrib(VBO, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texUV));
-    VAO.LinkAttrib(VBO, 3, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, position));
+    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texUV));
+    vao.LinkAttrib(vbo, 3, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
 
-    VAO.Unbind();
-    VBO.Unbind();
-    EBO.Unbind();
+    vao.Unbind();
+    vbo.Unbind();
+    ebo.Unbind();
 }
 
 void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID drawMaterialID) const
 {
     GPUInstrumentationTimer timer("Draw Call");
+
     ShaderManager::Activate(shaderID);
 
-    VAO.Bind();
+    vao.Bind();
 
     if (drawMaterialID == USE_FILE_MATERIAL)
         MaterialManager::getMatAt(materialID).Apply();

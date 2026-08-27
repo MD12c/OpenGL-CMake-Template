@@ -15,7 +15,7 @@ void Camera::updateUniforms(ShaderID shaderID) const
     ShaderManager::Activate(shaderID);
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "proj"), 1, GL_FALSE, glm::value_ptr(proj));
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-    glUniform3f(ShaderManager::getLoc(shaderID, "camPos"), position.x, position.y, position.z);
+    glUniform3f(ShaderManager::getLoc(shaderID, "camPos"), Position.x, Position.y, Position.z);
 }
 
 glm::vec2 Camera::screenToWorld(const glm::vec2& pos)

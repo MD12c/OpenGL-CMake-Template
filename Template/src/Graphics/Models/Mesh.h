@@ -7,12 +7,16 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 
-#include "../GLObjects/VAO.h"
-#include "../GLObjects/EBO.h"
-#include "../Cameras/Camera.h"
-#include "../GLObjects/Texture.h"
 #include "../Shaders/ShaderManager.h"
 #include "../Materials/MaterialManager.h"
+#include "../Frustum/BoundingSphere.h"
+
+#include "../GLObjects/VAO.h"
+#include "../GLObjects/EBO.h"
+#include "../GLObjects/VBO.h"
+#include "../GLObjects/Texture.h"
+
+class Frustum;
 
 class Mesh
 {
@@ -21,11 +25,13 @@ public:
     std::vector<GLuint> indices;
     int                 materialID;
 
-    VAO VAO;
-    VBO VBO;
-    EBO EBO;
+    VAO vao;
+    VBO vbo;
+    EBO ebo;
 
-    Mesh(std::vector<Vertex>& verticies, std::vector<GLuint>& indices, MaterialID materialID);
+    BoundingSphere sphere;
 
-    void Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID drawMaterialID) const;
+    Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, MaterialID materialID);
+
+    void Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID drawMaterialID = NO_MATERIAL) const;
 };

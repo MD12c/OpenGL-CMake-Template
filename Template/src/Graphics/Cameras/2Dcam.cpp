@@ -21,13 +21,13 @@ void Camera2D::onScroll(GLFWwindow* win, double xoffset, double yoffset)
     zoom  = glm::clamp(expf(logf(zoom) + -(float)yoffset * sensitivity), 0.125f, 64.0f);
     scale = glm::scale(glm::mat4(1.0f), glm::vec3(zoom, zoom, 1.0f));
 
-    view = glm::inverse(glm::translate(glm::mat4(1.0f), position) * scale);
+    view = glm::inverse(glm::translate(glm::mat4(1.0f), Position) * scale);
 
     glm::vec2 worldMouseAfter = screenToWorld(glm::vec2(posX, posY));
     glm::vec2 d               = worldMouseBefore - worldMouseAfter;
 
-    position += glm::vec3(d, 0.0f);
-    view = glm::inverse(glm::translate(glm::mat4(1.0f), position) * scale);
+    Position += glm::vec3(d, 0.0f);
+    view = glm::inverse(glm::translate(glm::mat4(1.0f), Position) * scale);
 };
 
 void Camera2D::updateScreenSize()
@@ -51,9 +51,9 @@ void Camera2D::Inputs(GLFWwindow* window)
         glm::vec2 worldPrev  = screenToWorld(glm::vec2(posXprev, posYprev));
         glm::vec2 worldDelta = worldPrev - worldCurr;
 
-        position += glm::vec3(worldDelta, 0.0f);
+        Position += glm::vec3(worldDelta, 0.0f);
 
-        view = glm::inverse(glm::translate(glm::mat4(1.0f), position) * scale);
+        view = glm::inverse(glm::translate(glm::mat4(1.0f), Position) * scale);
     }
 
     posXprev = posX;

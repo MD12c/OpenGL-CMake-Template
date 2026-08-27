@@ -26,13 +26,26 @@ void App::Update()
     if (timeDiff >= 1.0 / 60.0)
     {
         timePrev = timeCrnt;
+
         if (!My_ImGui::m_io->WantCaptureMouse)
             scene.cameras[scene.activeCam]->Inputs(scene.glfwWindowPtr);
+
+        Camera& camera = *scene.cameras[scene.activeCam];
         if (glfwGetKey(window.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
         {
-            scene.lights.at(0).setPosition(scene.cameras[scene.activeCam]->position + glm::vec3(0.0f, 0.0f, 0.5f));
-            scene.lights.at(0).setDirection(scene.cameras[scene.activeCam]->Orientation);
+            scene.lights.at(0).setPosition(camera.Position);
+            scene.lights.at(0).setDirection(camera.Orientation);
         }
+
+        static bool firstClick_C = true;
+        if (glfwGetKey(window.getWindow(), GLFW_KEY_C) == GLFW_PRESS && firstClick_C)
+        {
+            scene.activeCam = !scene.activeCam;
+            firstClick_C = false;
+        }
+        else if (glfwGetKey(window.getWindow(), GLFW_KEY_C) == GLFW_RELEASE)
+            firstClick_C = true;
+
         // for (auto& model : scene.models)
         //     model.setMeshMetalicRoughness(-1, My_ImGui::metalic, My_ImGui::roughness);
     }

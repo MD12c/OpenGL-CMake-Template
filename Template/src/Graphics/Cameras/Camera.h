@@ -20,7 +20,7 @@ public:
     glm::mat4 view  = glm::mat4(1.0f);
     glm::mat4 scale = glm::mat4(1.0f);
 
-    glm::vec3 position    = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 Position    = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 Up          = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -31,10 +31,12 @@ public:
     void        updateUniforms(ShaderID shaderID) const;
     glm::vec2   screenToWorld(const glm::vec2& pos);
 
-    virtual void updateScreenSize()                                        = 0;
-    virtual void Inputs(GLFWwindow* window)                                = 0;
-    virtual void onScroll(GLFWwindow* win, double xoffset, double yoffset) = 0;
+    virtual void  updateScreenSize()                                        = 0;
+    virtual void  Inputs(GLFWwindow* window)                                = 0;
+    virtual void  onScroll(GLFWwindow* win, double xoffset, double yoffset) = 0;
+    virtual float getFOV() const                                            = 0;
 
     glm::mat4 getRotationMat();
+    glm::mat4 getCameraMat() const { return proj * view * scale; }
 };
 #endif

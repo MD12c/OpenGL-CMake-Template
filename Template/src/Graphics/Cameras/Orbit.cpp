@@ -4,9 +4,9 @@
 CameraOrbit::CameraOrbit(GLFWwindow* window)
     : Camera(window)
 {
-    position    = calculatePos() + focusPoint;
-    Orientation = glm::normalize(-position + focusPoint);
-    view        = glm::lookAt(position, position + Orientation, Up);
+    Position    = calculatePos() + focusPoint;
+    Orientation = glm::normalize(-Position + focusPoint);
+    view        = glm::lookAt(Position, Position + Orientation, Up);
     proj        = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
     updateScreenSize();
 }
@@ -69,10 +69,10 @@ void CameraOrbit::Inputs(GLFWwindow* window)
         if (pitch > 89.0f) pitch = 89.0f;
         if (pitch < -89.0f) pitch = -89.0f;
 
-        position = calculatePos() + focusPoint;
+        Position = calculatePos() + focusPoint;
 
         // Look at origin
-        Orientation = glm::normalize(-position + focusPoint);
+        Orientation = glm::normalize(-Position + focusPoint);
 
         // Locks the cursor to the middle of the screen
         glfwSetCursorPos(window, (width / 2), (height / 2));
@@ -98,7 +98,7 @@ void CameraOrbit::Inputs(GLFWwindow* window)
         glm::vec3 newRight = glm::normalize(glm::cross(Orientation, Up));
         glm::vec3 newUp    = glm::normalize(glm::cross(newRight, Orientation));
         focusPoint += -newRight * moveX + newUp * moveY;
-        position = calculatePos() + focusPoint;
+        Position = calculatePos() + focusPoint;
 
         glfwSetCursorPos(window, (width / 2), (height / 2));
     }
@@ -108,15 +108,15 @@ void CameraOrbit::Inputs(GLFWwindow* window)
         firstClick = true;
     }
 
-    view = glm::lookAt(position, position + Orientation, Up);
+    view = glm::lookAt(Position, Position + Orientation, Up);
 }
 
 void CameraOrbit::onScroll(GLFWwindow* win, double xoffset, double yoffset)
 {
     radius      = glm::clamp(expf(logf(radius) + -(float)yoffset * speedZoom), 0.1f, 1000.0f);
-    position    = calculatePos() + focusPoint;
-    Orientation = glm::normalize(-position + focusPoint);
-    view        = glm::lookAt(position, position + Orientation, Up);
+    Position    = calculatePos() + focusPoint;
+    Orientation = glm::normalize(-Position + focusPoint);
+    view        = glm::lookAt(Position, Position + Orientation, Up);
 }
 
 void CameraOrbit::updateScreenSize()

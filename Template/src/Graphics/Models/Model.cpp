@@ -9,10 +9,23 @@ Model::Model(const std::string& path)
     loadModel(path);
 }
 
-void Model::Draw(ShaderID shaderID, Transform transform, MaterialID materialID) const
+void Model::Draw(ShaderID shaderID, Transform transform, const Frustum* frustum, MaterialID materialID) const
 {
-    for (unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].Draw(shaderID, transform.model, transform.normal, materialID);
+    for (const auto& mesh : meshes)
+    {
+        glm::vec3 worldCenter = glm::vec3(transform.model * glm::vec4(mesh.sphere.center, 1.0f));
+
+        float maxScale = std::max(
+            { glm::length(glm::vec3(transform.model[0])),
+              glm::length(glm::vec3(transform.model[1])),
+              glm::length(glm::vec3(transform.model[2])) });
+        float worldRadius = mesh.sphere.radius * maxScale;
+
+        if (frustum && !frustum->sphereInFrustum(BoundingSphere(worldCenter, worldRadius)))
+            continue;
+
+        mesh.Draw(shaderID, transform.model, transform.normal, materialID);
+    }
 }
 
 void Model::loadModel(const std::string& path)
@@ -151,16 +164,16 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
             return (relPath.length && success) ? directory + "/" + relPath.C_Str() : "";
         };
 
-        for (int i = aiTextureType_DIFFUSE; i <= aiTextureType_GLTF_METALLIC_ROUGHNESS; i++)
-        {
-            aiTextureType type = static_cast<aiTextureType>(i);
-            std::string   path = findPath(type);
-            if (path == "")
-                continue;
+        // for (int i = aiTextureType_DIFFUSE; i <= aiTextureType_GLTF_METALLIC_ROUGHNESS; i++)
+        // {
+        //     aiTextureType type = static_cast<aiTextureType>(i);
+        //     std::string   path = findPath(type);
+        //     if (path == "")
+        //         continue;
 
-            const char* name = aiTextureTypeToString(type);
-            std::cout << name << ": " << path << std::endl;
-        }
+        //     const char* name = aiTextureTypeToString(type);
+        //     std::cout << name << ": " << path << std::endl;
+        // }
 
         // materialID = MaterialManager::LoadMaterialSpecular(
         //     std::string(material->GetName().C_Str()),
