@@ -14,7 +14,8 @@ This redering engine (if you can call it so) has:
 - Shadows for all 3 light types
 - Forward rendering pipeline (for now)
 - Multi-Sampling Anti-Alias
-- Gamma correction
+- Gamma correction + HDR
+- Frustum Culling
 - ImGui user interface
 - Post-Process effects
 - Diffuse, specular, normal and displacement mapping for specular
