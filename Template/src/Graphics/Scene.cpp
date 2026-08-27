@@ -47,9 +47,11 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
 
     imguiFunctions = [&]()
     {
-        My_ImGui::RenderOverlay(cameras[activeCam]->Position.x, cameras[activeCam]->Position.y, cameras[activeCam]->Position.z,
-                                cameras[activeCam]->Orientation.x, cameras[activeCam]->Orientation.y, cameras[activeCam]->Orientation.z);
-        My_ImGui::RenderInterfaceInput();
+        const Camera& cam = *cameras[activeCam];
+        My_ImGui::RenderOverlay(
+            cam.Position.x, cam.Position.y, cam.Position.z,
+            cam.Orientation.x, cam.Orientation.y, cam.Orientation.z);
+        //My_ImGui::RenderInterfaceInput();
     };
 }
 
