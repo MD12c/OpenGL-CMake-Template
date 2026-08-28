@@ -21,7 +21,6 @@ public:
 
     MSAAbuffer();
     void Resize(int w, int h);
-    void Activate();
     void CopyResultsTo(const Framebuffer& postProcessing);
 };
 

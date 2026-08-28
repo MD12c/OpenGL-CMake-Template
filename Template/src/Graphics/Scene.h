@@ -4,8 +4,7 @@
 #include <vector>
 #include <functional>
 
-#include "Lighting\LightSystem.h"
-#include "Models/Model.h"
+#include "Lighting/LightResources.h"
 #include "Models/Transform.h"
 #include "Models\Skybox.h"
 #include "Cameras/Camera.h"
@@ -18,14 +17,13 @@ public:
     const float zNear = 0.1f;
     const float zFar  = 400.0f;
 
-    LightSystem               lightSystem;
     GLFWwindow*               glfwWindowPtr;
     std::function<void(void)> imguiFunctions = {};
 
-    Transform                       worldTransform;
-    Skybox                          skybox;
-    std::vector<Model>              models;
-    std::vector<LightSystem::Light> lights;
+    Transform          worldTransform;
+    Skybox             skybox;
+    LightResources     lightResources;
+    std::vector<Model> models;
 
     int                                  activeCam = 0;
     std::vector<std::unique_ptr<Camera>> cameras;

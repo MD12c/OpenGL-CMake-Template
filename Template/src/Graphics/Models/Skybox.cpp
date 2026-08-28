@@ -88,6 +88,10 @@ Skybox::Skybox(std::string HDRimage)
 
 void Skybox::HDRtoCube(float* data, int widthImg, int heightImg, int resolution)
 {
+    GLint prevFramebuffer, prevIsCull;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
+    glGetIntegerv(GL_CULL_FACE, &prevIsCull);
+
     GLuint captureFBO, captureRBO;
     glGenFramebuffers(1, &captureFBO);
     glGenRenderbuffers(1, &captureRBO);
@@ -115,15 +119,19 @@ void Skybox::HDRtoCube(float* data, int widthImg, int heightImg, int resolution)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "HDRtoCube capture FBO incomplete!" << std::endl;
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (prevIsCull) glEnable(GL_CULL_FACE);
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
-
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
 }
 
 void Skybox::CubeToIrradiance(int resolution)
 {
+    GLint prevFramebuffer, prevIsCull;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
+    glGetIntegerv(GL_CULL_FACE, &prevIsCull);
+
     GLuint captureFBO, captureRBO;
     glGenFramebuffers(1, &captureFBO);
     glGenRenderbuffers(1, &captureRBO);
@@ -153,11 +161,11 @@ void Skybox::CubeToIrradiance(int resolution)
     }
     unbind();
 
-    glEnable(GL_CULL_FACE);
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Irradiance capture FBO incomplete!" << std::endl;
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (prevIsCull) glEnable(GL_CULL_FACE);
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
 }
@@ -177,6 +185,10 @@ void Skybox::DrawCaptureCube(ShaderID shaderID, glm::mat4 cameraMatrix, Texture&
 
 void Skybox::CubeToPrefiltered(int baseResolution)
 {
+    GLint prevFramebuffer, prevIsCull;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
+    glGetIntegerv(GL_CULL_FACE, &prevIsCull);
+
     GLuint captureFBO, captureRBO;
     glGenFramebuffers(1, &captureFBO);
     glGenRenderbuffers(1, &captureRBO);
@@ -220,28 +232,23 @@ void Skybox::CubeToPrefiltered(int baseResolution)
         std::cout << "Prefilter capture FBO incomplete!" << std::endl;
 
     unbind();
-    glEnable(GL_CULL_FACE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    if (prevIsCull) glEnable(GL_CULL_FACE);
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
 }
 
 void Skybox::Draw(ShaderID shaderID, glm::mat4 cameraMatrix) const
 {
+    GPUInstrumentationTimer timerGPU("Skybox");
     ShaderManager::Activate(shaderID);
     glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
     cubemapTexture->texUnit(shaderID, "skybox");
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture->ID);
 
     bind();
-    glDisable(GL_CULL_FACE);
-    glDepthFunc(GL_LEQUAL);
     if (cubemapTexture)
         cubemapTexture->Draw(ShaderManager::getUnit(shaderID, "skybox"));
     unbind();
-    glDepthFunc(GL_LESS);
-    glEnable(GL_CULL_FACE);
 }
 
 void Skybox::ExportUniformsTo(ShaderID shaderID) const

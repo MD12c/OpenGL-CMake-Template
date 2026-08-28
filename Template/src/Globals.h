@@ -5,7 +5,7 @@
 #include "Benchmarks/Instrumentatior.h"
 #include "Benchmarks/GPUtimer.h"
 
-#define BENCHMARK
+// #define BENCHMARK
 
 inline int         width        = 2560;
 inline int         height       = 1440;
@@ -41,7 +41,7 @@ constexpr GLuint squareIndices[6] = {
 constexpr glm::vec2 BOT_LEFT_BOUNDERY  = glm::vec2(square[0], square[1]);
 constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[6], square[7]);
 
-constexpr GLuint numSamples = 8;
+constexpr GLuint numSamples = 4;
 
 constexpr unsigned int MAX_DIR_LIGHTS   = 8;
 constexpr unsigned int MAX_SPOT_LIGHTS  = 8;
@@ -70,7 +70,7 @@ enum ShaderID
     IRRADIANCE,
     PREFILTER,
     BRDF_LUT,
-    LAST
+    LAST_SHADER
 };
 
 using MaterialID                        = uint32_t;
@@ -80,6 +80,12 @@ constexpr MaterialID WIREFRAME_MATERIAL = UINT32_MAX - 2;
 
 class Square;
 inline Square* quad = nullptr;
+
+struct DebugGroup
+{
+    DebugGroup(const char* name) { glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, -1, name); }
+    ~DebugGroup() { glPopDebugGroup(); }
+};
 
 //-----------------------------------------------------------------------
 // Temporary Globals Below

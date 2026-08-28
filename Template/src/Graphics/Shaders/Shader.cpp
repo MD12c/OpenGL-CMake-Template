@@ -57,7 +57,7 @@ void PrintProgramError(GLuint program)
               << infoLog << "\n";
 }
 
-Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) : filename(vertexFile)
+Shader::Shader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile) : filename(vertexFile), name(name)
 {
     std::string vertexCode   = get_file_contents(vertexFile);
     std::string fragmentCode = get_file_contents(fragmentFile);
@@ -84,8 +84,10 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) :
 
     ID = glCreateProgram();
     glAttachShader(ID, vertexShader);
+    
     glAttachShader(ID, fragmentShader);
     glLinkProgram(ID);
+    glObjectLabel(GL_PROGRAM, ID, -1, name.c_str());
 
     GLint successProgram;
     glGetProgramiv(ID, GL_LINK_STATUS, &successProgram);
@@ -96,7 +98,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile) :
     glDeleteShader(fragmentShader);
 }
 
-Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile) : filename(vertexFile)
+Shader::Shader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile) : filename(vertexFile), name(name)
 {
     std::string vertexCode   = get_file_contents(vertexFile);
     std::string fragmentCode = get_file_contents(fragmentFile);
@@ -136,6 +138,8 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
     glAttachShader(ID, geometryShader);
 
     glLinkProgram(ID);
+    glObjectLabel(GL_PROGRAM, ID, -1, name.c_str());
+
 
     GLint successProgram;
     glGetProgramiv(ID, GL_LINK_STATUS, &successProgram);
@@ -147,7 +151,7 @@ Shader::Shader(const std::string& vertexFile, const std::string& fragmentFile, c
     glDeleteShader(geometryShader);
 }
 
-Shader::Shader(const std::string& computeFile) : filename(computeFile)
+Shader::Shader(const std::string& name, const std::string& computeFile) : filename(computeFile), name(name)
 {
     std::string   computeCode   = get_file_contents(computeFile);
     const GLchar* computeSource = computeCode.c_str();
@@ -163,7 +167,9 @@ Shader::Shader(const std::string& computeFile) : filename(computeFile)
 
     ID = glCreateProgram();
     glAttachShader(ID, computeShader);
+
     glLinkProgram(ID);
+    glObjectLabel(GL_PROGRAM, ID, -1, name.c_str());
 
     GLint successProgram;
     glGetProgramiv(ID, GL_LINK_STATUS, &successProgram);

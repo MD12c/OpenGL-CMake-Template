@@ -8,6 +8,7 @@ Frustum::Frustum()
 
 void Frustum::setFrustumPlanes(const glm::mat4& vp)
 {
+    InstrumentationTimer timerCPU("frustum");
     leftFace.normal.x = vp[0][3] + vp[0][0];
     leftFace.normal.y = vp[1][3] + vp[1][0];
     leftFace.normal.z = vp[2][3] + vp[2][0];

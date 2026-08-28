@@ -5,21 +5,22 @@
 #include "Square.h"
 
 Bloom::Bloom()
-    : buffer1(1, false),
-      buffer2(1, false)
+    : buffer1(1, false, "Bloom1"),
+      buffer2(1, false, "Bloom2")
 {
 }
 
-Texture& Bloom::BlurPass(GLuint brightTexture, ShaderID shaderID, int numPasses)
+Texture& Bloom::BlurPass(const Texture& brightTexture, ShaderID shaderID, int numPasses)
 {
     GPUInstrumentationTimer timer("Blur Pass");
     ShaderManager::Activate(shaderID);
-    glActiveTexture(GL_TEXTURE0);
-    glUniform1i(ShaderManager::getLoc(shaderID, "tex0"), 0);
+    
+    GLint prevFramebuffer;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
     glViewport(0, 0, width, height);
 
     bool horizontal = true, first_iteration = true;
-
+    
     for (int i = 0; i < numPasses; i++)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, horizontal ? buffer1.ID : buffer2.ID);
@@ -27,16 +28,16 @@ Texture& Bloom::BlurPass(GLuint brightTexture, ShaderID shaderID, int numPasses)
         glUniform1i(ShaderManager::getLoc(shaderID, "horizontal"), horizontal);
 
         if (first_iteration)
-            glBindTexture(GL_TEXTURE_2D, brightTexture);
+            brightTexture.Bind(0);
         else
-            glBindTexture(GL_TEXTURE_2D, horizontal ? buffer2.textures[0].ID : buffer1.textures[0].ID);
+            horizontal ? buffer2.textures[0].texUnit(shaderID, "tex0") : buffer1.textures[0].texUnit(shaderID, "tex0");
 
         quad->DrawSquare();
         horizontal      = !horizontal;
         first_iteration = false;
     }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     return horizontal ? buffer2.textures[0] : buffer1.textures[0];
 }
 

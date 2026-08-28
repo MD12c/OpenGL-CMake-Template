@@ -17,10 +17,12 @@ set(VERTEX_BUFFERS_SOURCES
     src/Graphics/GLObjects/VAO.h
     src/Graphics/GLObjects/VBO.cpp
     src/Graphics/GLObjects/VBO.h
-    src/Graphics/GLObjects/SSBO.h
     src/Graphics/GLObjects/SSBO.cpp
+    src/Graphics/GLObjects/SSBO.h
     src/Graphics/GLObjects/RBO.cpp
     src/Graphics/GLObjects/RBO.h
+    src/Graphics/GLObjects/IBO.cpp
+    src/Graphics/GLObjects/IBO.h
     src/Graphics/GLObjects/Texture.cpp
     src/Graphics/GLObjects/Texture.h
     src/Graphics/GLObjects/CubeTexture.cpp
@@ -58,15 +60,13 @@ set(MATERIAL_SOURCES
     src/Graphics/Materials/MaterialManager.cpp)
 
 set(LIGHTING_SOURCES
-    src/Graphics/Lighting/LightSystem.h
-    src/Graphics/Lighting/LightSystem.cpp
     src/Graphics/Lighting/ShadowMap2D.h
     src/Graphics/Lighting/ShadowMap2D.cpp
     src/Graphics/Lighting/ShadowCaster.h
     src/Graphics/Lighting/ShadowMapCube.h
     src/Graphics/Lighting/ShadowMapCube.cpp
-    src/Graphics/Lighting/ShadowSystem.h
-    src/Graphics/Lighting/ShadowSystem.cpp)
+    src/Graphics/Lighting/LightResources.h
+    src/Graphics/Lighting/LightResources.cpp)
 
 set(FRAMEBUFFER_SOURCES
     src/Graphics/FrameBuffers/Bloom.h
@@ -78,9 +78,7 @@ set(FRAMEBUFFER_SOURCES
     src/Graphics/FrameBuffers/Square.h
     src/Graphics/FrameBuffers/Square.cpp
     src/Graphics/FrameBuffers/LUT.h
-    src/Graphics/FrameBuffers/LUT.cpp
-    src/Graphics/FrameBuffers/PostProcessSystem.h
-    src/Graphics/FrameBuffers/PostProcessSystem.cpp)
+    src/Graphics/FrameBuffers/LUT.cpp)
 
 set(FRUSTUM_SOURCES
     src/Graphics/Frustum/Frustum.h src/Graphics/Frustum/Frustum.cpp

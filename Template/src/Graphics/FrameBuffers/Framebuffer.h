@@ -10,14 +10,15 @@ class Framebuffer
 {
 public:
     GLuint               ID;
+    std::string          name;
     std::unique_ptr<RBO> framebufferRBO = nullptr;
     std::deque<Texture>  textures;
 
-    Framebuffer(int numRenderTargets, bool hasDepthStencil);
+    int crntWidth = 0, crntHeight = 0;
 
-    void ClearBuffer();
+    Framebuffer(int numRenderTargets, bool hasDepthStencil, const std::string& name);
+
     void Resize(int w, int h);
-    void Activate();
 };
 
 #endif

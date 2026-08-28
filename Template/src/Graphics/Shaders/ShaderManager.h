@@ -22,13 +22,13 @@ struct ShaderResources
     ShaderResources(const ShaderResources&)                = delete;
     ShaderResources& operator=(const ShaderResources&)     = delete;
 };
-extern std::deque<ShaderResources> shaderResources;
+extern std::deque<ShaderResources> shaderResources;  // TODO: make array
 
 extern ShaderID boundShader;
 
 void    LoadAllShaders();
-void    Load(const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
-void    Load(const std::string& vertPath, const std::string& fragPath);
+void    Load(const std::string& name, const std::string& vertPath, const std::string& fragPath, const std::string& geomPath);
+void    Load(const std::string& name, const std::string& vertPath, const std::string& fragPath);
 Shader& Get(ShaderID ID);
 void    AddUnits(ShaderID ID, std::unordered_map<std::string, GLint>&& units);
 void    PrintLoadedUniforms();

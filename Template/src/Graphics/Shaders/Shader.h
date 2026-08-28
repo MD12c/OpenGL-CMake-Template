@@ -10,17 +10,21 @@ class Shader
 public:
     GLuint      ID;
     std::string filename;
-    Shader(const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile);
-    Shader(const std::string& vertexFile, const std::string& fragmentFile);
-    Shader(const std::string& computeFile);
+    std::string name;
+
+    Shader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile, const std::string& geometryFile);  // TODO: cleanup constructor mess
+    Shader(const std::string& name, const std::string& vertexFile, const std::string& fragmentFile);
+    Shader(const std::string& name, const std::string& computeFile);
     Shader(const Shader&)            = delete;
     Shader& operator=(const Shader&) = delete;
     Shader(Shader&& other) noexcept
     {
         ID             = other.ID;
         filename       = other.filename;
+        name           = other.name;
         other.ID       = 0;
         other.filename = "";
+        other.name     = "";
     }
     ~Shader();
     void PrintError(GLuint shader);

@@ -14,8 +14,6 @@
 class ShadowMap2D : public ShadowCaster
 {
 private:
-    GLuint layerIndex;
-
     glm::mat4 proj = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
 
@@ -28,10 +26,8 @@ public:
     ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float fovDeg, float innerCone, float outerCone, float zNear, float zFar);
 
     void setView(glm::vec3 newPosition, glm::vec3 newDirection) override;
-    void BeginDepthPass(ShaderID shaderID, ShadowSystem& shadowSystem, glm::vec3 lightPos) override;
+    void BeginDepthPass(ShaderID shaderID, glm::vec3 lightPos) override;
     void ExportUniformsTo(ShaderID shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor) override;
-
-    void DrawDepthDebug(ShaderID shaderID, ShadowSystem& shadowSystem);
 };
 
 #endif

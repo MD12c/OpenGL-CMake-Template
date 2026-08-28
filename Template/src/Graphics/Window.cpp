@@ -11,6 +11,7 @@ Window::Window()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
     // glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
     m_window = glfwCreateWindow(width, height, windowName.c_str(), NULL, NULL);
     if (m_window == NULL)
@@ -29,9 +30,9 @@ Window::Window()
         width  = w;
         height = h;
         ptr->camera->updateScreenSize();
-        ptr->renderer->postProcessSystem.finalFrameBuffer.Resize(w, h);
-        ptr->renderer->postProcessSystem.antiAlias.Resize(w, h);
-        ptr->renderer->postProcessSystem.bloom.Resize(w, h);
+        ptr->renderer->finalFrameBuffer.Resize(w, h);
+        ptr->renderer->antiAlias.Resize(w, h);
+        ptr->renderer->bloom.Resize(w, h);
     };
 
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);

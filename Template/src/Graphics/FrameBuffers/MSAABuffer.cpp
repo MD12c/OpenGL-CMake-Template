@@ -7,9 +7,11 @@ MSAAbuffer::MSAAbuffer()
 {
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
+    glObjectLabel(GL_FRAMEBUFFER, ID, -1, "MSAA");
 
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureID);
+    glObjectLabel(GL_FRAMEBUFFER, ID, -1, "MSAA Texture");
     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB16F, width, height, GL_TRUE);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -33,15 +35,6 @@ MSAAbuffer::MSAAbuffer()
     auto MSAAStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (MSAAStatus != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "MSAAbuffer error: " << MSAAStatus << std::endl;
-}
-
-void MSAAbuffer::Activate()
-{
-    glViewport(0, 0, width, height);
-    glBindFramebuffer(GL_FRAMEBUFFER, ID);
-    glEnable(GL_MULTISAMPLE);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    MSAAbufferRBO.Bind();
 }
 
 void MSAAbuffer::CopyResultsTo(const Framebuffer& postProcessing)

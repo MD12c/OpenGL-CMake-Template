@@ -16,6 +16,10 @@ LUT::LUT()
 
 void LUT::Draw(ShaderID shaderID)
 {
+    GLint prevFramebuffer, prevViewport[4];
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
+    glGetIntegerv(GL_VIEWPORT, prevViewport);
+    
     GLuint framebuffer;
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -25,15 +29,13 @@ void LUT::Draw(ShaderID shaderID)
         std::cout << "LUT framebuffer incomplete!" << std::endl;
 
     ShaderManager::Activate(ShaderID::BRDF_LUT);
-    GLint prevViewport[4];
-    glGetIntegerv(GL_VIEWPORT, prevViewport);
     
     tex.Bind(0);
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
     quad->DrawSquare();
     
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
     glDeleteFramebuffers(1, &framebuffer);
 }
@@ -41,6 +43,5 @@ void LUT::Draw(ShaderID shaderID)
 
 void LUT::ExportUniformsTo(ShaderID shaderID)
 {
-    ShaderManager::Activate(shaderID);
     tex.texUnit(shaderID, "brdfLUT");
 }

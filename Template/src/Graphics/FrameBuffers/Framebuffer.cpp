@@ -4,11 +4,15 @@
 #include "../Shaders/ShaderManager.h"
 #include "Square.h"
 
-Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil)
+Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil, const std::string& name)
     : framebufferRBO(hasDepthStencil ? std::make_unique<RBO>(false) : nullptr)
 {
+    GLint prevFramebuffer;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
+    
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
+    glObjectLabel(GL_FRAMEBUFFER, ID, -1, name.c_str());
 
     for (int i = 0; i < numRenderTargets; i++)
     {
@@ -31,35 +35,15 @@ Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil)
     auto fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (fboStatus != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer error: " << fboStatus << std::endl;
-}
 
-void Framebuffer::Activate()
-{
-    glViewport(0, 0, width, height);
-    ClearBuffer();
-
-    if (framebufferRBO)
-        framebufferRBO->Bind();
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    glEnable(GL_STENCIL_TEST);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-}
-
-void Framebuffer::ClearBuffer()
-{
-    glBindFramebuffer(GL_FRAMEBUFFER, ID);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
 }
 
 void Framebuffer::Resize(int w, int h)
 {
+    crntWidth  = w;
+    crntHeight = h;
+
     for (const auto& tex : textures)
     {
         glBindTexture(GL_TEXTURE_2D, tex.ID);

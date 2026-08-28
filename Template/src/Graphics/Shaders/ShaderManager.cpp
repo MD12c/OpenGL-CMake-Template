@@ -6,7 +6,7 @@
 namespace ShaderManager
 {
 std::deque<ShaderResources> shaderResources;
-ShaderID                    boundShader = LAST;
+ShaderID                    boundShader = LAST_SHADER;
 
 Shader& Get(ShaderID ID)
 {
@@ -66,7 +66,7 @@ GLint getUnit(ShaderID ID, const std::string& name)
 
 void PrintLoadedUniforms()
 {
-    for (int i = 0; i < ShaderID::LAST; i++)
+    for (int i = 0; i < ShaderID::LAST_SHADER; i++)
     {
         auto&       map        = getUniforms(static_cast<ShaderID>(i));
         std::string shaderName = getName(static_cast<ShaderID>(i));

@@ -23,7 +23,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, Material
 
 void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID drawMaterialID) const
 {
-    GPUInstrumentationTimer timer("Draw Call");
+    GPUInstrumentationTimer timerGPU("Draw Call");
 
     ShaderManager::Activate(shaderID);
 

@@ -33,8 +33,8 @@ void App::Update()
         Camera& camera = *scene.cameras[scene.activeCam];
         if (glfwGetKey(window.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
         {
-            scene.lights.at(0).setPosition(camera.Position);
-            scene.lights.at(0).setDirection(camera.Orientation);
+            scene.lightResources.lights.at(0).setPosition(camera.Position);
+            scene.lightResources.lights.at(0).setDirection(camera.Orientation);
         }
 
         static bool firstClick_C = true;

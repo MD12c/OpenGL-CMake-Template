@@ -13,7 +13,8 @@ void Model::Draw(ShaderID shaderID, Transform transform, const Frustum* frustum,
 {
     for (const auto& mesh : meshes)
     {
-        glm::vec3 worldCenter = glm::vec3(transform.model * glm::vec4(mesh.sphere.center, 1.0f));
+        InstrumentationTimer timerCPU("Draw");
+        glm::vec3            worldCenter = glm::vec3(transform.model * glm::vec4(mesh.sphere.center, 1.0f));
 
         float maxScale = std::max(
             { glm::length(glm::vec3(transform.model[0])),
