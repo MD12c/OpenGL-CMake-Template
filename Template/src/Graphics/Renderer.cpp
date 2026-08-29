@@ -6,6 +6,10 @@
 #include "Framebuffers/Square.h"
 #include "Shaders/Shader.h"
 
+using RF = RenderFeature;
+using DF = DepthFunc;
+using CM = CullMode;
+
 Renderer::Renderer()
     : antiAlias(),
       finalFrameBuffer(2, true, "PostProcess"),
@@ -17,16 +21,19 @@ Renderer::Renderer()
     quad = new Square();
     Shader::LoadAllShaders();
     Texture::setNoTextureID(noTexture->ID);
-    for (int i = 0; i < RenderFlag::LAST_RENDERFLAG; i++)
-        applyFlag(flags[i], i);
+    glFrontFace(GL_CCW);
 
+    glGetError();
+
+    GLenum err1 = glGetError();
+    if (err1) std::cout << err1 << std::endl;
     lut.Draw(ShaderID::BRDF_LUT);
 }
 
 Renderer::~Renderer()
 {
     delete quad;
-    Shader::PrintLoadedUniforms();
+    // Shader::PrintLoadedUniforms();
     Shader::Cleanup();
 }
 
@@ -35,18 +42,17 @@ void Renderer::Render(const Scene& scene)
     GPUInstrumentationTimer timerGPU("Frame");
     InstrumentationTimer    timerCPU("Frame");
     frustum.setFrustumPlanes(scene.cameras[0]->getCameraMat());
-    
-    set(DEPTH_b, true);
-    set(CULL_b, true);
-    set(CULL_FACE_c, GL_BACK);
+
+    set(RF::DEPTH, true);
+    set(RF::CULL, true);
+    setCullMode(CM::BACK);
     glViewport(0, 0, ShadowCaster::SHADOW_MAP_WIDTH, ShadowCaster::SHADOW_MAP_HEIGHT);
     scene.lightResources.ShadowPass(this, scene.models, scene.worldTransform);
-    
-    set(CULL_b, false);
-    set(DEPTH_FUNC_c, GL_LESS);
-    set(FRONT_FACE_c, GL_CCW);
+
+    set(RF::CULL, false);
+    setDepthFunc(DF::LESS);
     glViewport(0, 0, width, height);
-    
+
     BindFramebuffer(antiAlias.ID);
     antiAlias.MSAAbufferRBO.Bind();
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -62,11 +68,11 @@ void Renderer::Render(const Scene& scene)
     scene.cameras[scene.activeCam]->updateUniforms(ShaderID::LIGHT_SPHERE);
     scene.lightResources.DrawLightSpheres(ShaderID::LIGHT_SPHERE);
 
-    set(CULL_b, false);
-    set(DEPTH_FUNC_c, GL_LEQUAL);
+    set(RF::CULL, false);
+    setDepthFunc(DF::LEQUAL);
     scene.skybox.Draw(ShaderID::SKYBOX, scene.cameras[scene.activeCam]->getRotationMat());
-    set(DEPTH_FUNC_c, GL_LESS);
-    set(CULL_b, true);
+    setDepthFunc(DF::LESS);
+    set(RF::CULL, true);
 
     antiAlias.CopyResultsTo(finalFrameBuffer);
     Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1], ShaderID::BLUR, 3);
@@ -75,52 +81,52 @@ void Renderer::Render(const Scene& scene)
     glUniform1f(Shader::getLoc(ShaderID::POSTPROCESS, "gamma"), gamma);
     finalFrameBuffer.textures[0].texUnit(ShaderID::POSTPROCESS, "tex0");
     blurredTexture.texUnit(ShaderID::POSTPROCESS, "tex1");
-    
+
     BindFramebuffer(0);
     glViewport(0, 0, width, height);
-    set(DEPTH_b, false);
+    set(RF::DEPTH, false);
     quad->DrawSquare();
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    set(DEPTH_b, true);
+    set(RF::DEPTH, true);
     Texture::UnbindAll();
     CubeTexture::UnbindAll();
-    // std::cout << glGetError() << std::endl;
+
     scene.imguiFunctions();
 }
 
-void Renderer::set(RenderFlag f, GLenum value)
+void Renderer::set(RenderFeature feature, bool enable)
 {
-    if (flags[f] == value)
-        return;
-    flags[f] = value;
+    size_t index = static_cast<size_t>(feature);
+    if (enabledFeatures[index] == enable) return;
+    enabledFeatures[index] = enable;
 
-    switch (f)
+    switch (feature)
     {
-        case DEPTH_b:
-            applyFlag(value, GL_DEPTH_TEST);
+        case RenderFeature::DEPTH:
+            enable ? glEnable(GL_DEPTH_TEST) : glDisable(GL_DEPTH_TEST);
             break;
-        case STENCIL_b:
-            applyFlag(value, GL_STENCIL_TEST);
+        case RenderFeature::STENCIL:
+            enable ? glEnable(GL_STENCIL_TEST) : glDisable(GL_STENCIL_TEST);
             break;
-        case COLOR_b:
-            applyFlag(value, GL_COLOR_LOGIC_OP);
+        case RenderFeature::CULL:
+            enable ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
             break;
-        case CULL_b:
-            applyFlag(value, GL_CULL_FACE);
-            break;
-        case CULL_FACE_c:
-            glCullFace(value);
-            break;
-        case FRONT_FACE_c:
-            glFrontFace(value);
-            break;
-        case DEPTH_FUNC_c:
-            glDepthFunc(value);
-            break;
-        case MULTISAMPLE_b:
-            applyFlag(value, GL_MULTISAMPLE);
-            break;
-        default:
+        case RenderFeature::MULTISAMPLE:
+            enable ? glEnable(GL_MULTISAMPLE) : glDisable(GL_MULTISAMPLE);
             break;
     }
+}
+
+void Renderer::setDepthFunc(DepthFunc func)
+{
+    if (currentDepthFunc == func) return;
+    currentDepthFunc = func;
+    glDepthFunc(static_cast<GLenum>(func));
+}
+
+void Renderer::setCullMode(CullMode mode)
+{
+    if (currentCullMode == mode) return;
+    currentCullMode = mode;
+    glCullFace(static_cast<GLenum>(mode));
 }

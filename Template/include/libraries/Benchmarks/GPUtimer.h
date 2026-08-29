@@ -28,6 +28,7 @@
 
 #include <glad/glad.h>  // swap for your GL loader (glew.h, etc.)
 
+#ifdef BENCHMARK
 struct GPUProfileResult
 {
     std::string Name;
@@ -201,3 +202,17 @@ private:
     GLuint      m_StartQuery, m_EndQuery;
     bool        m_Stopped;
 };
+#else
+class GPUInstrumentor
+{
+public:
+    GPUInstrumentor() {}
+    void BeginSession(const std::string& name, const std::string& filepath = "") {}
+    void EndSession() {}
+};
+class GPUInstrumentationTimer
+{
+public:
+    GPUInstrumentationTimer(std::string name) {}
+};
+#endif

@@ -2,10 +2,11 @@
 #include <string>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+
+//#define BENCHMARK
 #include "Benchmarks/Instrumentatior.h"
 #include "Benchmarks/GPUtimer.h"
 
-// #define BENCHMARK
 
 inline int         width        = 2560;
 inline int         height       = 1440;

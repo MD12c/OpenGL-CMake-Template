@@ -9,24 +9,37 @@
 #include "FrameBuffers/LUT.h"
 #include "Models/Transform.h"
 
-// _b bool, _c choice
-enum RenderFlag
+enum class RenderFeature : uint8_t
 {
-    DEPTH_b,
-    DEPTH_FUNC_c,
-    STENCIL_b,
-    COLOR_b,
-    CULL_b,
-    CULL_FACE_c,
-    FRONT_FACE_c,
-    MULTISAMPLE_b,
-    LAST_RENDERFLAG
+    DEPTH,
+    STENCIL,
+    CULL,
+    MULTISAMPLE,
+    LAST
+};
+
+enum class DepthFunc : GLenum
+{
+    LESS   = GL_LESS,
+    LEQUAL = GL_LEQUAL,
+    GRATER = GL_GREATER,
+    ALWAYS = GL_ALWAYS
+};
+
+enum class CullMode : GLenum
+{
+    FRONT          = GL_FRONT,
+    BACK           = GL_BACK,
+    FRONT_AND_BACK = GL_FRONT_AND_BACK
 };
 
 class Renderer
 {
 public:
-    std::array<GLenum, RenderFlag::LAST_RENDERFLAG> flags = {};
+    std::array<bool, static_cast<size_t>(RenderFeature::LAST)> enabledFeatures = {};
+
+    DepthFunc currentDepthFunc = DepthFunc::LESS;
+    CullMode  currentCullMode  = CullMode::BACK;
 
     MSAAbuffer  antiAlias;
     Framebuffer finalFrameBuffer;
@@ -35,7 +48,6 @@ public:
     Frustum     frustum;
 
     std::shared_ptr<Texture> noTexture;
-
 
     GLuint boundFramebuffer = 0;
     void   BindFramebuffer(GLenum ID) { ID != boundFramebuffer ? glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer = ID) : void(); }
@@ -46,9 +58,9 @@ public:
     void Render(const Scene& scene);
 
 private:
-    void        set(RenderFlag f, GLenum value);
-    bool        isSet(RenderFlag f) const { return flags[f]; }
-    static void applyFlag(bool apply, GLenum target) { apply ? glEnable(target) : glDisable(target); }
+    void set(RenderFeature feature, bool enable);
+    void setCullMode(CullMode mode);
+    void setDepthFunc(DepthFunc func);
 };
 
 #endif
