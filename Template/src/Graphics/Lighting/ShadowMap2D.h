@@ -8,7 +8,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 #include "ShadowCaster.h"
 
 class ShadowMap2D : public ShadowCaster

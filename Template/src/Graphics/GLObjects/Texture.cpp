@@ -4,7 +4,7 @@
 
 #include <stb/stb_image.h>
 #include "Globals.h"
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 
 Texture::Texture(GLenum formatL, GLenum formatR, int w, int h, GLenum dataType, const void* data, GLenum paramMin, GLenum paramMax, GLenum wrapType)
     : path("Custom texture"), type(CUSTOM)
@@ -196,18 +196,10 @@ void Texture::CombinePack(unsigned char* dst, unsigned char* src, int w, int h, 
 
 void Texture::texUnit(const ShaderID shaderID, const std::string& uniform) const
 {
-    ShaderManager::Activate(shaderID);
-    GLint unit = ShaderManager::getUnit(shaderID, uniform);
+    Shader::Activate(shaderID);
+    GLint unit = Shader::getUnit(shaderID, uniform);
     Bind(unit);
-    glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
-}
-
-// Old! Dont use if using shader manager
-void Texture::texUnit(const Shader& shader, const std::string& uniform, const GLint unit) const
-{
-    GLint texUni = glGetUniformLocation(shader.ID, uniform.c_str());
-    shader.Activate();
-    glUniform1i(texUni, unit);
+    glUniform1i(Shader::getLoc(shaderID, uniform), unit);
 }
 
 void Texture::Bind(GLint unit) const
@@ -221,10 +213,10 @@ void Texture::Bind(GLint unit) const
 
 void Texture::UnbindAt(ShaderID shaderID, const std::string& uniform)
 {
-    ShaderManager::Activate(shaderID);
-    GLint unit = ShaderManager::getUnit(shaderID, uniform);
+    Shader::Activate(shaderID);
+    GLint unit = Shader::getUnit(shaderID, uniform);
     Unbind(unit);
-    glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
+    glUniform1i(Shader::getLoc(shaderID, uniform), unit);
 }
 
 void Texture::Unbind(GLint unit)

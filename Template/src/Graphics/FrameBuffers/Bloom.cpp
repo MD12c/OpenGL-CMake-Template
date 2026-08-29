@@ -1,7 +1,7 @@
 #include "Bloom.h"
 
 #include "Globals.h"
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 #include "Square.h"
 
 Bloom::Bloom()
@@ -13,7 +13,7 @@ Bloom::Bloom()
 Texture& Bloom::BlurPass(const Texture& brightTexture, ShaderID shaderID, int numPasses)
 {
     GPUInstrumentationTimer timer("Blur Pass");
-    ShaderManager::Activate(shaderID);
+    Shader::Activate(shaderID);
     
     GLint prevFramebuffer;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
@@ -25,7 +25,7 @@ Texture& Bloom::BlurPass(const Texture& brightTexture, ShaderID shaderID, int nu
     {
         glBindFramebuffer(GL_FRAMEBUFFER, horizontal ? buffer1.ID : buffer2.ID);
         glClear(GL_COLOR_BUFFER_BIT);
-        glUniform1i(ShaderManager::getLoc(shaderID, "horizontal"), horizontal);
+        glUniform1i(Shader::getLoc(shaderID, "horizontal"), horizontal);
 
         if (first_iteration)
             brightTexture.Bind(0);

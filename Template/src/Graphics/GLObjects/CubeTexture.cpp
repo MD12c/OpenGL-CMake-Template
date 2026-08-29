@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 
 CubeTexture::CubeTexture()
 {
@@ -70,10 +70,10 @@ void CubeTexture::Bind(GLuint unit) const
 
 void CubeTexture::texUnit(ShaderID shaderID, const std::string& uniform) const
 {
-    ShaderManager::Activate(shaderID);
-    GLint unit = ShaderManager::getUnit(shaderID, uniform);
+    Shader::Activate(shaderID);
+    GLint unit = Shader::getUnit(shaderID, uniform);
     Bind(unit);
-    glUniform1i(ShaderManager::getLoc(shaderID, uniform), unit);
+    glUniform1i(Shader::getLoc(shaderID, uniform), unit);
 }
 
 void CubeTexture::Unbind(GLuint unit) const

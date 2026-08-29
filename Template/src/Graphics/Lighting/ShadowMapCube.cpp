@@ -21,21 +21,21 @@ void ShadowMapCube::setView(glm::vec3 newPosition, glm::vec3 newDirection)
 
 void ShadowMapCube::BeginDepthPass(ShaderID shaderID, glm::vec3 lightPos)
 {
-    ShaderManager::Activate(shaderID);
+    Shader::Activate(shaderID);
 
     for (int i = 0; i < 6; i++)
-        glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "shadowMatrices[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(shadowMatrices[i]));
+        glUniformMatrix4fv(Shader::getLoc(shaderID, "shadowMatrices[" + std::to_string(i) + "]"), 1, GL_FALSE, glm::value_ptr(shadowMatrices[i]));
 
-    glUniform3f(ShaderManager::getLoc(shaderID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
-    glUniform1f(ShaderManager::getLoc(shaderID, "farPlane"), farPlane);
-    glUniform1i(ShaderManager::getLoc(shaderID, "lightLayerOffset"), layerIndex * 6);
+    glUniform3f(Shader::getLoc(shaderID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    glUniform1f(Shader::getLoc(shaderID, "farPlane"), farPlane);
+    glUniform1i(Shader::getLoc(shaderID, "lightLayerOffset"), layerIndex * 6);
 }
 
 void ShadowMapCube::ExportUniformsTo(ShaderID shaderID, int lightIndex, glm::vec3 lightPos, glm::vec3 lightDirection, glm::vec3 lightColor)
 {
-    ShaderManager::Activate(shaderID);
-    glUniform1i(ShaderManager::getLoc(shaderID, "pointLayerIndex[" + std::to_string(lightIndex) + "]"), layerIndex);
-    glUniform1f(ShaderManager::getLoc(shaderID, "pointFarPlane[" + std::to_string(lightIndex) + "]"), farPlane);
-    glUniform3fv(ShaderManager::getLoc(shaderID, "pointLightPos[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightPos));
-    glUniform3fv(ShaderManager::getLoc(shaderID, "pointLightColor[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightColor));
+    Shader::Activate(shaderID);
+    glUniform1i(Shader::getLoc(shaderID, "pointLayerIndex[" + std::to_string(lightIndex) + "]"), layerIndex);
+    glUniform1f(Shader::getLoc(shaderID, "pointFarPlane[" + std::to_string(lightIndex) + "]"), farPlane);
+    glUniform3fv(Shader::getLoc(shaderID, "pointLightPos[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightPos));
+    glUniform3fv(Shader::getLoc(shaderID, "pointLightColor[" + std::to_string(lightIndex) + "]"), 1, glm::value_ptr(lightColor));
 }

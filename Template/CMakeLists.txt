@@ -30,7 +30,6 @@ set(VERTEX_BUFFERS_SOURCES
 
 set(SHADERS_SOURCES
     src/Graphics/Shaders/Shader.h src/Graphics/Shaders/Shader.cpp
-    src/Graphics/Shaders/ShaderManager.h src/Graphics/Shaders/ShaderManager.cpp
     src/Graphics/Shaders/ShaderLoader.cpp)
 
 set(CAMERA_SOURCES

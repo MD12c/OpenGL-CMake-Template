@@ -3,7 +3,7 @@
 
 #include "glm/glm.hpp"
 
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 #include "ShadowCaster.h"
 
 class ShadowMapCube : public ShadowCaster

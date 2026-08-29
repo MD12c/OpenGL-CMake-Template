@@ -7,7 +7,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 #include "../Materials/MaterialManager.h"
 #include "../Frustum/BoundingSphere.h"
 

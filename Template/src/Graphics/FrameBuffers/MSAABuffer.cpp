@@ -1,6 +1,6 @@
 #include "MSAAbuffer.h"
 #include "Globals.h"
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 
 MSAAbuffer::MSAAbuffer()
     : MSAAbufferRBO(true)

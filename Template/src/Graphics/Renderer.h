@@ -28,13 +28,14 @@ class Renderer
 public:
     std::array<GLenum, RenderFlag::LAST_RENDERFLAG> flags = {};
 
-    MSAAbuffer   antiAlias;
-    Framebuffer  finalFrameBuffer;
-    Bloom        bloom;
-    LUT          lut;
-    Frustum      frustum;
+    MSAAbuffer  antiAlias;
+    Framebuffer finalFrameBuffer;
+    Bloom       bloom;
+    LUT         lut;
+    Frustum     frustum;
 
     std::shared_ptr<Texture> noTexture;
+
 
     GLuint boundFramebuffer = 0;
     void   BindFramebuffer(GLenum ID) { ID != boundFramebuffer ? glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer = ID) : void(); }

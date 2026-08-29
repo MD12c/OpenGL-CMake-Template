@@ -5,7 +5,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "..\GLObjects\Texture.h"
 #include "Material.h"
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 
 class SpecularMaterial : public Material
 {
@@ -45,13 +45,13 @@ public:
 
     void Apply() const override
     {
-        ShaderManager::Activate(shaderID);
-        glUniform3fv(ShaderManager::getLoc(shaderID, "diffuseColor"), 1, glm::value_ptr(diffuseColor));
-        glUniform1f(ShaderManager::getLoc(shaderID, "shininess"), shininess);
+        Shader::Activate(shaderID);
+        glUniform3fv(Shader::getLoc(shaderID, "diffuseColor"), 1, glm::value_ptr(diffuseColor));
+        glUniform1f(Shader::getLoc(shaderID, "shininess"), shininess);
 
-        glUniform1i(ShaderManager::getLoc(shaderID, "useTexture"), (diffuseMap != nullptr));
-        glUniform1i(ShaderManager::getLoc(shaderID, "useNormal"), (normalMap != nullptr));
-        glUniform1i(ShaderManager::getLoc(shaderID, "useDisplacement"), (displacementMap != nullptr));
+        glUniform1i(Shader::getLoc(shaderID, "useTexture"), (diffuseMap != nullptr));
+        glUniform1i(Shader::getLoc(shaderID, "useNormal"), (normalMap != nullptr));
+        glUniform1i(Shader::getLoc(shaderID, "useDisplacement"), (displacementMap != nullptr));
 
         checkAndLoad(diffuseMap, "diffuse0", shaderID);
         checkAndLoad(specularMap, "specular0", shaderID);

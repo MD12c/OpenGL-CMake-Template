@@ -69,22 +69,22 @@ void LightResources::genTexture(GLenum type, GLsizei maxDepth, GLuint* shadowMap
 
 void LightResources::BindShadowTextures(ShaderID shaderID) const
 {
-    ShaderManager::Activate(shaderID);
+    Shader::Activate(shaderID);
 
-    GLint texDir = ShaderManager::getUnit(shaderID, "dirShadowMaps");
+    GLint texDir = Shader::getUnit(shaderID, "dirShadowMaps");
     glActiveTexture(GL_TEXTURE0 + texDir);
     glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMapDirArray);
-    glUniform1i(ShaderManager::getLoc(shaderID, "dirShadowMaps"), texDir);
+    glUniform1i(Shader::getLoc(shaderID, "dirShadowMaps"), texDir);
 
-    GLint texSpot = ShaderManager::getUnit(shaderID, "spotShadowMaps");
+    GLint texSpot = Shader::getUnit(shaderID, "spotShadowMaps");
     glActiveTexture(GL_TEXTURE0 + texSpot);
     glBindTexture(GL_TEXTURE_2D_ARRAY, shadowMapSpotArray);
-    glUniform1i(ShaderManager::getLoc(shaderID, "spotShadowMaps"), texSpot);
+    glUniform1i(Shader::getLoc(shaderID, "spotShadowMaps"), texSpot);
 
-    GLint texPoint = ShaderManager::getUnit(shaderID, "pointShadowMaps");
+    GLint texPoint = Shader::getUnit(shaderID, "pointShadowMaps");
     glActiveTexture(GL_TEXTURE0 + texPoint);
     glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, shadowMapPointArray);
-    glUniform1i(ShaderManager::getLoc(shaderID, "pointShadowMaps"), texPoint);
+    glUniform1i(Shader::getLoc(shaderID, "pointShadowMaps"), texPoint);
 }
 
 GLint LightResources::RegisterCaster(LightType type)
@@ -110,12 +110,12 @@ GLint LightResources::RegisterCaster(LightType type)
 
 void LightResources::DrawLightSpheres(ShaderID shaderID) const
 {
-    ShaderManager::Activate(shaderID);
+    Shader::Activate(shaderID);
     glEnable(GL_CULL_FACE);
     for (const auto& light : lights)
     {
         glm::vec4 col = glm::vec4(light.getColor(), 1.0f);
-        glUniform4fv(ShaderManager::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
+        glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
         icoSphere.Draw(shaderID, Transform(light.getPosition()), nullptr, materialSphere);
     }
     glDisable(GL_CULL_FACE);
@@ -144,9 +144,9 @@ void LightResources::ExportUniformsTo(ShaderID shaderID) const
                 break;
         }
     }
-    glUniform1i(ShaderManager::getLoc(shaderID, "numDirLights"), dirIdx);
-    glUniform1i(ShaderManager::getLoc(shaderID, "numSpotLights"), spotIdx);
-    glUniform1i(ShaderManager::getLoc(shaderID, "numPointLights"), pointIdx);
+    glUniform1i(Shader::getLoc(shaderID, "numDirLights"), dirIdx);
+    glUniform1i(Shader::getLoc(shaderID, "numSpotLights"), spotIdx);
+    glUniform1i(Shader::getLoc(shaderID, "numPointLights"), pointIdx);
 }
 
 void LightResources::ShadowPass(Renderer* renderer, const std::vector<Model>& models, Transform transform) const
@@ -158,7 +158,7 @@ void LightResources::ShadowPass(Renderer* renderer, const std::vector<Model>& mo
     for (const auto& light : lights)
     {
         LightType  lightType = light.getType();
-        ShaderID   shaderID  = ShaderManager::getShaderIDfromLightType(lightType);
+        ShaderID   shaderID  = Shader::getShaderIDfromLightType(lightType);
         MaterialID materialID;
         light.caster->BeginDepthPass(shaderID, light.getPosition());
 

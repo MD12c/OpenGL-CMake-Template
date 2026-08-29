@@ -7,7 +7,7 @@
 
 #include <glad/glad.h>
 
-#include "..\Shaders\ShaderManager.h"
+#include "..\Shaders\Shader.h"
 
 class Texture
 {
@@ -53,7 +53,6 @@ public:
 
     void LoadTexture(const void* data, GLenum formatL, GLenum formatR, int w, int h, GLenum dataType = GL_UNSIGNED_BYTE) const;
     void texUnit(const ShaderID shaderID, const std::string& uniform) const;
-    void texUnit(const Shader& shader, const std::string& uniform, const GLint unit) const;  // Old
     void Bind(GLint unit) const;
 
     static void UnbindAt(ShaderID shaderID, const std::string& uniform);

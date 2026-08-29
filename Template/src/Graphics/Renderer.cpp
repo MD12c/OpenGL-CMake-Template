@@ -4,6 +4,7 @@
 #include "Globals.h"
 #include "Cameras/Camera.h"
 #include "Framebuffers/Square.h"
+#include "Shaders/Shader.h"
 
 Renderer::Renderer()
     : antiAlias(),
@@ -14,7 +15,7 @@ Renderer::Renderer()
       noTexture(MaterialManager::makeTexture("Assets/Textures/noTexture.png", Texture::TextureType::ALBEDO))
 {
     quad = new Square();
-    ShaderManager::LoadAllShaders();
+    Shader::LoadAllShaders();
     Texture::setNoTextureID(noTexture->ID);
     for (int i = 0; i < RenderFlag::LAST_RENDERFLAG; i++)
         applyFlag(flags[i], i);
@@ -25,8 +26,8 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
     delete quad;
-    ShaderManager::PrintLoadedUniforms();
-    ShaderManager::Cleanup();
+    Shader::PrintLoadedUniforms();
+    Shader::Cleanup();
 }
 
 void Renderer::Render(const Scene& scene)
@@ -70,8 +71,8 @@ void Renderer::Render(const Scene& scene)
     antiAlias.CopyResultsTo(finalFrameBuffer);
     Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1], ShaderID::BLUR, 3);
 
-    ShaderManager::Activate(ShaderID::POSTPROCESS);
-    glUniform1f(ShaderManager::getLoc(ShaderID::POSTPROCESS, "gamma"), gamma);
+    Shader::Activate(ShaderID::POSTPROCESS);
+    glUniform1f(Shader::getLoc(ShaderID::POSTPROCESS, "gamma"), gamma);
     finalFrameBuffer.textures[0].texUnit(ShaderID::POSTPROCESS, "tex0");
     blurredTexture.texUnit(ShaderID::POSTPROCESS, "tex1");
     

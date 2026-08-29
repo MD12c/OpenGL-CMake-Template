@@ -1,7 +1,7 @@
 #include "Skybox.h"
 
 #include "Globals.h"
-#include "..\Shaders\ShaderManager.h"
+#include "..\Shaders\Shader.h"
 #include "../GLObjects/Texture.h"
 
 #include "stb/stb_image.h"
@@ -153,7 +153,7 @@ void Skybox::CubeToIrradiance(int resolution)
     for (GLuint i = 0; i < 6; ++i)
     {
         glm::mat4 mvp = captureProjection * captureViews[i];
-        glUniformMatrix4fv(ShaderManager::getLoc(ShaderID::IRRADIANCE, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(mvp));
+        glUniformMatrix4fv(Shader::getLoc(ShaderID::IRRADIANCE, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(mvp));
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradiancemapTexture->ID, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -172,8 +172,8 @@ void Skybox::CubeToIrradiance(int resolution)
 
 void Skybox::DrawCaptureCube(ShaderID shaderID, glm::mat4 cameraMatrix, Texture& inputTexture) const
 {
-    ShaderManager::Activate(shaderID);
-    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+    Shader::Activate(shaderID);
+    glUniformMatrix4fv(Shader::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 
     glDisable(GL_CULL_FACE);
     bind();
@@ -215,12 +215,12 @@ void Skybox::CubeToPrefiltered(int baseResolution)
         glViewport(0, 0, mipRes, mipRes);
 
         float roughness = (float)mip / (float)(maxMipLevels - 1);
-        glUniform1f(ShaderManager::getLoc(ShaderID::PREFILTER, "roughness"), roughness);
+        glUniform1f(Shader::getLoc(ShaderID::PREFILTER, "roughness"), roughness);
 
         for (GLuint face = 0; face < 6; ++face)
         {
             glm::mat4 mvp = captureProjection * captureViews[face];
-            glUniformMatrix4fv(ShaderManager::getLoc(ShaderID::PREFILTER, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(mvp));
+            glUniformMatrix4fv(Shader::getLoc(ShaderID::PREFILTER, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(mvp));
 
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, prefilteredmapTexture->ID, mip);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -241,20 +241,20 @@ void Skybox::CubeToPrefiltered(int baseResolution)
 void Skybox::Draw(ShaderID shaderID, glm::mat4 cameraMatrix) const
 {
     GPUInstrumentationTimer timerGPU("Skybox");
-    ShaderManager::Activate(shaderID);
-    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
+    Shader::Activate(shaderID);
+    glUniformMatrix4fv(Shader::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
     cubemapTexture->texUnit(shaderID, "skybox");
 
     bind();
     if (cubemapTexture)
-        cubemapTexture->Draw(ShaderManager::getUnit(shaderID, "skybox"));
+        cubemapTexture->Draw(Shader::getUnit(shaderID, "skybox"));
     unbind();
 }
 
 void Skybox::ExportUniformsTo(ShaderID shaderID) const
 {
-    ShaderManager::Activate(shaderID);
+    Shader::Activate(shaderID);
     irradiancemapTexture->texUnit(shaderID, "irradiance0");
     prefilteredmapTexture->texUnit(shaderID, "prefilteredmap0");
-    glUniform1i(ShaderManager::getLoc(shaderID, "useIBL"), (irradiancemapTexture != nullptr && prefilteredmapTexture != nullptr));
+    glUniform1i(Shader::getLoc(shaderID, "useIBL"), (irradiancemapTexture != nullptr && prefilteredmapTexture != nullptr));
 }

@@ -25,7 +25,7 @@ void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID
 {
     GPUInstrumentationTimer timerGPU("Draw Call");
 
-    ShaderManager::Activate(shaderID);
+    Shader::Activate(shaderID);
 
     vao.Bind();
 
@@ -36,8 +36,8 @@ void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID
     else
         MaterialManager::getMatAt(drawMaterialID).Apply();
 
-    glUniformMatrix4fv(ShaderManager::getLoc(shaderID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix3fv(ShaderManager::getLoc(shaderID, "normal"), 1, GL_FALSE, glm::value_ptr(normal));
+    glUniformMatrix4fv(Shader::getLoc(shaderID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix3fv(Shader::getLoc(shaderID, "normal"), 1, GL_FALSE, glm::value_ptr(normal));
 
     glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
     // glDrawElements(GL_LINES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0); // wireframe for debug

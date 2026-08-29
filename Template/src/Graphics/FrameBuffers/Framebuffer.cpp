@@ -1,7 +1,7 @@
 #include "Framebuffer.h"
 
 #include "Globals.h"
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 #include "Square.h"
 
 Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil, const std::string& name)

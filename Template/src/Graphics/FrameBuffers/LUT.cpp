@@ -1,7 +1,7 @@
 #include "LUT.h"
 
 #include "Globals.h"
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 #include "Square.h"
 
 LUT::LUT()
@@ -28,7 +28,7 @@ void LUT::Draw(ShaderID shaderID)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "LUT framebuffer incomplete!" << std::endl;
 
-    ShaderManager::Activate(ShaderID::BRDF_LUT);
+    Shader::Activate(ShaderID::BRDF_LUT);
     
     tex.Bind(0);
     glViewport(0, 0, width, height);

@@ -1,7 +1,7 @@
 #ifndef MATERIAL_CLASS_H
 #define MATERIAL_CLASS_H
 
-#include "../Shaders/ShaderManager.h"
+#include "../Shaders/Shader.h"
 
 class Material
 {
@@ -23,7 +23,7 @@ public:
     Material(int ID, ShaderID shaderID) : ID(ID), shaderID(shaderID) {}
     ~Material() = default;
 
-    virtual void Apply() const { ShaderManager::Activate(shaderID); };
+    virtual void Apply() const { Shader::Activate(shaderID); };
 };
 
 #endif
