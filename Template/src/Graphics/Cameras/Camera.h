@@ -11,7 +11,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include "../Shaders/Shader.h"
+#include "Globals.h"
 
 class Camera
 {

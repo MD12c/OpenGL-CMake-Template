@@ -1,8 +1,8 @@
 #include "Model.h"
 
-#include <thread>
-
 #include "Globals.h"
+#include "../Shaders/Shader.h"
+#include "../Materials/MaterialManager.h"
 
 Model::Model(const std::string& path)
 {

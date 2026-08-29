@@ -1,8 +1,8 @@
 #include "Mesh.h"
 
 #include <cstddef>
+#include "../Materials/MaterialManager.h"
 
-#include "../Frustum/Frustum.h"
 
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, MaterialID materialID)
     : vertices(vertices), indices(indices), materialID(materialID), vao(), vbo(vertices), ebo(indices), sphere(computeBoundingSphere(vertices))

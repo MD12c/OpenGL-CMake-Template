@@ -1,14 +1,7 @@
 #ifndef SHADOW_MAP_CLASS_H
 #define SHADOW_MAP_CLASS_H
 
-#include <string>
-
 #include "glad/glad.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-
-#include "../Shaders/Shader.h"
 #include "ShadowCaster.h"
 
 class ShadowMap2D : public ShadowCaster

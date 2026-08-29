@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include "Graphics/ImguiSetup.h"
+
 App::App()
     : window(), renderer(), scene(window.getWindow())
 {

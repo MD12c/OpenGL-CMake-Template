@@ -5,9 +5,7 @@
 #include <string>
 #include <array>
 
-#include <glad/glad.h>
-
-#include "..\Shaders\Shader.h"
+#include "Globals.h"
 
 class Texture
 {

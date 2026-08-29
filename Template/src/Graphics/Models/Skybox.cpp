@@ -1,5 +1,7 @@
 #include "Skybox.h"
 
+#include <iostream>
+
 #include "Globals.h"
 #include "..\Shaders\Shader.h"
 #include "../GLObjects/Texture.h"

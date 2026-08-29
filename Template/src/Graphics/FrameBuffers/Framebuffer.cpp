@@ -1,8 +1,6 @@
 #include "Framebuffer.h"
 
 #include "Globals.h"
-#include "../Shaders/Shader.h"
-#include "Square.h"
 
 Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil, const std::string& name)
     : framebufferRBO(hasDepthStencil ? std::make_unique<RBO>(false) : nullptr)

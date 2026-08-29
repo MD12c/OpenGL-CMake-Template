@@ -1,10 +1,7 @@
 #ifndef SHADOW_CASTER_CLASS_H
 #define SHADOW_CASTER_CLASS_H
 
-#include <string>
-
 #include "glad/glad.h"
-#include "glm/glm.hpp"
 
 #include "Globals.h"
 

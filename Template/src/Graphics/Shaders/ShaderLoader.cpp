@@ -1,8 +1,5 @@
 #include "Shader.h"
 
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/glm.hpp"
-
 #include "Globals.h"
 
 void Shader::LoadAllShaders()

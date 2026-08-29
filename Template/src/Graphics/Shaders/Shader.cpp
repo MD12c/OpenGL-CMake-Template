@@ -1,7 +1,6 @@
 #include "Shader.h"
 
 #include <fstream>
-#include <sstream>
 #include <iostream>
 
 Shader Shader::MakeVertFrag(std::string name, std::string vertexPath, std::string fragmentPath)

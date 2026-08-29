@@ -6,8 +6,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "../Shaders/Shader.h"
-#include "../Materials/MaterialManager.h"
 #include "../Frustum/Frustum.h"
 #include "Transform.h"
 

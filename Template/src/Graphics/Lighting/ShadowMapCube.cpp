@@ -1,10 +1,9 @@
 #include "ShadowMapCube.h"
 
-#include "glad/glad.h"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-
 #include "Globals.h"
+#include "glad/glad.h"
+#include "../Shaders/Shader.h"
+#include "glm/gtc/type_ptr.hpp"
 
 ShadowMapCube::ShadowMapCube(GLuint layerIndex, glm::vec3 lightPos, float zNear, float zFar)
     : ShadowCaster(LightType::POINT, layerIndex), farPlane(zFar)

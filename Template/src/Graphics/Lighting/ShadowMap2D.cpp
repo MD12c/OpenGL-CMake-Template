@@ -1,8 +1,9 @@
 #include "ShadowMap2D.h"
 
 #include "Globals.h"
+#include "../Shaders/Shader.h"
+#include "glm/gtc/type_ptr.hpp"
 
-#include "LightResources.h"
 
 ShadowMap2D::ShadowMap2D(GLuint layerIndex, glm::vec3 lightPos, glm::vec3 direction, float left, float right, float bottom, float top, float zNear, float zFar)
     : ShadowCaster(LightType::DIRECTION, layerIndex)

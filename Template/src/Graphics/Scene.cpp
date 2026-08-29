@@ -1,9 +1,6 @@
 #include "Scene.h"
 
-#include "Models/Model.h"
 #include "ImguiSetup.h"
-#include "Cameras/Orbit.h"
-#include "Cameras/2Dcam.h"
 #include "Cameras/Fly.h"
 
 static std::string facesCubemap[6] = {
@@ -34,7 +31,7 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     // models.emplace_back("Assets/Models/Lava Wall/lava.obj");
 
     // models.emplace_back("Assets/Models/ignore/Sphere/Metal/Sphere.gltf");
-    models.emplace_back("Assets/Models/ignore/sponza_palace/scene.gltf");
+    // models.emplace_back("Assets/Models/ignore/sponza_palace/scene.gltf");
     // models.emplace_back("Assets/Models/Sphere/Sphere.obj");
 
     // models.emplace_back("Assets/Models/icoSphere.obj");

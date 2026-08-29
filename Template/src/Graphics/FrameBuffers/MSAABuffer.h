@@ -3,10 +3,6 @@
 
 #include <glad/glad.h>
 
-#include "..\GLObjects\VAO.h"
-#include "..\GLObjects\VBO.h"
-#include "..\GLObjects\EBO.h"
-#include "..\GLObjects\Texture.h"
 #include "..\GLObjects\RBO.h"
 
 #include "Framebuffer.h"

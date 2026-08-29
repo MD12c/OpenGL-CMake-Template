@@ -2,7 +2,6 @@
 #define SKYBOX_CLASS_H
 
 #include <string>
-#include <iostream>
 
 #include "..\GLObjects\VAO.h"
 #include "..\GLObjects\VBO.h"

@@ -1,8 +1,6 @@
 #ifndef SHADOW_MAP_CUBE_CLASS_H
 #define SHADOW_MAP_CUBE_CLASS_H
 
-#include "glm/glm.hpp"
-
 #include "../Shaders/Shader.h"
 #include "ShadowCaster.h"
 

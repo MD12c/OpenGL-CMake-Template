@@ -1,10 +1,10 @@
 #include "Renderer.h"
 
-#include "imgui.h"
 #include "Globals.h"
 #include "Cameras/Camera.h"
 #include "Framebuffers/Square.h"
 #include "Shaders/Shader.h"
+#include "Materials/MaterialManager.h"
 
 using RF = RenderFeature;
 using DF = DepthFunc;
@@ -22,11 +22,6 @@ Renderer::Renderer()
     Shader::LoadAllShaders();
     Texture::setNoTextureID(noTexture->ID);
     glFrontFace(GL_CCW);
-
-    glGetError();
-
-    GLenum err1 = glGetError();
-    if (err1) std::cout << err1 << std::endl;
     lut.Draw(ShaderID::BRDF_LUT);
 }
 

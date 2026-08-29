@@ -8,6 +8,7 @@
 #include "ShadowCaster.h"
 #include "ShadowMap2D.h"
 #include "ShadowMapCube.h"
+#include "../Materials/MaterialManager.h"
 
 LightResources::LightResources(float zNear, float zFar)
     : zNear(zNear),

@@ -1,20 +1,13 @@
 #pragma once
 
-#include <string>
 #include <vector>
-#include <unordered_set>
-
-#include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
 
 #include "../Shaders/Shader.h"
-#include "../Materials/MaterialManager.h"
 #include "../Frustum/BoundingSphere.h"
 
 #include "../GLObjects/VAO.h"
 #include "../GLObjects/EBO.h"
 #include "../GLObjects/VBO.h"
-#include "../GLObjects/Texture.h"
 
 class Frustum;
 

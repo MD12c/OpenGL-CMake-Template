@@ -4,7 +4,6 @@
 #include "glad/glad.h"
 
 #include "Globals.h"
-#include "..\Shaders\Shader.h"
 #include "../Models/Model.h"
 #include "Light.h"
 
