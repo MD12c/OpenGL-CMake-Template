@@ -9,18 +9,20 @@
 #include "ShadowMap2D.h"
 #include "ShadowMapCube.h"
 #include "../Materials/MaterialManager.h"
+#include "../Models/BasicShapes.h"
 
 LightResources::LightResources(float zNear, float zFar)
     : zNear(zNear),
       zFar(zFar),
-      icoSphere("Assets/Models/icoSphere.obj"),
       material2D(MaterialManager::LoadMaterialCustom("Shadow2D", ShaderID::SHADOW_MAP2D)),
       materialCube(MaterialManager::LoadMaterialCustom("ShadowCube", ShaderID::SHADOW_MAPCUBE)),
       materialSphere(MaterialManager::LoadMaterialCustom("lightSphere", ShaderID::LIGHT_SPHERE))
 {
     glGenFramebuffers(1, &frameBuf2D);
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBuf2D);
     glObjectLabel(GL_FRAMEBUFFER, frameBuf2D, -1, "ShadowMap FBO 2D");
     glGenFramebuffers(1, &frameBufCube);
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBufCube);
     glObjectLabel(GL_FRAMEBUFFER, frameBufCube, -1, "ShadowMap FBO Cube");
 
     genTexture(GL_TEXTURE_2D_ARRAY, MAX_DIR_LIGHTS, &shadowMapDirArray);
@@ -117,7 +119,7 @@ void LightResources::DrawLightSpheres(ShaderID shaderID) const
     {
         glm::vec4 col = glm::vec4(light.getColor(), 1.0f);
         glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
-        icoSphere.Draw(shaderID, Transform(light.getPosition()), nullptr, materialSphere);
+        basicShapes->icoSphere.Draw(shaderID, Transform(light.getPosition()), nullptr, materialSphere);
     }
     glDisable(GL_CULL_FACE);
 }

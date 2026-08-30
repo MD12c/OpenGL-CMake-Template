@@ -5,18 +5,18 @@
 #include "../GLObjects/VBO.h"
 #include "../GLObjects/EBO.h"
 
-class Square
-{
-private:
-    VAO squareVAO;
-    VBO squareVBO;
-    EBO squareEBO;
+// class Square
+// {
+// private:
+//     VAO squareVAO;
+//     VBO squareVBO;
+//     EBO squareEBO;
 
-public:
-    Square();
-    void BindSquare();
-    void UnbindSquare();
-    void DrawSquare();
-};
+// public:
+//     Square();
+//     void BindSquare();
+//     void UnbindSquare();
+//     void DrawSquare();
+// };
 
 #endif

@@ -18,7 +18,7 @@ class VBO
 public:
     GLuint ID;
     VBO(const void* vertices, GLsizeiptr size, int usageHint = GL_STATIC_DRAW);
-    VBO(std::vector<Vertex>& vertices);
+    VBO(const std::vector<Vertex>& vertices);
     VBO();
 
     VBO(const VBO&)            = delete;

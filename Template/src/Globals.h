@@ -3,10 +3,9 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-//#define BENCHMARK
+// #define BENCHMARK
 #include "Benchmarks/Instrumentatior.h"
 #include "Benchmarks/GPUtimer.h"
-
 
 inline int         width        = 2560;
 inline int         height       = 1440;
@@ -26,21 +25,6 @@ inline struct glfwPointers
     Camera*   camera;
     Renderer* renderer;
 } glfwPtr;
-
-constexpr GLfloat square[20] = {
-    -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-    -1.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-    1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-    1.0f, -1.0f, 0.0f, 1.0f, 0.0f
-};
-
-constexpr GLuint squareIndices[6] = {
-    3, 1, 0,
-    3, 2, 1
-};
-
-constexpr glm::vec2 BOT_LEFT_BOUNDERY  = glm::vec2(square[0], square[1]);
-constexpr glm::vec2 TOP_RIGHT_BOUNDERY = glm::vec2(square[6], square[7]);
 
 constexpr GLuint numSamples = 4;
 
@@ -71,6 +55,7 @@ enum ShaderID
     IRRADIANCE,
     PREFILTER,
     BRDF_LUT,
+    // DEFAULT,
     LAST_SHADER
 };
 
@@ -79,8 +64,8 @@ constexpr MaterialID NO_MATERIAL        = UINT32_MAX;
 constexpr MaterialID USE_FILE_MATERIAL  = UINT32_MAX - 1;
 constexpr MaterialID WIREFRAME_MATERIAL = UINT32_MAX - 2;
 
-class Square;
-inline Square* quad = nullptr;
+class BasicShapes;
+inline BasicShapes* basicShapes = nullptr;
 
 struct DebugGroup
 {

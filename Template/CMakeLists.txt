@@ -49,6 +49,8 @@ set(MODEL_SOURCES
     src/Graphics/Models/Model.cpp
     src/Graphics/Models/Skybox.h
     src/Graphics/Models/Skybox.cpp
+    src/Graphics/Models/BasicShapes.h
+    src/Graphics/Models/BasicShapes.cpp
     src/Graphics/Models/Transform.h)
 
 set(MATERIAL_SOURCES

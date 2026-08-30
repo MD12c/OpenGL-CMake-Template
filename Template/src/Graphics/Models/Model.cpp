@@ -205,7 +205,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
                 findPath(aiTextureType_DISPLACEMENT));
     }
 
-    std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
+    //std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
     return Mesh(vertices, indices, materialID);
 }
 

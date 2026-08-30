@@ -5,6 +5,7 @@
 #include "Framebuffers/Square.h"
 #include "Shaders/Shader.h"
 #include "Materials/MaterialManager.h"
+#include "Models/BasicShapes.h"
 
 using RF = RenderFeature;
 using DF = DepthFunc;
@@ -18,7 +19,7 @@ Renderer::Renderer()
       frustum(),
       noTexture(MaterialManager::makeTexture("Assets/Textures/noTexture.png", Texture::TextureType::ALBEDO))
 {
-    quad = new Square();
+    basicShapes = new BasicShapes();
     Shader::LoadAllShaders();
     Texture::setNoTextureID(noTexture->ID);
     glFrontFace(GL_CCW);
@@ -27,7 +28,7 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-    delete quad;
+    delete basicShapes;
     // Shader::PrintLoadedUniforms();
     Shader::Cleanup();
 }
@@ -62,16 +63,16 @@ void Renderer::Render(const Scene& scene)
 
     scene.cameras[scene.activeCam]->updateUniforms(ShaderID::LIGHT_SPHERE);
     scene.lightResources.DrawLightSpheres(ShaderID::LIGHT_SPHERE);
-
+    
     set(RF::CULL, false);
     setDepthFunc(DF::LEQUAL);
     scene.skybox.Draw(ShaderID::SKYBOX, scene.cameras[scene.activeCam]->getRotationMat());
     setDepthFunc(DF::LESS);
     set(RF::CULL, true);
-
+    
     antiAlias.CopyResultsTo(finalFrameBuffer);
     Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1], ShaderID::BLUR, 3);
-
+    
     Shader::Activate(ShaderID::POSTPROCESS);
     glUniform1f(Shader::getLoc(ShaderID::POSTPROCESS, "gamma"), gamma);
     finalFrameBuffer.textures[0].texUnit(ShaderID::POSTPROCESS, "tex0");
@@ -80,12 +81,14 @@ void Renderer::Render(const Scene& scene)
     BindFramebuffer(0);
     glViewport(0, 0, width, height);
     set(RF::DEPTH, false);
-    quad->DrawSquare();
+    basicShapes->plane.DrawQuad(ShaderID::POSTPROCESS);
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     set(RF::DEPTH, true);
     Texture::UnbindAll();
     CubeTexture::UnbindAll();
 
+    // std::cout << glGetError() << "\n";
+    
     scene.imguiFunctions();
 }
 

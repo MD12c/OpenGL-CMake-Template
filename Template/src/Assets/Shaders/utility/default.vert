@@ -3,7 +3,6 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
 
-out vec3 color;
 out vec2 TexCoord;
 
 uniform mat4 proj;
@@ -11,10 +10,7 @@ uniform mat4 view;
 uniform mat4 scale;
 uniform vec3 camPos;
 
-uniform vec3 Color;
-
 void main(){
 	gl_Position = proj * view * vec4(aPos, 1.0f);
-	color = Color;
 	TexCoord = aTexCoord;
 }

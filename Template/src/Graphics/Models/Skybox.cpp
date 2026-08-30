@@ -29,6 +29,7 @@ Skybox::Skybox(std::string facesCubemap[6])
       skyboxEBO(skyboxIndices, sizeof(skyboxIndices))
 {
     bind();
+    skyboxEBO.UpdateData(skyboxIndices, sizeof(skyboxIndices));
     skyboxVAO.LinkAttrib(skyboxVBO, 0, 3, GL_FLOAT, 3 * sizeof(GLfloat), (void*)0);
     unbind();
 
@@ -66,6 +67,7 @@ Skybox::Skybox(std::string HDRimage)
       skyboxEBO(skyboxIndices, sizeof(skyboxIndices))
 {
     bind();
+    skyboxEBO.UpdateData(skyboxIndices, sizeof(skyboxIndices));
     skyboxVAO.LinkAttrib(skyboxVBO, 0, 3, GL_FLOAT, 3 * sizeof(GLfloat), (void*)0);
     unbind();
 
@@ -146,6 +148,7 @@ void Skybox::CubeToIrradiance(int resolution)
     irradiancemapTexture->Bind(0);
     for (GLuint i = 0; i < 6; ++i)
         irradiancemapTexture->AllocTexture(i, GL_FLOAT, GL_RGB16F, GL_RGB, resolution, resolution);
+    irradiancemapTexture->Unbind(0);
 
     cubemapTexture->texUnit(ShaderID::IRRADIANCE, "environmentMap");
 

@@ -15,7 +15,6 @@ private:
     int nextPointLayer = 0;
 
     float      zNear, zFar;
-    Model      icoSphere;
     MaterialID materialSphere;
     MaterialID material2D;
     MaterialID materialCube;

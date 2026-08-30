@@ -116,4 +116,11 @@ void Shader::LoadAllShaders()
         "BRDF LUT",
         "Assets/shaders/skybox/LUT.vert",
         "Assets/shaders/skybox/LUT.frag");
+
+    // Default
+    // shaders.at(ShaderID::DEFAULT) = MakeVertFrag(
+    //     "BRDF LUT",
+    //     "Assets/shaders/utility/default.vert",
+    //     "Assets/shaders/utility/default.frag");
+    // AddUnits(ShaderID::DEFAULT, { { "tex0", 0 } });
 }

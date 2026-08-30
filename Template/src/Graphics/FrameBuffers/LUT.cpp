@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 #include "../Shaders/Shader.h"
-#include "Square.h"
+#include "../Models/BasicShapes.h"
 
 LUT::LUT()
     : tex(GL_RG16F, GL_RG, width, height)
@@ -28,12 +28,12 @@ void LUT::Draw(ShaderID shaderID)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "LUT framebuffer incomplete!" << std::endl;
 
-    Shader::Activate(ShaderID::BRDF_LUT);
+    Shader::Activate(shaderID);
     
     tex.Bind(0);
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
-    quad->DrawSquare();
+    basicShapes->plane.Draw(shaderID);
     
     glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
