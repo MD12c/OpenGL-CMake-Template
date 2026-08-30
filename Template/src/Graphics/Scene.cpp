@@ -27,11 +27,11 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
 
     // models.emplace_back("Assets/Models/Brick wall/wall.gltf");
     // models.emplace_back("Assets/Models/Brick wall/wall.obj");
-
+    
     // models.emplace_back("Assets/Models/Lava Wall/lava.obj");
 
     // models.emplace_back("Assets/Models/ignore/Sphere/Metal/Sphere.gltf");
-    // models.emplace_back("Assets/Models/ignore/sponza_palace/scene.gltf");
+    models.emplace_back("Assets/Models/ignore/sponza_palace/scene.gltf");
     // models.emplace_back("Assets/Models/Sphere/Sphere.obj");
 
     // models.emplace_back("Assets/Models/icoSphere.obj");
@@ -42,13 +42,6 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     // lightResources.addDirectionLight(lightPosition, lightOrientation, glm::vec3(10.0f, 10.0f, 10.0f), -35.0f, 35.0f, -35.0f, 35.0f);
     // lightResources.addSpotLight(lightPosition, lightOrientation, glm::vec3(10.0f, 10.0f, 10.0f), 90.0f, 0.95f, 0.90f);
     lightResources.addPointLight(lightPosition, glm::vec3(10.0f, 10.0f, 10.0f));
-    // lightResources.addPointLight(lightPosition, glm::vec3(100.0f, 100.0f, 100.0f));
-    // lightResources.addPointLight(lightPosition, glm::vec3(100.0f, 100.0f, 100.0f));
-    // lightResources.addPointLight(lightPosition, glm::vec3(100.0f, 100.0f, 100.0f));
-    // lightResources.addPointLight(lightPosition, glm::vec3(100.0f, 100.0f, 100.0f));
-    // lightResources.addPointLight(lightPosition, glm::vec3(100.0f, 100.0f, 100.0f));
-    // lightResources.addPointLight(lightPosition, glm::vec3(100.0f, 100.0f, 100.0f));
-    // lightResources.addPointLight(lightPosition, glm::vec3(100.0f, 100.0f, 100.0f));
 
     imguiFunctions = [&]()
     {

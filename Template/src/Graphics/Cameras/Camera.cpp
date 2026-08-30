@@ -1,5 +1,7 @@
 #include "Camera.h"
+
 #include "Globals.h"
+#include "../Shaders/Shader.h"
 
 std::vector<Camera*> Camera::cameras = {};
 

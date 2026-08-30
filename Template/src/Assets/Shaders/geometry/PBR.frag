@@ -274,6 +274,8 @@ void main()
     float crntRoughness   = useRoughness ? texture(metalicRoughness0, UVs).g : roughness;
     vec3  crntAlbedoColor = useTexture ? texture(albedo0, UVs).rgb : albedoColor;
 
+    if (texture(albedo0, UVs).a < 0.1f) discard;
+
     if (length(camPos - crntPos) < 0.01f)
         return;
 
@@ -332,7 +334,7 @@ void main()
     // FragColor = vec4(spotLight(0, spotLightPos[0] - crntPos, N), 1.0f);
 
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-    if (brightness > 1.0f)
+    if (brightness > 2.0f)
         BloomColor = vec4(FragColor.rgb, 1.0f);
     else
         BloomColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);

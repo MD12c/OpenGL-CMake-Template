@@ -37,7 +37,7 @@ void Renderer::Render(const Scene& scene)
     GPUInstrumentationTimer timerGPU("Frame");
     InstrumentationTimer    timerCPU("Frame");
     frustum.setFrustumPlanes(scene.cameras[0]->getCameraMat());
-
+    
     set(RF::DEPTH, true);
     set(RF::CULL, true);
     setCullMode(CM::BACK);
