@@ -31,10 +31,10 @@ void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID
 
     if (drawMaterialID == USE_FILE_MATERIAL)
         MaterialManager::getMatAt(materialID).Apply();
-    // else if (drawMaterialID == NO_MATERIAL)
-    //     Texture::UnbindAll();
-    // else
-    //     MaterialManager::getMatAt(drawMaterialID).Apply();
+    else if (drawMaterialID == NO_MATERIAL)
+        Texture::UnbindAll();
+    else
+        MaterialManager::getMatAt(drawMaterialID).Apply();
 
     glUniformMatrix4fv(Shader::getLoc(shaderID, "model"), 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix3fv(Shader::getLoc(shaderID, "normal"), 1, GL_FALSE, glm::value_ptr(normal));
@@ -44,7 +44,7 @@ void Mesh::Draw(ShaderID shaderID, glm::mat4 model, glm::mat3 normal, MaterialID
     vao.Unbind();
 }
 
-void Mesh::DrawQuad(ShaderID shaderID) const
+void Mesh::DrawSimple(ShaderID shaderID) const
 {
     Shader::Activate(shaderID);
     vao.Bind();

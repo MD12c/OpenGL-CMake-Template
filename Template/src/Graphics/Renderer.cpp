@@ -38,7 +38,7 @@ void Renderer::Render(const Scene& scene)
     GPUInstrumentationTimer timerGPU("Frame");
     InstrumentationTimer    timerCPU("Frame");
     frustum.setFrustumPlanes(scene.cameras[0]->getCameraMat());
-    
+
     set(RF::DEPTH, true);
     set(RF::CULL, true);
     setCullMode(CM::BACK);
@@ -62,17 +62,29 @@ void Renderer::Render(const Scene& scene)
         model.Draw(useShader, scene.worldTransform, &frustum);
 
     scene.cameras[scene.activeCam]->updateUniforms(ShaderID::LIGHT_SPHERE);
-    scene.lightResources.DrawLightSpheres(ShaderID::LIGHT_SPHERE);
-    
+    for (size_t i = 0; i < scene.lightResources.lights.size(); i++)
+    {
+        if (scene.lightResources.lights.at(i).getType() == LightType::POINT)
+        {
+            set(RF::CULL, true);
+            scene.lightResources.DrawLightSpheres(ShaderID::LIGHT_SPHERE, i);
+        }
+        else
+        {
+            set(RF::CULL, false);
+            scene.lightResources.DrawLightPlanes(ShaderID::LIGHT_SPHERE, i);
+        }
+    }
+
     set(RF::CULL, false);
     setDepthFunc(DF::LEQUAL);
     scene.skybox.Draw(ShaderID::SKYBOX, scene.cameras[scene.activeCam]->getRotationMat());
     setDepthFunc(DF::LESS);
     set(RF::CULL, true);
-    
+
     antiAlias.CopyResultsTo(finalFrameBuffer);
     Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1], ShaderID::BLUR, 3);
-    
+
     Shader::Activate(ShaderID::POSTPROCESS);
     glUniform1f(Shader::getLoc(ShaderID::POSTPROCESS, "gamma"), gamma);
     finalFrameBuffer.textures[0].texUnit(ShaderID::POSTPROCESS, "tex0");
@@ -81,14 +93,14 @@ void Renderer::Render(const Scene& scene)
     BindFramebuffer(0);
     glViewport(0, 0, width, height);
     set(RF::DEPTH, false);
-    basicShapes->plane.DrawQuad(ShaderID::POSTPROCESS);
+    basicShapes->plane.DrawSimple(ShaderID::POSTPROCESS);
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     set(RF::DEPTH, true);
     Texture::UnbindAll();
     CubeTexture::UnbindAll();
 
     // std::cout << glGetError() << "\n";
-    
+
     scene.imguiFunctions();
 }
 

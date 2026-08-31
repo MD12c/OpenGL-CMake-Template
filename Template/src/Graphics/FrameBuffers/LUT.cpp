@@ -33,7 +33,7 @@ void LUT::Draw(ShaderID shaderID)
     tex.Bind(0);
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
-    basicShapes->plane.Draw(shaderID);
+    basicShapes->plane.DrawSimple(shaderID);
     
     glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);

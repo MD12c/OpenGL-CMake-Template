@@ -7,7 +7,7 @@ class BasicShapes
 {
 public:
     Model icoSphere;
-    Mesh  plane;
+    Model plane;
 
     BasicShapes();
     ~BasicShapes() = default;

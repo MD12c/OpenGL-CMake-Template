@@ -36,7 +36,8 @@ public:
     ~LightResources();
 
     void BindShadowTextures(ShaderID shaderID) const;
-    void DrawLightSpheres(ShaderID shaderID) const;
+    void DrawLightPlanes(ShaderID shaderID, size_t index) const;
+    void DrawLightSpheres(ShaderID shaderID, size_t index) const;
     void ExportUniformsTo(ShaderID shaderID) const;
     void ShadowPass(Renderer* renderer, const std::vector<Model>& models, Transform transform) const;
 

@@ -29,6 +29,12 @@ void Model::Draw(ShaderID shaderID, Transform transform, const Frustum* frustum,
     }
 }
 
+void Model::DrawSimple(ShaderID shaderID) const
+{
+    for (const auto& mesh : meshes)
+        mesh.DrawSimple(shaderID);
+}
+
 void Model::loadModel(const std::string& path)
 {
     Assimp::Importer importer;
@@ -205,8 +211,8 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
                 findPath(aiTextureType_DISPLACEMENT));
     }
 
-    //std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
-    return Mesh(vertices, indices, materialID);
+    // std::cout << "mesh verts: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
+    return std::move(Mesh(vertices, indices, materialID));
 }
 
 void Model::setCustomMaterial(MaterialID materialID)

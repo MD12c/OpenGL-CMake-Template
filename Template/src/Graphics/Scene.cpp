@@ -39,7 +39,7 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
     glm::vec3 lightPosition    = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 lightOrientation = glm::vec3(-0.15f, 1.0f, -1.0f);
 
-    // lightResources.addDirectionLight(lightPosition, lightOrientation, glm::vec3(10.0f, 10.0f, 10.0f), -35.0f, 35.0f, -35.0f, 35.0f);
+    lightResources.addDirectionLight(lightPosition, lightOrientation, glm::vec3(10.0f, 10.0f, 10.0f), -35.0f, 35.0f, -35.0f, 35.0f);
     // lightResources.addSpotLight(lightPosition, lightOrientation, glm::vec3(10.0f, 10.0f, 10.0f), 90.0f, 0.95f, 0.90f);
     lightResources.addPointLight(lightPosition, glm::vec3(10.0f, 10.0f, 10.0f));
 

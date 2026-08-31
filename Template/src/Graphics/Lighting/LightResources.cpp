@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-#include "Globals.h"
+#include <glm/gtx/rotate_vector.hpp>
 
+#include "Globals.h"
 #include "../Renderer.h"
 #include "ShadowCaster.h"
 #include "ShadowMap2D.h"
@@ -111,17 +112,23 @@ GLint LightResources::RegisterCaster(LightType type)
     }
 }
 
-void LightResources::DrawLightSpheres(ShaderID shaderID) const
+void LightResources::DrawLightSpheres(ShaderID shaderID, size_t index) const
 {
     Shader::Activate(shaderID);
-    glEnable(GL_CULL_FACE);
-    for (const auto& light : lights)
-    {
-        glm::vec4 col = glm::vec4(light.getColor(), 1.0f);
-        glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
-        basicShapes->icoSphere.Draw(shaderID, Transform(light.getPosition()), nullptr, materialSphere);
-    }
-    glDisable(GL_CULL_FACE);
+    glm::vec4 col = glm::vec4(lights.at(index).getColor(), 1.0f);
+    glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
+    basicShapes->icoSphere.Draw(shaderID, Transform(lights.at(index).getPosition()), nullptr, materialSphere);
+}
+
+void LightResources::DrawLightPlanes(ShaderID shaderID, size_t index) const
+{
+    Shader::Activate(shaderID);
+    glm::vec4 col = glm::vec4(lights.at(index).getColor(), 1.0f);
+    glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
+    glm::vec3 dir        = glm::normalize(lights.at(index).getDirection());
+    glm::vec3 defaultDir = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::quat rotation   = glm::rotation(defaultDir, dir);
+    basicShapes->plane.Draw(shaderID, Transform(lights.at(index).getPosition(), rotation), nullptr, materialSphere);
 }
 
 void LightResources::ExportUniformsTo(ShaderID shaderID) const

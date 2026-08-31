@@ -32,7 +32,7 @@ Texture& Bloom::BlurPass(const Texture& brightTexture, ShaderID shaderID, int nu
         else
             horizontal ? buffer2.textures[0].texUnit(shaderID, "tex0") : buffer1.textures[0].texUnit(shaderID, "tex0");
 
-        basicShapes->plane.Draw(shaderID);
+        basicShapes->plane.DrawSimple(shaderID);
         horizontal      = !horizontal;
         first_iteration = false;
     }

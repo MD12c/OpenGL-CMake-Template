@@ -123,7 +123,7 @@ void Skybox::HDRtoCube(float* data, int widthImg, int heightImg, int resolution)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "HDRtoCube capture FBO incomplete!" << std::endl;
 
-    if (prevIsCull) glEnable(GL_CULL_FACE);
+    prevIsCull ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
     glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
     glDeleteFramebuffers(1, &captureFBO);
@@ -169,7 +169,7 @@ void Skybox::CubeToIrradiance(int resolution)
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Irradiance capture FBO incomplete!" << std::endl;
 
-    if (prevIsCull) glEnable(GL_CULL_FACE);
+    prevIsCull ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
     glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);
@@ -180,12 +180,15 @@ void Skybox::DrawCaptureCube(ShaderID shaderID, glm::mat4 cameraMatrix, Texture&
     Shader::Activate(shaderID);
     glUniformMatrix4fv(Shader::getLoc(shaderID, "cameraMatrix"), 1, GL_FALSE, glm::value_ptr(cameraMatrix));
 
-    glDisable(GL_CULL_FACE);
+    GLint prevIsCull;
+    glGetIntegerv(GL_CULL_FACE, &prevIsCull);
+
     bind();
     inputTexture.texUnit(ShaderID::HDR_CONVERTER, "equirectangularMap");
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     unbind();
-    glEnable(GL_CULL_FACE);
+
+    prevIsCull ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 }
 
 void Skybox::CubeToPrefiltered(int baseResolution)
@@ -208,7 +211,7 @@ void Skybox::CubeToPrefiltered(int baseResolution)
 
     cubemapTexture->texUnit(ShaderID::PREFILTER, "environmentMap");
 
-    glDisable(GL_CULL_FACE);
+    prevIsCull ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
     bind();
 
     GLuint maxMipLevels = 5;
@@ -237,7 +240,7 @@ void Skybox::CubeToPrefiltered(int baseResolution)
         std::cout << "Prefilter capture FBO incomplete!" << std::endl;
 
     unbind();
-    if (prevIsCull) glEnable(GL_CULL_FACE);
+    prevIsCull ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
     glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
     glDeleteFramebuffers(1, &captureFBO);
     glDeleteRenderbuffers(1, &captureRBO);

@@ -26,8 +26,13 @@ public:
 
     Mesh(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices, MaterialID materialID);
 
+    Mesh(const Mesh&)                = delete;
+    Mesh& operator=(const Mesh&)     = delete;
+    Mesh(Mesh&&) noexcept            = default;
+    Mesh& operator=(Mesh&&) noexcept = default;
+
     void Draw(ShaderID shaderID, glm::mat4 model = glm::mat4(1.0f), glm::mat3 normal = glm::mat3(1.0f), MaterialID drawMaterialID = NO_MATERIAL) const;
-    void DrawQuad(ShaderID shaderID) const;
+    void DrawSimple(ShaderID shaderID) const;
 
     static std::vector<GLuint> makeVecIndex(const GLuint* array, size_t size);
     static std::vector<Vertex> makeVecVertex(const GLfloat* array, size_t size);

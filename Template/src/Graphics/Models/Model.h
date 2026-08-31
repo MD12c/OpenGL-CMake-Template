@@ -23,8 +23,15 @@ public:
     std::string fileType;
 
     Model(const std::string& path);
+    Model(std::vector<Mesh> meshes) : meshes(std::move(meshes)) {}
+
+    Model(const Model&)                = delete;
+    Model& operator=(const Model&)     = delete;
+    Model(Model&&) noexcept            = default;
+    Model& operator=(Model&&) noexcept = default;
 
     void Draw(ShaderID shaderID, Transform transform = {}, const Frustum* frustum = nullptr, MaterialID materialID = USE_FILE_MATERIAL) const;
+    void DrawSimple(ShaderID shaderID) const;
 
     void setMeshMetalicRoughness(int meshIndex, float metalic, float roughness);
     void setCustomMaterial(MaterialID materialID);
