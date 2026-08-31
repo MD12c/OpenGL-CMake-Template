@@ -16,9 +16,8 @@ LUT::LUT()
 
 void LUT::Draw(ShaderID shaderID)
 {
-    GLint prevFramebuffer, prevViewport[4];
+    GLint prevFramebuffer;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
-    glGetIntegerv(GL_VIEWPORT, prevViewport);
     
     GLuint framebuffer;
     glGenFramebuffers(1, &framebuffer);
@@ -36,7 +35,6 @@ void LUT::Draw(ShaderID shaderID)
     basicShapes->plane.DrawSimple(shaderID);
     
     glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
-    glViewport(prevViewport[0], prevViewport[1], prevViewport[2], prevViewport[3]);
     glDeleteFramebuffers(1, &framebuffer);
 }
 
