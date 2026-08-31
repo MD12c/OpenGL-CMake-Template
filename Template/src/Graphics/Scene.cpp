@@ -41,7 +41,7 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
 
     lightResources.addDirectionLight(lightPosition, lightOrientation, glm::vec3(10.0f, 10.0f, 10.0f), -35.0f, 35.0f, -35.0f, 35.0f);
     // lightResources.addSpotLight(lightPosition, lightOrientation, glm::vec3(10.0f, 10.0f, 10.0f), 90.0f, 0.95f, 0.90f);
-    lightResources.addPointLight(lightPosition, glm::vec3(10.0f, 10.0f, 10.0f));
+    // lightResources.addPointLight(lightPosition, glm::vec3(10.0f, 10.0f, 10.0f));
 
     imguiFunctions = [&]()
     {

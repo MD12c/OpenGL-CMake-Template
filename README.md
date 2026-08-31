@@ -20,6 +20,10 @@ This redering engine (if you can call it so) has:
 - Post-Process effects
 - Diffuse, specular, normal and displacement mapping for specular
 - Albedo, ambient-occlusion, roughness, metalic, normal and displacement mapping for PBR
+
+## Screenshot
+![img](images/screenshot.png)
  
-Sorry for the messy commit history since I was learning these concepts at the same time.  
-(**Note:** some 3D models that are used in the repo are not commited)
+ ## Notes
+- You may see messy commit history since I was learning these concepts at the time of building this project.  
+- Some 3D models that are used in the repo are not commited due to large file size.
