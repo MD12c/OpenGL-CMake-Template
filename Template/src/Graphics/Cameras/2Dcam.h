@@ -10,7 +10,7 @@ private:
     float sensitivity = 0.2f;
 
 public:
-    Camera2D(GLFWwindow* window);
+    Camera2D();
 
     void  updateScreenSize() override;
     void  Inputs(GLFWwindow* window) override;

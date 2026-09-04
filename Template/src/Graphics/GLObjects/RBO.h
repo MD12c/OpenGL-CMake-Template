@@ -8,9 +8,9 @@ class RBO
 {
 public:
     GLuint ID;
-    bool useMultisample;
+    int numSamples;
 
-    RBO(bool useMultisample, GLenum internalformat = GL_DEPTH24_STENCIL8);
+    RBO(int numSamples, int width, int height, GLenum internalformat = GL_DEPTH24_STENCIL8);
     
     RBO(const RBO&)            = delete;
     RBO& operator=(const RBO&) = delete;

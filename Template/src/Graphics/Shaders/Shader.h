@@ -77,7 +77,6 @@ public:
     static u_map&   getUniforms(ShaderID index);
     static GLint    getUnit(ShaderID index, std::string_view name);
     static GLint    getLoc(ShaderID index, std::string_view uniformName);
-    static ShaderID getShaderIDfromLightType(LightType type);
 
     static Shader& get(ShaderID ID);
     static void    PrintLoadedUniforms();

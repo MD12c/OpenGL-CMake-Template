@@ -7,39 +7,18 @@
 #include "Benchmarks/Instrumentatior.h"
 #include "Benchmarks/GPUtimer.h"
 
-inline int         width        = 2560;
-inline int         height       = 1440;
-inline std::string windowName   = "Template";
-inline GLfloat     gamma        = 2;
-inline GLfloat     windowRGB[3] = {
-    pow(0.8f, gamma), pow(0.8f, gamma), pow(0.8f, gamma)
-};
+constexpr GLuint SHADOW_MAP_WIDTH  = 2048;
+constexpr GLuint SHADOW_MAP_HEIGHT = 2048;
 
 class Window;
-class Camera;
+class Scene;
 class Renderer;
 
-inline struct glfwPointers
+struct glfwPointers
 {
-    Window*   window;
-    Camera*   camera;
-    Renderer* renderer;
-} glfwPtr;
-
-constexpr GLuint numSamples = 4;
-
-constexpr unsigned int SHADOW_MAP_WIDTH  = 2048;
-constexpr unsigned int SHADOW_MAP_HEIGHT = 2048;
-constexpr float        clampColor[4]     = { 1.0f, 1.0f, 1.0f, 1.0f };
-constexpr unsigned int MAX_DIR_LIGHTS    = 8;
-constexpr unsigned int MAX_SPOT_LIGHTS   = 8;
-constexpr unsigned int MAX_POINT_LIGHTS  = 8;
-
-enum LightType
-{
-    DIRECTION,
-    SPOT,
-    POINT
+    Window*   window   = nullptr;
+    Scene*    scene    = nullptr;
+    Renderer* renderer = nullptr;
 };
 
 enum ShaderID

@@ -16,7 +16,7 @@ public:
 
     int crntWidth = 0, crntHeight = 0;
 
-    Framebuffer(int numRenderTargets, bool hasDepthStencil, const std::string& name);
+    Framebuffer(int numRenderTargets, bool hasDepthStencil, int width, int height, const std::string& name);
 
     void Resize(int w, int h);
 };

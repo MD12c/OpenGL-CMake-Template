@@ -3,7 +3,7 @@
 #include "Graphics/ImguiSetup.h"
 
 App::App()
-    : window(), renderer(), scene(window.getWindow())
+    : window(2560, 1440, "Template", glm::vec3(0.7f), &glfwPtr), renderer(2.0f), scene(window.getWindow())
 {
     My_ImGui::Init(window.getWindow());
     setResizePointers();
@@ -16,7 +16,7 @@ App::~App()
 void App::setResizePointers()
 {
     glfwPtr.window   = &window;
-    glfwPtr.camera   = scene.cameras[scene.activeCam].get();
+    glfwPtr.scene    = &scene;
     glfwPtr.renderer = &renderer;
 }
 
@@ -45,7 +45,7 @@ void App::Update()
         static bool firstClick_C = true;
         if (glfwGetKey(window.getWindow(), GLFW_KEY_C) == GLFW_PRESS && firstClick_C)
         {
-            scene.activeCam = !scene.activeCam;
+            scene.activeCam < static_cast<int>(scene.cameras.size() - 1) ? scene.activeCam++ : scene.activeCam = 0;
             firstClick_C    = false;
         }
         else if (glfwGetKey(window.getWindow(), GLFW_KEY_C) == GLFW_RELEASE)

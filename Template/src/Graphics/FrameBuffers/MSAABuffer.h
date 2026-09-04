@@ -9,6 +9,9 @@
 
 class MSAAbuffer
 {
+private:
+    static constexpr GLuint numSamples = 4;
+
 public:
     GLuint ID;
     RBO    MSAAbufferRBO;

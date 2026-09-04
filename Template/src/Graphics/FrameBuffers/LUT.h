@@ -9,7 +9,7 @@ private:
     Texture tex;
 
 public:
-    LUT();
+    LUT(int width, int height);
     void ExportUniformsTo(ShaderID shaderID);
     void Draw(ShaderID shaderID);
 };

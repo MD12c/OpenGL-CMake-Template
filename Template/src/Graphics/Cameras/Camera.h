@@ -24,10 +24,7 @@ public:
     glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 Up          = glm::vec3(0.0f, 1.0f, 0.0f);
 
-    static std::vector<Camera*> cameras;
-
-    Camera(GLFWwindow* window);
-    static void ScrollCallback(GLFWwindow* win, double xoffset, double yoffset);
+    Camera();
     void        updateUniforms(ShaderID shaderID) const;
     glm::vec2   screenToWorld(const glm::vec2& pos);
 

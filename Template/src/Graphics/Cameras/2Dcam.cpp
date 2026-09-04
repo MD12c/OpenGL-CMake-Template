@@ -2,8 +2,7 @@
 #include "Globals.h"
 #include "../Window.h"
 
-Camera2D::Camera2D(GLFWwindow* window)
-    : Camera(window)
+Camera2D::Camera2D()
 {
     view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
     updateScreenSize();
@@ -32,7 +31,7 @@ void Camera2D::onScroll(GLFWwindow* win, double xoffset, double yoffset)
 
 void Camera2D::updateScreenSize()
 {
-    float aspect = (float)width / (float)height;
+    float aspect = (float)Window::width / (float)Window::height;
     proj         = glm::ortho(-aspect, aspect, -1.0f, 1.0f, -1.0f, 1.0f);
 }
 

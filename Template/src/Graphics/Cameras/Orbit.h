@@ -22,7 +22,7 @@ private:
     glm::vec3 calculatePos();
 
 public:
-    CameraOrbit(GLFWwindow* window);
+    CameraOrbit();
     void  Inputs(GLFWwindow* window) override;
     void  updateScreenSize() override;
     void  onScroll(GLFWwindow* win, double xoffset, double yoffset) override;

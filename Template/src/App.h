@@ -5,12 +5,15 @@
 #include "Graphics/Window.h"
 #include "Graphics/Renderer.h"
 
+class Camera;
+
 class App
 {
 private:
-    Window   window;
-    Renderer renderer;
-    Scene    scene;
+    glfwPointers glfwPtr;
+    Window       window;
+    Renderer     renderer;
+    Scene        scene;
 
     double timePrev = 0;
     double timeCrnt = 0;

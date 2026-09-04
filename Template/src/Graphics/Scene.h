@@ -31,7 +31,8 @@ public:
     Scene(GLFWwindow* glfwWindowPtr);
     ~Scene();
 
-    const Camera& getActiveCamera() const;
+    const Camera& getActiveCamera() const { return *cameras.at(activeCam); }
+    void          Resize(int w, int h);
 };
 
 #endif

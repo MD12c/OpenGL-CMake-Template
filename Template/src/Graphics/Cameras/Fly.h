@@ -12,7 +12,7 @@ private:
     float sensitivity = 100.0f;
 
 public:
-    CameraFly(GLFWwindow* window, float FOVdeg, float nearPlane, float farPlane);
+    CameraFly(float FOVdeg, float nearPlane, float farPlane);
     void  updateScreenSize() override;
     void  Inputs(GLFWwindow* window) override;
     void  onScroll(GLFWwindow* win, double xoffset, double yoffset) override;

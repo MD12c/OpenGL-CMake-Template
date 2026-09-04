@@ -4,7 +4,7 @@
 #include "../Shaders/Shader.h"
 #include "../Models/BasicShapes.h"
 
-LUT::LUT()
+LUT::LUT(int width, int height)
     : tex(GL_RG16F, GL_RG, width, height)
 {
     tex.Bind(0);
@@ -30,7 +30,6 @@ void LUT::Draw(ShaderID shaderID)
     Shader::Activate(shaderID);
     
     tex.Bind(0);
-    glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);
     basicShapes->plane.DrawSimple(shaderID);
     

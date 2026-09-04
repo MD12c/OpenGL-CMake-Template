@@ -1,12 +1,21 @@
 #include "Window.h"
-#include "../Globals.h"
 #include "Cameras/Camera.h"
 #include "FrameBuffers/MSAABuffer.h"
 #include "FrameBuffers/Framebuffer.h"
 #include "Renderer.h"
 
-Window::Window()
+int         Window::width      = 0;
+int         Window::height     = 0;
+std::string Window::windowName = "";
+glm::vec3   Window::windowRGB  = {};
+
+Window::Window(int width, int height, std::string windowName, glm::vec3 windowRGB, glfwPointers* glfwPtr)
 {
+    Window::width      = width;
+    Window::height     = height;
+    Window::windowName = windowName;
+    Window::windowRGB  = windowRGB;
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -20,21 +29,27 @@ Window::Window()
         throw std::runtime_error("Failed to create GLFW window");
     }
     glfwMakeContextCurrent(m_window);
-    glfwSetWindowUserPointer(m_window, &glfwPtr);
-    glfwPtr.window = this;
+    glfwSetWindowUserPointer(m_window, glfwPtr);
 
     auto resizeCallback = [](GLFWwindow* win, int w, int h)
     {
         auto* ptr = static_cast<glfwPointers*>(glfwGetWindowUserPointer(win));
         glViewport(0, 0, w, h);
-        width  = w;
-        height = h;
-        ptr->camera->updateScreenSize();
+        Window::width  = w;
+        Window::height = h;
+        ptr->scene->Resize(w, h);
         ptr->renderer->finalFrameBuffer.Resize(w, h);
         ptr->renderer->antiAlias.Resize(w, h);
         ptr->renderer->bloom.Resize(w, h);
     };
 
+    auto ScrollCallback = [](GLFWwindow* win, double xoffset, double yoffset)
+    {
+        auto* ptr = static_cast<glfwPointers*>(glfwGetWindowUserPointer(win));
+        ptr->scene->cameras.at(ptr->scene->activeCam)->onScroll(win, xoffset, yoffset);
+    };
+
+    glfwSetScrollCallback(m_window, ScrollCallback);
     glfwSetFramebufferSizeCallback(m_window, resizeCallback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -77,27 +92,21 @@ void Window::updateFPS()
     }
 }
 
-GLFWwindow* Window::getWindow()
-{
-    return m_window;
-}
-
 Window::~Window()
 {
     if (m_window)
-    {
         glfwDestroyWindow(m_window);
-    }
+
     glfwTerminate();
 }
 
 void Window::StartFrame()
 {
-    glClearColor(windowRGB[0], windowRGB[1], windowRGB[2], 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glfwPollEvents();
 }
 
 void Window::EndFrame()
 {
     glfwSwapBuffers(m_window);
-    glfwPollEvents();
 }

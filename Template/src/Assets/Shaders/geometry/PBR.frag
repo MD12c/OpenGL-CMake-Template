@@ -283,11 +283,11 @@ void main()
 {
     const vec2 UVs = getUVs();
 
+    vec4  crntAlbedoColor = useTexture ? texture(albedo0, UVs) : vec4(albedoColor, 1.0f);
+    if (crntAlbedoColor.a < 0.1f) discard;
     float crntMetalic     = useMetalic ? texture(metalicRoughness0, UVs).b : metalic;
     float crntRoughness   = useRoughness ? texture(metalicRoughness0, UVs).g : roughness;
-    vec4  crntAlbedoColor = useTexture ? texture(albedo0, UVs) : vec4(albedoColor, 1.0f);
 
-    if (crntAlbedoColor.a < 0.1f) discard;
 
     if (length(camPos - crntPos) < 0.01f)
         discard;

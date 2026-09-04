@@ -1,13 +1,14 @@
 #include "Orbit.h"
-#include "Globals.h"
 
-CameraOrbit::CameraOrbit(GLFWwindow* window)
-    : Camera(window)
+#include "Globals.h"
+#include "../Window.h"
+
+CameraOrbit::CameraOrbit()
 {
     Position    = calculatePos() + focusPoint;
     Orientation = glm::normalize(-Position + focusPoint);
     view        = glm::lookAt(Position, Position + Orientation, Up);
-    proj        = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
+    proj        = glm::perspective(glm::radians(FOVdeg), (float)Window::width / (float)Window::height, nearPlane, farPlane);
     updateScreenSize();
 }
 
@@ -50,7 +51,7 @@ void CameraOrbit::Inputs(GLFWwindow* window)
         // Prevents rotate spike
         if (firstClick)
         {
-            glfwSetCursorPos(window, (width / 2), (height / 2));
+            glfwSetCursorPos(window, (Window::width / 2), (Window::height / 2));
             firstClick = false;
         }
 
@@ -59,8 +60,8 @@ void CameraOrbit::Inputs(GLFWwindow* window)
         glfwGetCursorPos(window, &mouseX, &mouseY);
 
         // Shifts the cursor coord to be in the middle of the screen and normalizes them
-        float rotX = speedPitch * (float)(mouseX - (width / 2)) / width;
-        float rotY = speedYaw * (float)(mouseY - (height / 2)) / height;
+        float rotX = speedPitch * (float)(mouseX - (Window::width / 2)) / Window::width;
+        float rotY = speedYaw * (float)(mouseY - (Window::height / 2)) / Window::height;
 
         yaw -= rotX;
         pitch += rotY;
@@ -75,7 +76,7 @@ void CameraOrbit::Inputs(GLFWwindow* window)
         Orientation = glm::normalize(-Position + focusPoint);
 
         // Locks the cursor to the middle of the screen
-        glfwSetCursorPos(window, (width / 2), (height / 2));
+        glfwSetCursorPos(window, (Window::width / 2), (Window::height / 2));
     }
     else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
     {
@@ -84,7 +85,7 @@ void CameraOrbit::Inputs(GLFWwindow* window)
 
         if (firstClick)
         {
-            glfwSetCursorPos(window, (width / 2), (height / 2));
+            glfwSetCursorPos(window, (Window::width / 2), (Window::height / 2));
             firstClick = false;
         }
 
@@ -92,15 +93,15 @@ void CameraOrbit::Inputs(GLFWwindow* window)
         double mouseY;
         glfwGetCursorPos(window, &mouseX, &mouseY);
 
-        float moveX = speedMove * (float)(mouseX - (width / 2)) / width;
-        float moveY = speedMove * (float)(mouseY - (height / 2)) / height;
+        float moveX = speedMove * (float)(mouseX - (Window::width / 2)) / Window::width;
+        float moveY = speedMove * (float)(mouseY - (Window::height / 2)) / Window::height;
 
         glm::vec3 newRight = glm::normalize(glm::cross(Orientation, Up));
         glm::vec3 newUp    = glm::normalize(glm::cross(newRight, Orientation));
         focusPoint += -newRight * moveX + newUp * moveY;
         Position = calculatePos() + focusPoint;
 
-        glfwSetCursorPos(window, (width / 2), (height / 2));
+        glfwSetCursorPos(window, (Window::width / 2), (Window::height / 2));
     }
     else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
@@ -121,6 +122,6 @@ void CameraOrbit::onScroll(GLFWwindow* win, double xoffset, double yoffset)
 
 void CameraOrbit::updateScreenSize()
 {
-    float aspect = (float)width / (float)height;
+    float aspect = (float)Window::width / (float)Window::height;
     proj         = glm::perspective(glm::radians(FOVdeg), aspect, nearPlane, farPlane);
 }

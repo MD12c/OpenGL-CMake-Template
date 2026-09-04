@@ -22,6 +22,11 @@ private:
     UBO dirUBO;
     UBO spotUBO;
 
+    static constexpr float  clampColor[4]    = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static constexpr GLuint MAX_DIR_LIGHTS   = 8;
+    static constexpr GLuint MAX_SPOT_LIGHTS  = 8;
+    static constexpr GLuint MAX_POINT_LIGHTS = 8;
+
     void genTexture(GLenum type, GLsizei maxDepth, GLuint* shadowMapTexture);
 
 public:

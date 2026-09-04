@@ -6,23 +6,26 @@
 #include "Shaders/Shader.h"
 #include "Materials/MaterialManager.h"
 #include "Models/BasicShapes.h"
+#include "Window.h"
 
 using RF = RenderFeature;
 using DF = DepthFunc;
 using CM = CullMode;
 
-Renderer::Renderer()
+Renderer::Renderer(GLfloat gamma)
     : antiAlias(),
-      finalFrameBuffer(2, true, "PostProcess"),
-      bloom(),
-      lut(),
+      finalFrameBuffer(2, false, Window::width, Window::height, "PostProcess"),
+      bloom(Window::width, Window::height),
+      lut(Window::width, Window::height),
       frustum(),
+      gamma(gamma),
       noTexture(MaterialManager::makeTexture("Assets/Textures/noTexture.png", Texture::TextureType::ALBEDO))
 {
     basicShapes = new BasicShapes();
     Shader::LoadAllShaders();
     Texture::setNoTextureID(noTexture->ID);
     glFrontFace(GL_CCW);
+    glViewport(0, 0, Window::width, Window::height);
     lut.Draw(ShaderID::BRDF_LUT);
 }
 
@@ -47,12 +50,13 @@ void Renderer::Render(const Scene& scene)
 
     set(RF::CULL, false);
     setDepthFunc(DF::LESS);
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, Window::width, Window::height);
 
     BindFramebuffer(antiAlias.ID);
     antiAlias.MSAAbufferRBO.Bind();
     glClear(GL_DEPTH_BUFFER_BIT);
 
+    set(RF::CULL, true);
     auto useShader = ShaderID::PBR;
     scene.lightResources.ExportUniformsTo(useShader);
     scene.skybox.ExportUniformsTo(useShader);
@@ -86,6 +90,7 @@ void Renderer::Render(const Scene& scene)
     set(RF::CULL, true);
 
     antiAlias.CopyResultsTo(finalFrameBuffer);
+    glViewport(0, 0, Window::width, Window::height);
     Texture& blurredTexture = bloom.BlurPass(finalFrameBuffer.textures[1], ShaderID::BLUR, 3);
 
     Shader::Activate(ShaderID::POSTPROCESS);
@@ -94,7 +99,7 @@ void Renderer::Render(const Scene& scene)
     blurredTexture.texUnit(ShaderID::POSTPROCESS, "tex1");
 
     BindFramebuffer(0);
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, Window::width, Window::height);
     set(RF::DEPTH, false);
     basicShapes->plane.DrawSimple(ShaderID::POSTPROCESS);
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

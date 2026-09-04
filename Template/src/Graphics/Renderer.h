@@ -45,13 +45,14 @@ public:
     Bloom       bloom;
     LUT         lut;
     Frustum     frustum;
+    GLfloat     gamma;
 
     std::shared_ptr<Texture> noTexture;
 
     GLuint boundFramebuffer = 0;
     void   BindFramebuffer(GLenum ID) { ID != boundFramebuffer ? glBindFramebuffer(GL_FRAMEBUFFER, boundFramebuffer = ID) : void(); }
 
-    Renderer();
+    explicit Renderer(GLfloat gamma);
     ~Renderer();
 
     void Render(const Scene& scene);

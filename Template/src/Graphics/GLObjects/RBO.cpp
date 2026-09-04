@@ -1,12 +1,13 @@
 #include "RBO.h"
 #include "Globals.h"
 
-RBO::RBO(bool useMultisample, GLenum internalformat) : useMultisample(useMultisample)
+RBO::RBO(int numSamples, int width, int height, GLenum internalformat)
+    : numSamples(numSamples)
 {
     glGenRenderbuffers(1, &ID);
     glBindRenderbuffer(GL_RENDERBUFFER, ID);
 
-    if (useMultisample)
+    if (numSamples > 1)
         glRenderbufferStorageMultisample(GL_RENDERBUFFER, numSamples, GL_DEPTH24_STENCIL8, width, height);
     else
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
@@ -19,7 +20,7 @@ RBO& RBO::operator=(RBO&& other) noexcept
         glDeleteBuffers(1, &ID);
 
         ID             = other.ID;
-        useMultisample = other.useMultisample;
+        numSamples = other.numSamples;
         other.ID       = 0;
     }
 
@@ -27,7 +28,7 @@ RBO& RBO::operator=(RBO&& other) noexcept
 }
 
 RBO::RBO(RBO&& other) noexcept
-    : ID(other.ID), useMultisample(useMultisample)
+    : ID(other.ID), numSamples(numSamples)
 {
     other.ID = 0;
 }

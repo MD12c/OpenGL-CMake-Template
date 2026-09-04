@@ -2,14 +2,10 @@
 
 #include "Globals.h"
 #include "../Shaders/Shader.h"
+#include "../Window.h"
 
-std::vector<Camera*> Camera::cameras = {};
-
-Camera::Camera(GLFWwindow* window)
+Camera::Camera()
 {
-    glfwPtr.camera = this;
-    cameras.push_back(this);
-    glfwSetScrollCallback(window, ScrollCallback);
 }
 
 void Camera::updateUniforms(ShaderID shaderID) const
@@ -22,8 +18,8 @@ void Camera::updateUniforms(ShaderID shaderID) const
 
 glm::vec2 Camera::screenToWorld(const glm::vec2& pos)
 {
-    float ndcX = (2.0f * (float)pos.x) / width - 1.0f;
-    float ndcY = 1.0f - (2.0f * (float)pos.y) / height;
+    float ndcX = (2.0f * (float)pos.x) / Window::width - 1.0f;
+    float ndcY = 1.0f - (2.0f * (float)pos.y) / Window::height;
 
     glm::mat4 invCamera = glm::inverse(proj * view);
     glm::vec4 world     = invCamera * glm::vec4(ndcX, ndcY, 0.0f, 1.0f);
@@ -32,14 +28,6 @@ glm::vec2 Camera::screenToWorld(const glm::vec2& pos)
         world /= world.w;
 
     return glm::vec2(world.x, world.y);
-}
-
-void Camera::ScrollCallback(GLFWwindow* win, double xoffset, double yoffset)
-{
-    auto* ptr = static_cast<glfwPointers*>(glfwGetWindowUserPointer(win));
-
-    if (ptr && ptr->camera)
-        ptr->camera->onScroll(win, xoffset, yoffset);
 }
 
 glm::mat4 Camera::getRotationMat()

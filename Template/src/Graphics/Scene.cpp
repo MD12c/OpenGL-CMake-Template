@@ -2,6 +2,8 @@
 
 #include "ImguiSetup.h"
 #include "Cameras/Fly.h"
+#include "Cameras/Orbit.h"
+#include "Cameras/2Dcam.h"
 
 static std::string facesCubemap[6] = {
     "Assets/Textures/Skybox/right.jpg",
@@ -17,17 +19,17 @@ static std::string HDRimage = "Assets/Textures/cloudbox/clouds.hdr";
 Scene::Scene(GLFWwindow* glfwWindowPtr)
     : lightResources(zNear, zFar), skybox(HDRimage), glfwWindowPtr(glfwWindowPtr), worldTransform({}, {}, glm::vec3(0.02f))
 {
-    // cameras.emplace_back(std::make_unique<Camera2D>(glfwWindowPtr));
-    // cameras.emplace_back(std::make_unique<CameraOrbit>(glfwWindowPtr));
-    cameras.emplace_back(std::make_unique<CameraFly>(glfwWindowPtr, 45.0f, zNear, zFar));
-    cameras.emplace_back(std::make_unique<CameraFly>(glfwWindowPtr, 45.0f, zNear, zFar));
+    // cameras.emplace_back(std::make_unique<Camera2D>());
+    cameras.emplace_back(std::make_unique<CameraOrbit>());
+    cameras.emplace_back(std::make_unique<CameraFly>(45.0f, zNear, zFar));
+    cameras.emplace_back(std::make_unique<CameraFly>(45.0f, zNear, zFar));
 
     // models.emplace_back("Assets/Models/crow/scene.gltf");
     //   models.emplace_back("Assets/Models/crow.obj");
 
     // models.emplace_back("Assets/Models/Brick wall/wall.gltf");
     // models.emplace_back("Assets/Models/Brick wall/wall.obj");
-    
+
     // models.emplace_back("Assets/Models/Lava Wall/lava.obj");
 
     // models.emplace_back("Assets/Models/ignore/Sphere/Metal/Sphere.gltf");
@@ -49,7 +51,7 @@ Scene::Scene(GLFWwindow* glfwWindowPtr)
         My_ImGui::RenderOverlay(
             cam.Position.x, cam.Position.y, cam.Position.z,
             cam.Orientation.x, cam.Orientation.y, cam.Orientation.z);
-        //My_ImGui::RenderInterfaceInput();
+        // My_ImGui::RenderInterfaceInput();
     };
 }
 
@@ -57,7 +59,8 @@ Scene::~Scene()
 {
 }
 
-const Camera& Scene::getActiveCamera() const
+void Scene::Resize(int w, int h)
 {
-    return *cameras.at(activeCam);
+    for (auto& camera : cameras)
+        camera->updateScreenSize();
 }

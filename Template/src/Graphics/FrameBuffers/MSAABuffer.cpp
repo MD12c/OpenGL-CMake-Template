@@ -1,8 +1,10 @@
 #include "MSAAbuffer.h"
+
 #include "Globals.h"
+#include "../Window.h"
 
 MSAAbuffer::MSAAbuffer()
-    : MSAAbufferRBO(true)
+    : MSAAbufferRBO(numSamples, Window::width, Window::height)
 {
     glGenFramebuffers(1, &ID);
     glBindFramebuffer(GL_FRAMEBUFFER, ID);
@@ -11,13 +13,13 @@ MSAAbuffer::MSAAbuffer()
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureID);
     glObjectLabel(GL_TEXTURE, textureID, -1, "MSAA Texture");
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB16F, width, height, GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB16F, Window::width, Window::height, GL_TRUE);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureID, 0);
 
     glGenTextures(1, &bloomTextureID);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, bloomTextureID);
     glObjectLabel(GL_TEXTURE, textureID, -1, "Bloom texture");
-    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB16F, width, height, GL_TRUE);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, numSamples, GL_RGB16F, Window::width, Window::height, GL_TRUE);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, bloomTextureID, 0);
 
     GLenum attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
@@ -39,11 +41,11 @@ void MSAAbuffer::CopyResultsTo(const Framebuffer& postProcessing)
 
     glReadBuffer(GL_COLOR_ATTACHMENT0);
     glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, Window::width, Window::height, 0, 0, Window::width, Window::height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
     glReadBuffer(GL_COLOR_ATTACHMENT1);
     glDrawBuffer(GL_COLOR_ATTACHMENT1);
-    glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBlitFramebuffer(0, 0, Window::width, Window::height, 0, 0, Window::width, Window::height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }
 
 void MSAAbuffer::Resize(int w, int h)

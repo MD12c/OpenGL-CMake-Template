@@ -10,7 +10,7 @@ private:
     Framebuffer buffer2;
 
 public:
-    Bloom();
+    Bloom(int width, int height);
 
     Texture& BlurPass(const Texture& brightTexture, ShaderID shaderID, int numPasses);
     void     Resize(int w, int h);

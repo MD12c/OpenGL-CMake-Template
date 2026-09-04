@@ -1,9 +1,10 @@
 #include "Fly.h"
-#include "Globals.h"
 
-CameraFly::CameraFly(GLFWwindow* window, float FOVdeg, float nearPlane, float farPlane)
-    : Camera(window),
-      FOVdeg(FOVdeg),
+#include "Globals.h"
+#include "../Window.h"
+
+CameraFly::CameraFly(float FOVdeg, float nearPlane, float farPlane)
+    : FOVdeg(FOVdeg),
       nearPlane(nearPlane),
       farPlane(farPlane)
 {
@@ -13,7 +14,7 @@ CameraFly::CameraFly(GLFWwindow* window, float FOVdeg, float nearPlane, float fa
 
 void CameraFly::updateScreenSize()
 {
-    proj = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
+    proj = glm::perspective(glm::radians(FOVdeg), (float)Window::width / (float)Window::height, nearPlane, farPlane);
 }
 
 void CameraFly::Inputs(GLFWwindow* window)
@@ -45,7 +46,7 @@ void CameraFly::Inputs(GLFWwindow* window)
         // Prevents rotate spike
         if (firstClick)
         {
-            glfwSetCursorPos(window, (width / 2), (height / 2));
+            glfwSetCursorPos(window, (Window::width / 2), (Window::height / 2));
             firstClick = false;
         }
 
@@ -54,8 +55,8 @@ void CameraFly::Inputs(GLFWwindow* window)
         glfwGetCursorPos(window, &mouseX, &mouseY);
 
         // Shifts the cursor coord to be in the middle of the screen and normalizes them
-        float rotX = sensitivity * (float)(mouseY - (height / 2)) / height;
-        float rotY = sensitivity * (float)(mouseX - (width / 2)) / width;
+        float rotX = sensitivity * (float)(mouseY - (Window::height / 2)) / Window::height;
+        float rotY = sensitivity * (float)(mouseX - (Window::width / 2)) / Window::width;
 
         // Gets new rotated orientation rotate -> mat4, degree, axis
         glm::vec3 newOrientation = glm::rotate(Orientation, glm::radians(-rotX), glm::normalize(glm::cross(Orientation, Up)));
@@ -68,7 +69,7 @@ void CameraFly::Inputs(GLFWwindow* window)
         Orientation = glm::rotate(Orientation, glm::radians(-rotY), Up);
 
         // Locks the cursor to the middle of the screen
-        glfwSetCursorPos(window, (width / 2), (height / 2));
+        glfwSetCursorPos(window, (Window::width / 2), (Window::height / 2));
     }
     else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
     {
@@ -82,5 +83,5 @@ void CameraFly::onScroll(GLFWwindow* win, double xoffset, double yoffset)
 {
     FOVdeg += (float)yoffset * 5;
     FOVdeg = glm::clamp(FOVdeg, 0.0f, 179.0f);
-    proj   = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
+    proj   = glm::perspective(glm::radians(FOVdeg), (float)Window::width / (float)Window::height, nearPlane, farPlane);
 }

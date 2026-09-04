@@ -14,40 +14,43 @@ namespace MaterialManager
 extern std::deque<std::unique_ptr<Material>>                                                               materials;
 extern std::unordered_map<Texture::TextureType, std::unordered_map<std::string, std::shared_ptr<Texture>>> loadedTextures;
 
-MaterialID LoadMaterialSpecular(const std::string& name,
-                                glm::vec3          diffuseColor,
-                                glm::vec3          specularColor,
-                                float              shininess,
-                                const std::string& diffuseMapPath,
-                                const std::string& specularMapPath,
-                                const std::string& normalMapPath,
-                                const std::string& displacementMapPath);
+MaterialID LoadMaterialSpecular(
+    const std::string& name,
+    glm::vec3          diffuseColor,
+    glm::vec3          specularColor,
+    float              shininess,
+    const std::string& diffuseMapPath,
+    const std::string& specularMapPath,
+    const std::string& normalMapPath,
+    const std::string& displacementMapPath);
 
-MaterialID LoadMaterialPBRobj(const std::string& name,
-                              float              roughness,
-                              float              metalic,
-                              const std::string& albedoMapPath,
-                              const std::string& aoMapPath,
-                              const std::string& roughnessMapPath,
-                              const std::string& metalicMapPath,
-                              const std::string& normalMapPath,
-                              const std::string& displacementMapPath);
+MaterialID LoadMaterialPBRobj(
+    const std::string& name,
+    float              roughness,
+    float              metalic,
+    const std::string& albedoMapPath,
+    const std::string& aoMapPath,
+    const std::string& roughnessMapPath,
+    const std::string& metalicMapPath,
+    const std::string& normalMapPath,
+    const std::string& displacementMapPath);
 
-MaterialID LoadMaterialPBRgltf(const std::string& name,
-                               float              roughness,
-                               float              metalic,
-                               const std::string& albedoMapPath,
-                               const std::string& aoMapPath,
-                               const std::string& metalicRoughnessMapPath,
-                               const std::string& normalMapPath,
-                               const std::string& displacementMapPath);
+MaterialID LoadMaterialPBRgltf(
+    const std::string& name,
+    float              roughness,
+    float              metalic,
+    const std::string& albedoMapPath,
+    const std::string& aoMapPath,
+    const std::string& metalicRoughnessMapPath,
+    const std::string& normalMapPath,
+    const std::string& displacementMapPath);
 
 MaterialID LoadMaterialCustom(const std::string& name, ShaderID shaderID);
 
 std::shared_ptr<Texture> makeTexture(const std::string& texturePath, Texture::TextureType type);
 std::shared_ptr<Texture> makeTexture(const std::string& texturePath1, const std::string& texturePath2, Texture::TextureType type);
 
-Material& getMatAt(MaterialID ID);
+inline Material& getMatAt(MaterialID ID) { return *materials.at(ID); }
 
 };  // namespace MaterialManager
 #endif

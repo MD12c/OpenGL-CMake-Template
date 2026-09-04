@@ -2,8 +2,8 @@
 
 #include "Globals.h"
 
-Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil, const std::string& name)
-    : framebufferRBO(hasDepthStencil ? std::make_unique<RBO>(false) : nullptr)
+Framebuffer::Framebuffer(int numRenderTargets, bool hasDepthStencil, int width, int height, const std::string& name)
+    : framebufferRBO(hasDepthStencil ? std::make_unique<RBO>(1, width, height) : nullptr)
 {
     GLint prevFramebuffer;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);

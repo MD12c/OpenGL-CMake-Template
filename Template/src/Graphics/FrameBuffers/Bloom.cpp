@@ -4,9 +4,9 @@
 #include "../Shaders/Shader.h"
 #include "../Models/BasicShapes.h"
 
-Bloom::Bloom()
-    : buffer1(1, false, "Bloom1"),
-      buffer2(1, false, "Bloom2")
+Bloom::Bloom(int width, int height)
+    : buffer1(1, false, width, height, "Bloom1"),
+      buffer2(1, false, width, height, "Bloom2")
 {
 }
 
@@ -17,7 +17,6 @@ Texture& Bloom::BlurPass(const Texture& brightTexture, ShaderID shaderID, int nu
 
     GLint prevFramebuffer;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
-    glViewport(0, 0, width, height);
 
     bool horizontal = true, first_iteration = true;
 
