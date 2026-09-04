@@ -6,9 +6,6 @@
 
 #include "Globals.h"
 #include "../Renderer.h"
-#include "ShadowCaster.h"
-#include "ShadowMap2D.h"
-#include "ShadowMapCube.h"
 #include "../Materials/MaterialManager.h"
 #include "../Models/BasicShapes.h"
 
@@ -17,8 +14,14 @@ LightResources::LightResources(float zNear, float zFar)
       zFar(zFar),
       material2D(MaterialManager::LoadMaterialCustom("Shadow2D", ShaderID::SHADOW_MAP2D)),
       materialCube(MaterialManager::LoadMaterialCustom("ShadowCube", ShaderID::SHADOW_MAPCUBE)),
-      materialSphere(MaterialManager::LoadMaterialCustom("lightSphere", ShaderID::LIGHT_SPHERE))
+      materialSphere(MaterialManager::LoadMaterialCustom("lightSphere", ShaderID::LIGHT_SPHERE)),
+      pointUBO(sizeof(PointLight::PointLightsUBO), GL_STATIC_DRAW),
+      dirUBO(sizeof(DirectionLight::DirLightsUBO), GL_STATIC_DRAW),
+      spotUBO(sizeof(SpotLight::SpotLightsUBO), GL_STATIC_DRAW)
 {
+    GLint prevFramebuffer;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
+
     glGenFramebuffers(1, &frameBuf2D);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuf2D);
     glObjectLabel(GL_FRAMEBUFFER, frameBuf2D, -1, "ShadowMap FBO 2D");
@@ -33,9 +36,6 @@ LightResources::LightResources(float zNear, float zFar)
     genTexture(GL_TEXTURE_CUBE_MAP_ARRAY, MAX_POINT_LIGHTS * 6, &shadowMapPointArray);
     glObjectLabel(GL_TEXTURE, shadowMapPointArray, -1, "ShadowMap Point Array");
 
-    GLint prevFramebuffer;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFramebuffer);
-
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuf2D);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
@@ -43,6 +43,10 @@ LightResources::LightResources(float zNear, float zFar)
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, prevFramebuffer);
+
+    pointUBO.linkShader(ShaderID::PBR, "PointLightsBlock");
+    dirUBO.linkShader(ShaderID::PBR, "DirLightsBlock");
+    spotUBO.linkShader(ShaderID::PBR, "SpotLightsBlock");
 }
 
 LightResources::~LightResources()
@@ -50,25 +54,21 @@ LightResources::~LightResources()
     glDeleteTextures(1, &shadowMapDirArray);
     glDeleteTextures(1, &shadowMapSpotArray);
     glDeleteTextures(1, &shadowMapPointArray);
-    shadowMapDirArray   = 0;
-    shadowMapSpotArray  = 0;
-    shadowMapPointArray = 0;
+    glDeleteFramebuffers(1, &frameBuf2D);
+    glDeleteFramebuffers(1, &frameBufCube);
 }
 
 void LightResources::genTexture(GLenum type, GLsizei maxDepth, GLuint* shadowMapTexture)
 {
     glGenTextures(1, shadowMapTexture);
     glBindTexture(type, *shadowMapTexture);
-    glTexImage3D(type, 0, GL_DEPTH_COMPONENT,
-                 ShadowCaster::SHADOW_MAP_WIDTH,
-                 ShadowCaster::SHADOW_MAP_HEIGHT,
-                 maxDepth, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+    glTexImage3D(type, 0, GL_DEPTH_COMPONENT, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT, maxDepth, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
     glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     glTexParameteri(type, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameterfv(type, GL_TEXTURE_BORDER_COLOR, ShadowCaster::clampColor);
+    glTexParameterfv(type, GL_TEXTURE_BORDER_COLOR, clampColor);
 }
 
 void LightResources::BindShadowTextures(ShaderID shaderID) const
@@ -91,72 +91,82 @@ void LightResources::BindShadowTextures(ShaderID shaderID) const
     glUniform1i(Shader::getLoc(shaderID, "pointShadowMaps"), texPoint);
 }
 
-GLint LightResources::RegisterCaster(LightType type)
-{
-    switch (type)
-    {
-        case LightType::DIRECTION:
-            if (nextDirLayer >= MAX_DIR_LIGHTS) return -1;
-            return nextDirLayer++;
-
-        case LightType::SPOT:
-            if (nextSpotLayer >= MAX_SPOT_LIGHTS) return -1;
-            return nextSpotLayer++;
-
-        case LightType::POINT:
-            if (nextPointLayer >= MAX_POINT_LIGHTS) return -1;
-            return nextPointLayer++;
-
-        default:
-            return -1;
-    }
-}
-
-void LightResources::DrawLightSpheres(ShaderID shaderID, size_t index) const
+void LightResources::DrawLightSpheres(ShaderID shaderID, glm::vec3 pos, glm::vec3 color) const
 {
     Shader::Activate(shaderID);
-    glm::vec4 col = glm::vec4(lights.at(index).getColor(), 1.0f);
-    glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
-    basicShapes->icoSphere.Draw(shaderID, Transform(lights.at(index).getPosition()), nullptr, materialSphere);
+    glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(color));
+    basicShapes->icoSphere.Draw(shaderID, Transform(pos), nullptr, materialSphere);
 }
 
-void LightResources::DrawLightPlanes(ShaderID shaderID, size_t index) const
+void LightResources::DrawLightPlanes(ShaderID shaderID, glm::vec3 pos, glm::vec3 direction, glm::vec3 color) const
 {
     Shader::Activate(shaderID);
-    glm::vec4 col = glm::vec4(lights.at(index).getColor(), 1.0f);
+    glm::vec4 col = glm::vec4(color, 1.0f);
     glUniform4fv(Shader::getLoc(shaderID, "lightColor"), 1, glm::value_ptr(col));
-    glm::vec3 dir        = glm::normalize(lights.at(index).getDirection());
+    glm::vec3 dir        = glm::normalize(direction);
     glm::vec3 defaultDir = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::quat rotation   = glm::rotation(defaultDir, dir);
-    basicShapes->plane.Draw(shaderID, Transform(lights.at(index).getPosition(), rotation), nullptr, materialSphere);
+    basicShapes->plane.Draw(shaderID, Transform(pos, rotation), nullptr, materialSphere);
 }
 
 void LightResources::ExportUniformsTo(ShaderID shaderID) const
 {
     BindShadowTextures(shaderID);
 
-    int dirIdx = 0, spotIdx = 0, pointIdx = 0;
-    for (auto& light : lights)
+    GLint numSpotLights  = static_cast<GLint>(spotLights.size());
+    GLint numDirLights   = static_cast<GLint>(directionLights.size());
+    GLint numPointLights = static_cast<GLint>(pointLights.size());
+
+    if (DirectionLight::updateUBOdata)
     {
-        switch (light.getType())
+        DirectionLight::DirLightsUBO data{};
+        data.numDirLights = numDirLights;
+        for (int i = 0; i < numDirLights; ++i)
         {
-            case LightType::DIRECTION:
-                light.caster->ExportUniformsTo(shaderID, dirIdx, light.getPosition(), light.getDirection(), light.getColor());
-                dirIdx++;
-                break;
-            case LightType::SPOT:
-                light.caster->ExportUniformsTo(shaderID, spotIdx, light.getPosition(), light.getDirection(), light.getColor());
-                spotIdx++;
-                break;
-            case LightType::POINT:
-                light.caster->ExportUniformsTo(shaderID, pointIdx, light.getPosition(), light.getDirection(), light.getColor());
-                pointIdx++;
-                break;
+            data.direction[i]    = glm::vec4(directionLights[i].getDirection(), 0.0f);
+            data.color[i]        = glm::vec4(directionLights[i].getColor(), 0.0f);
+            data.shadowMatrix[i] = directionLights[i].getShadowMatrix();
+            data.layerIndex[i]   = glm::ivec4(directionLights[i].layerIndex);
         }
+        dirUBO.Bind();
+        dirUBO.UpdateData(&data, sizeof(DirectionLight::DirLightsUBO));
+        DirectionLight::updateUBOdata = false;
     }
-    glUniform1i(Shader::getLoc(shaderID, "numDirLights"), dirIdx);
-    glUniform1i(Shader::getLoc(shaderID, "numSpotLights"), spotIdx);
-    glUniform1i(Shader::getLoc(shaderID, "numPointLights"), pointIdx);
+
+    if (SpotLight::updateUBOdata)
+    {
+        SpotLight::SpotLightsUBO data{};
+        data.numSpotLights = numSpotLights;
+        for (int i = 0; i < numSpotLights; ++i)
+        {
+            data.innerCone[i]    = glm::vec4(spotLights[i].innerCone);
+            data.outerCone[i]    = glm::vec4(spotLights[i].outerCone);
+            data.pos[i]          = glm::vec4(spotLights[i].getPosition(), 0.0f);
+            data.direction[i]    = glm::vec4(spotLights[i].getDirection(), 0.0f);
+            data.color[i]        = glm::vec4(spotLights[i].getColor(), 0.0f);
+            data.shadowMatrix[i] = spotLights[i].getShadowMatrix();
+            data.layerIndex[i]   = glm::ivec4(spotLights[i].layerIndex);
+        }
+        spotUBO.Bind();
+        spotUBO.UpdateData(&data, sizeof(SpotLight::SpotLightsUBO));
+        SpotLight::updateUBOdata = false;
+    }
+
+    if (PointLight::updateUBOdata)
+    {
+        PointLight::PointLightsUBO data{};
+        data.numPointLights = numPointLights;
+        for (int i = 0; i < data.numPointLights; ++i)
+        {
+            data.pos[i]        = glm::vec4(pointLights[i].getPosition(), 0.0f);
+            data.color[i]      = glm::vec4(pointLights[i].getColor(), 0.0f);
+            data.farPlane[i]   = glm::vec4(pointLights[i].getFarPlane());
+            data.layerIndex[i] = glm::ivec4(pointLights[i].layerIndex);
+        }
+        pointUBO.Bind();
+        pointUBO.UpdateData(&data, sizeof(PointLight::PointLightsUBO));
+        PointLight::updateUBOdata = false;
+    }
 }
 
 void LightResources::ShadowPass(Renderer* renderer, const std::vector<Model>& models, Transform transform) const
@@ -165,52 +175,66 @@ void LightResources::ShadowPass(Renderer* renderer, const std::vector<Model>& mo
     renderer->BindFramebuffer(frameBuf2D);
     renderer->BindFramebuffer(frameBufCube);
 
-    for (const auto& light : lights)
+    for (const auto& pointLight : pointLights)
     {
-        LightType  lightType = light.getType();
-        ShaderID   shaderID  = Shader::getShaderIDfromLightType(lightType);
-        MaterialID materialID;
-        light.caster->BeginDepthPass(shaderID, light.getPosition());
-
-        if (lightType == POINT)
-        {
-            materialID = materialCube;
-            renderer->BindFramebuffer(frameBufCube);
-            glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMapPointArray, 0);
-        }
-        else
-        {
-            materialID = material2D;
-            renderer->BindFramebuffer(frameBuf2D);
-            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                      lightType == DIRECTION ? shadowMapDirArray : shadowMapSpotArray,
-                                      0, light.caster->layerIndex);
-        }
+        ShaderID shaderID = ShaderID::SHADOW_MAPCUBE;
+        pointLight.BeginDepthPass(shaderID);
+        renderer->BindFramebuffer(frameBufCube);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMapPointArray, 0);
         glClear(GL_DEPTH_BUFFER_BIT);
 
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE)
-            std::cout << "ShadowMap FBO incomplete: " << status << std::endl;
+            std::cout << "pointLight FBO incomplete: " << status << std::endl;
 
         for (const auto& model : models)
-            model.Draw(shaderID, transform, nullptr, materialID);
+            model.Draw(shaderID, transform, nullptr, materialCube);
+    }
+
+    for (const auto& directionLight : directionLights)
+    {
+        ShaderID shaderID = ShaderID::SHADOW_MAP2D;
+        directionLight.BeginDepthPass(shaderID);
+        renderer->BindFramebuffer(frameBuf2D);
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMapDirArray, 0, directionLight.layerIndex);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "directionLight FBO incomplete: " << status << std::endl;
+
+        for (const auto& model : models)
+            model.Draw(shaderID, transform, nullptr, material2D);
+    }
+
+    for (const auto& spotLight : spotLights)
+    {
+        ShaderID shaderID = ShaderID::SHADOW_MAP2D;
+        spotLight.BeginDepthPass(shaderID);
+        renderer->BindFramebuffer(frameBuf2D);
+        glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowMapSpotArray, 0, spotLight.layerIndex);
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "spotLight FBO incomplete: " << status << std::endl;
+
+        for (const auto& model : models)
+            model.Draw(shaderID, transform, nullptr, material2D);
     }
 }
 
 void LightResources::addDirectionLight(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float left, float right, float bottom, float top)
 {
-    auto caster = std::make_unique<ShadowMap2D>(RegisterCaster(LightType::DIRECTION), lightPos, direction, left, right, bottom, top, zNear, zFar);
-    lights.emplace_back(LightType::DIRECTION, lightPos, direction, lightColor, std::move(caster));
+    directionLights.emplace_back(static_cast<GLuint>(directionLights.size()), lightPos, direction, lightColor, left, right, bottom, top, zNear, zFar);
 }
 
 void LightResources::addSpotLight(glm::vec3 lightPos, glm::vec3 direction, glm::vec3 lightColor, float fovDeg, float innerCone, float outerCone)
 {
-    auto caster = std::make_unique<ShadowMap2D>(RegisterCaster(LightType::SPOT), lightPos, direction, fovDeg, innerCone, outerCone, zNear, zFar);
-    lights.emplace_back(LightType::SPOT, lightPos, direction, lightColor, std::move(caster));
+    spotLights.emplace_back(static_cast<GLuint>(spotLights.size()), lightPos, direction, lightColor, fovDeg, innerCone, outerCone, zNear, zFar);
 }
 
 void LightResources::addPointLight(glm::vec3 lightPos, glm::vec3 lightColor)
 {
-    auto caster = std::make_unique<ShadowMapCube>(RegisterCaster(LightType::POINT), lightPos, zNear, zFar);
-    lights.emplace_back(LightType::POINT, lightPos, glm::vec3(0.0f), lightColor, std::move(caster));
+    pointLights.emplace_back(static_cast<GLuint>(pointLights.size()), lightPos, lightColor, zNear, zFar);
 }

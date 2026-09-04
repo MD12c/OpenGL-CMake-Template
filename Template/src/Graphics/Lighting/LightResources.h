@@ -5,25 +5,29 @@
 
 #include "Globals.h"
 #include "../Models/Model.h"
-#include "Light.h"
+#include "../GLObjects/UBO.h"
+#include "SpotLight.h"
+#include "DirectionLight.h"
+#include "PointLight.h"
 
 class LightResources
 {
 private:
-    int nextDirLayer   = 0;
-    int nextSpotLayer  = 0;
-    int nextPointLayer = 0;
-
     float      zNear, zFar;
     MaterialID materialSphere;
     MaterialID material2D;
     MaterialID materialCube;
 
-    void  genTexture(GLenum type, GLsizei maxDepth, GLuint* shadowMapTexture);
-    GLint RegisterCaster(LightType type);
+    UBO pointUBO;
+    UBO dirUBO;
+    UBO spotUBO;
+
+    void genTexture(GLenum type, GLsizei maxDepth, GLuint* shadowMapTexture);
 
 public:
-    std::vector<Light> lights;
+    std::vector<PointLight>     pointLights;
+    std::vector<DirectionLight> directionLights;
+    std::vector<SpotLight>      spotLights;
 
     GLuint shadowMapDirArray;
     GLuint shadowMapSpotArray;
@@ -36,8 +40,8 @@ public:
     ~LightResources();
 
     void BindShadowTextures(ShaderID shaderID) const;
-    void DrawLightPlanes(ShaderID shaderID, size_t index) const;
-    void DrawLightSpheres(ShaderID shaderID, size_t index) const;
+    void DrawLightPlanes(ShaderID shaderID, glm::vec3 pos, glm::vec3 direction, glm::vec3 color) const;
+    void DrawLightSpheres(ShaderID shaderID, glm::vec3 pos, glm::vec3 color) const;
     void ExportUniformsTo(ShaderID shaderID) const;
     void ShadowPass(Renderer* renderer, const std::vector<Model>& models, Transform transform) const;
 

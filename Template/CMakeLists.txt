@@ -17,6 +17,8 @@ set(VERTEX_BUFFERS_SOURCES
     src/Graphics/GLObjects/VAO.h
     src/Graphics/GLObjects/VBO.cpp
     src/Graphics/GLObjects/VBO.h
+    src/Graphics/GLObjects/UBO.cpp
+    src/Graphics/GLObjects/UBO.h
     src/Graphics/GLObjects/SSBO.cpp
     src/Graphics/GLObjects/SSBO.h
     src/Graphics/GLObjects/RBO.cpp
@@ -61,11 +63,9 @@ set(MATERIAL_SOURCES
     src/Graphics/Materials/MaterialManager.cpp)
 
 set(LIGHTING_SOURCES
-    src/Graphics/Lighting/ShadowMap2D.h
-    src/Graphics/Lighting/ShadowMap2D.cpp
-    src/Graphics/Lighting/ShadowCaster.h
-    src/Graphics/Lighting/ShadowMapCube.h
-    src/Graphics/Lighting/ShadowMapCube.cpp
+    src/Graphics/Lighting/DirectionLight.h
+    src/Graphics/Lighting/PointLight.h
+    src/Graphics/Lighting/SpotLight.h
     src/Graphics/Lighting/LightResources.h
     src/Graphics/Lighting/LightResources.cpp)
 

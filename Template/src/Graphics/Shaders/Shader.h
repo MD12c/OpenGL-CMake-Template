@@ -15,14 +15,8 @@ struct StringHash
 {
     using is_transparent = void;
 
-    std::size_t operator()(std::string_view sv) const noexcept
-    {
-        return std::hash<std::string_view>{}(sv);
-    }
-    std::size_t operator()(const std::string& s) const noexcept
-    {
-        return std::hash<std::string_view>{}(s);
-    }
+    std::size_t operator()(std::string_view sv) const noexcept { return std::hash<std::string_view>{}(sv); }
+    std::size_t operator()(const std::string& s) const noexcept { return std::hash<std::string_view>{}(s); }
 };
 
 using u_map = std::unordered_map<std::string, GLint, StringHash, std::equal_to<>>;

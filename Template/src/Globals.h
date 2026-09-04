@@ -28,9 +28,12 @@ inline struct glfwPointers
 
 constexpr GLuint numSamples = 4;
 
-constexpr unsigned int MAX_DIR_LIGHTS   = 8;
-constexpr unsigned int MAX_SPOT_LIGHTS  = 8;
-constexpr unsigned int MAX_POINT_LIGHTS = 8;
+constexpr unsigned int SHADOW_MAP_WIDTH  = 2048;
+constexpr unsigned int SHADOW_MAP_HEIGHT = 2048;
+constexpr float        clampColor[4]     = { 1.0f, 1.0f, 1.0f, 1.0f };
+constexpr unsigned int MAX_DIR_LIGHTS    = 8;
+constexpr unsigned int MAX_SPOT_LIGHTS   = 8;
+constexpr unsigned int MAX_POINT_LIGHTS  = 8;
 
 enum LightType
 {

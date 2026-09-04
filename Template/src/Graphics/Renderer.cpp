@@ -42,7 +42,7 @@ void Renderer::Render(const Scene& scene)
     set(RF::DEPTH, true);
     set(RF::CULL, true);
     setCullMode(CM::BACK);
-    glViewport(0, 0, ShadowCaster::SHADOW_MAP_WIDTH, ShadowCaster::SHADOW_MAP_HEIGHT);
+    glViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
     scene.lightResources.ShadowPass(this, scene.models, scene.worldTransform);
 
     set(RF::CULL, false);
@@ -62,18 +62,21 @@ void Renderer::Render(const Scene& scene)
         model.Draw(useShader, scene.worldTransform, &frustum);
 
     scene.cameras[scene.activeCam]->updateUniforms(ShaderID::LIGHT_SPHERE);
-    for (size_t i = 0; i < scene.lightResources.lights.size(); i++)
+    const auto& Lres = scene.lightResources;
+    for (size_t i = 0; i < Lres.pointLights.size(); i++)
     {
-        if (scene.lightResources.lights.at(i).getType() == LightType::POINT)
-        {
-            set(RF::CULL, true);
-            scene.lightResources.DrawLightSpheres(ShaderID::LIGHT_SPHERE, i);
-        }
-        else
-        {
-            set(RF::CULL, false);
-            scene.lightResources.DrawLightPlanes(ShaderID::LIGHT_SPHERE, i);
-        }
+        set(RF::CULL, true);
+        Lres.DrawLightSpheres(ShaderID::LIGHT_SPHERE,
+                              Lres.pointLights[i].getPosition(),
+                              Lres.pointLights[i].getColor());
+    }
+    for (size_t i = 0; i < Lres.directionLights.size(); i++)
+    {
+        set(RF::CULL, false);
+        Lres.DrawLightPlanes(ShaderID::LIGHT_SPHERE,
+                             Lres.directionLights[i].getPosition(),
+                             Lres.directionLights[i].getDirection(),
+                             Lres.directionLights[i].getColor());
     }
 
     set(RF::CULL, false);

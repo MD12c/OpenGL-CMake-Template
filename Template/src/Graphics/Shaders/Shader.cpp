@@ -121,18 +121,6 @@ GLint Shader::getLoc(ShaderID index, std::string_view uniformName)
     return loc;
 }
 
-ShaderID Shader::getShaderIDfromLightType(LightType type)
-{
-    if (type == LightType::DIRECTION)
-        return ShaderID::SHADOW_MAP2D;
-    else if (type == LightType::SPOT)
-        return ShaderID::SHADOW_MAP2D;
-    else if (type == LightType::POINT)
-        return ShaderID::SHADOW_MAPCUBE;
-    else
-        throw std::runtime_error("[ERROR] Invalid light type");
-};
-
 GLint Shader::getUnit(ShaderID index, std::string_view name)
 {
     const auto& unitMap = shaders.at(index).units;

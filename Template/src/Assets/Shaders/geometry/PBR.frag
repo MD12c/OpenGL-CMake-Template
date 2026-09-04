@@ -31,33 +31,46 @@ uniform bool useNormal;
 uniform bool useDisplacement;
 uniform bool useIBL;
 
-#define MAX_DIR_LIGHTS 8
-#define MAX_SPOT_LIGHTS 8
-#define MAX_POINT_LIGHTS 8
+// #define MAX_DIR_LIGHTS 8
+// #define MAX_SPOT_LIGHTS 8
+// #define MAX_POINT_LIGHTS 8
 
-uniform int            numDirLights;
-uniform vec3           dirLightDirection[MAX_DIR_LIGHTS];
-uniform vec3           dirLightColor[MAX_DIR_LIGHTS];
-uniform mat4           dirShadowMatrix[MAX_DIR_LIGHTS];
-uniform int            dirLayerIndex[MAX_DIR_LIGHTS];
 uniform sampler2DArray dirShadowMaps;
-
-uniform int            numSpotLights;
-uniform float          spotLightInnerCone[MAX_SPOT_LIGHTS];
-uniform float          spotLightOuterCone[MAX_SPOT_LIGHTS];
-uniform vec3           spotLightPos[MAX_SPOT_LIGHTS];
-uniform vec3           spotLightDirection[MAX_SPOT_LIGHTS];
-uniform vec3           spotLightColor[MAX_SPOT_LIGHTS];
-uniform mat4           spotShadowMatrix[MAX_SPOT_LIGHTS];
-uniform int            spotLayerIndex[MAX_SPOT_LIGHTS];
 uniform sampler2DArray spotShadowMaps;
-
-uniform int              numPointLights;
-uniform vec3             pointLightPos[MAX_POINT_LIGHTS];
-uniform vec3             pointLightColor[MAX_POINT_LIGHTS];
-uniform float            pointFarPlane[MAX_POINT_LIGHTS];
-uniform int              pointLayerIndex[MAX_POINT_LIGHTS];
 uniform samplerCubeArray pointShadowMaps;
+
+layout(std140) uniform DirLightsBlock
+{
+    vec4  dirLightDirection[8];
+    vec4  dirLightColor[8];
+    mat4  dirShadowMatrix[8];
+    ivec4 dirLayerIndex[8];
+    int   numDirLights;
+};
+// usage: dirLightDirection[i].xyz, dirLayerIndex[i].x
+
+layout(std140) uniform SpotLightsBlock
+{
+    vec4  spotLightInnerCone[8];
+    vec4  spotLightOuterCone[8];
+    vec4  spotLightPos[8];
+    vec4  spotLightDirection[8];
+    vec4  spotLightColor[8];
+    mat4  spotShadowMatrix[8];
+    ivec4 spotLayerIndex[8];
+    int   numSpotLights;
+};
+// usage: spotLightInnerCone[i].x, spotLightPos[i].xyz, spotLayerIndex[i].x
+
+layout(std140) uniform PointLightsBlock
+{
+    vec4  pointLightPos[8];
+    vec4  pointLightColor[8];
+    vec4  pointFarPlane[8];
+    ivec4 pointLayerIndex[8];
+    int   numPointLights;
+};
+// usage: pointLightPos[i].xyz, pointFarPlane[i].x, pointLayerIndex[i].x
 
 #define PI 3.14159265359
 
@@ -166,13 +179,13 @@ vec3 direcLight(int i, vec3 lightDir, vec3 N)
         float currentDepth = lightCoords.z;
         float bias         = max(0.0025f * (1.0f - dot(N, normalize(lightDir))), 0.0005f);
 
-        int  sampleRadius = 1;
+        int  sampleRadius = 2;
         vec2 pixelSize    = 1.0 / textureSize(dirShadowMaps, 0).xy;
         for (int y = -sampleRadius; y <= sampleRadius; y++)
         {
             for (int x = -sampleRadius; x <= sampleRadius; x++)
             {
-                float closestDepth = texture(dirShadowMaps, vec3(lightCoords.xy + vec2(x, y) * pixelSize, float(dirLayerIndex[i]))).r;
+                float closestDepth = texture(dirShadowMaps, vec3(lightCoords.xy + vec2(x, y) * pixelSize, float(dirLayerIndex[i].x))).r;
                 if (currentDepth > closestDepth + bias)
                     shadow += 1.0f;
             }
@@ -180,15 +193,15 @@ vec3 direcLight(int i, vec3 lightDir, vec3 N)
         shadow /= pow((sampleRadius * 2 + 1), 2);
     }
 
-    return (1.0f - shadow) * dirLightColor[i];
-    // return vec4(vec3(shaЗow), 1.0f);  // for debugging shadows (shows shadow regions in white)
+    return (1.0f - shadow) * dirLightColor[i].xyz;
+    // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
 vec3 spotLight(int i, vec3 surfaceToLightPos, vec3 N)
 {
     vec4  fragPosLight = spotShadowMatrix[i] * vec4(crntPos, 1.0);
-    float angle        = dot(normalize(spotLightDirection[i]), normalize(-surfaceToLightPos));
-    float inten        = clamp((angle - spotLightOuterCone[i]) / (spotLightInnerCone[i] - spotLightOuterCone[i]), 0.0f, 1.0f);
+    float angle        = dot(normalize(spotLightDirection[i].xyz), normalize(-surfaceToLightPos));
+    float inten        = clamp((angle - spotLightOuterCone[i].x) / (spotLightInnerCone[i].x - spotLightOuterCone[i].x), 0.0f, 1.0f);
 
     float shadow      = 0.0f;
     vec3  lightCoords = fragPosLight.xyz / fragPosLight.w;
@@ -204,7 +217,7 @@ vec3 spotLight(int i, vec3 surfaceToLightPos, vec3 N)
         {
             for (int x = -sampleRadius; x <= sampleRadius; x++)
             {
-                float closestDepth = texture(spotShadowMaps, vec3(lightCoords.xy + vec2(x, y) * pixelSize, float(spotLayerIndex[i]))).r;
+                float closestDepth = texture(spotShadowMaps, vec3(lightCoords.xy + vec2(x, y) * pixelSize, float(spotLayerIndex[i].x))).r;
                 if (currentDepth > closestDepth + bias)
                     shadow += 1.0f;
             }
@@ -212,7 +225,7 @@ vec3 spotLight(int i, vec3 surfaceToLightPos, vec3 N)
         shadow /= pow((sampleRadius * 2 + 1), 2);
     }
 
-    return ((1.0f - shadow) * inten) * spotLightColor[i];
+    return ((1.0f - shadow) * inten) * spotLightColor[i].xyz;
     // return vec4(vec3(shadow), 1.0f);  // for debugging shadows (shows shadow regions in white)
 }
 
@@ -236,8 +249,8 @@ vec3 pointLight(int i, vec3 surfaceToLightPos, vec3 N)
         {
             for (int x = -sampleRadius; x <= sampleRadius; x++)
             {
-                float closestDepth = texture(pointShadowMaps, vec4(-surfaceToLightPos + vec3(x, y, z) * offset, float(pointLayerIndex[i]))).r;
-                closestDepth *= pointFarPlane[i];
+                float closestDepth = texture(pointShadowMaps, vec4(-surfaceToLightPos + vec3(x, y, z) * offset, float(pointLayerIndex[i].x))).r;
+                closestDepth *= pointFarPlane[i].x;
                 if (dist > closestDepth + bias)
                     shadow += 1.0f;
             }
@@ -246,7 +259,7 @@ vec3 pointLight(int i, vec3 surfaceToLightPos, vec3 N)
     // Average shadow
     shadow /= pow((sampleRadius * 2 + 1), 3);
 
-    return ((1.0f - shadow) * inten) * pointLightColor[i];
+    return ((1.0f - shadow) * inten) * pointLightColor[i].xyz;
     // return vec3(shadow);  // for debugging shadows (shows shadow regions in white)
 }
 
@@ -272,27 +285,27 @@ void main()
 
     float crntMetalic     = useMetalic ? texture(metalicRoughness0, UVs).b : metalic;
     float crntRoughness   = useRoughness ? texture(metalicRoughness0, UVs).g : roughness;
-    vec3  crntAlbedoColor = useTexture ? texture(albedo0, UVs).rgb : albedoColor;
+    vec4  crntAlbedoColor = useTexture ? texture(albedo0, UVs) : vec4(albedoColor, 1.0f);
 
-    if (texture(albedo0, UVs).a < 0.1f) discard;
+    if (crntAlbedoColor.a < 0.1f) discard;
 
     if (length(camPos - crntPos) < 0.01f)
-        return;
+        discard;
 
     const vec3 Wo  = normalize(camPos - crntPos);  // view dir
     vec3       sum = vec3(0.0f);                   // PBR sum
     const vec3 N   = getNormal(UVs);               // normal
 
     vec3 F0 = vec3(0.04);
-    F0      = mix(F0, crntAlbedoColor, crntMetalic);
+    F0      = mix(F0, crntAlbedoColor.xyz, crntMetalic);
 
     // IBL
-    vec3 diffuse  = vec3(0.1f) * crntAlbedoColor;
+    vec3 diffuse  = vec3(0.1f) * crntAlbedoColor.xyz;
     vec3 specular = vec3(0.0f);
     vec3 kd       = 1.0 - fresnelSchlick(max(dot(N, Wo), 0.0), F0);
     if (useIBL)
     {
-        diffuse = texture(irradiance0, N).rgb * crntAlbedoColor;
+        diffuse = texture(irradiance0, N).rgb * crntAlbedoColor.xyz;
 
         const float MAX_REFLECTION_LOD = 4.0;
         vec3        R                  = reflect(-Wo, N);
@@ -306,32 +319,30 @@ void main()
 
     for (int i = 0; i < numPointLights; i++)
     {
-        const vec3 toLight = pointLightPos[i] - crntPos;  // light vec
+        const vec3 toLight = pointLightPos[i].xyz - crntPos;  // light vec
         const vec3 Wi      = normalize(toLight);          // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * pointLight(i, toLight, N) * max(dot(N, Wi), 0.0);
+        sum += Fr(crntAlbedoColor.xyz, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * pointLight(i, toLight, N) * max(dot(N, Wi), 0.0);
     }
 
     for (int i = 0; i < numSpotLights; i++)
     {
-        if (length(spotLightPos[i] - crntPos) < 0.01f)
-            continue;
-        const vec3 toLight = spotLightPos[i] - crntPos;  // light vec
-        const vec3 Wi      = normalize(toLight);         // light dir
+        const vec3 toLight = spotLightPos[i].xyz - crntPos;  // light vec
+        const vec3 Wi      = normalize(toLight);             // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
+        sum += Fr(crntAlbedoColor.xyz, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * spotLight(i, toLight, N) * max(dot(N, Wi), 0.0);
     }
 
     for (int i = 0; i < numDirLights; i++)
     {
-        const vec3 Wi      = normalize(-dirLightDirection[i]);  // light dir
+        const vec3 Wi      = normalize(-dirLightDirection[i].xyz);  // light dir
         const vec3 HalfWay = normalize(Wi + Wo);
-        sum += Fr(crntAlbedoColor, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
+        sum += Fr(crntAlbedoColor.xyz, crntRoughness, crntMetalic, F0, Wo, Wi, N, HalfWay) * direcLight(i, Wi, N) * max(dot(N, Wi), 0.0);
     }
 
     FragColor = vec4(ambient, 1.0f) + vec4(sum, 1.0f);
 
-    // FragColor = vec4(spotLight(0, spotLightPos[0] - crntPos, N), 1.0f);
+    // FragColor = vec4(spotLight(0, spotLightPos[0].xyz - crntPos, N), 1.0f);
 
     float brightness = dot(FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
     if (brightness > 2.0f)

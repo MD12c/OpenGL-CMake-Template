@@ -35,15 +35,18 @@ void App::Update()
         Camera& camera = *scene.cameras[scene.activeCam];
         if (glfwGetKey(window.getWindow(), GLFW_KEY_B) == GLFW_PRESS)
         {
-            scene.lightResources.lights.at(0).setPosition(camera.Position);
-            scene.lightResources.lights.at(0).setDirection(camera.Orientation);
+            scene.lightResources.pointLights.at(0).setPosition(camera.Position);
+            // scene.lightResources.directionLights.at(0).setPosition(camera.Position);
+            // scene.lightResources.directionLights.at(0).setDirection(camera.Orientation);
+            // scene.lightResources.spotLights.at(0).setPosition(camera.Position);
+            // scene.lightResources.spotLights.at(0).setDirection(camera.Orientation);
         }
 
         static bool firstClick_C = true;
         if (glfwGetKey(window.getWindow(), GLFW_KEY_C) == GLFW_PRESS && firstClick_C)
         {
             scene.activeCam = !scene.activeCam;
-            firstClick_C = false;
+            firstClick_C    = false;
         }
         else if (glfwGetKey(window.getWindow(), GLFW_KEY_C) == GLFW_RELEASE)
             firstClick_C = true;
